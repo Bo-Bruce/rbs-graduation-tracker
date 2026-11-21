@@ -159,19 +159,20 @@ details.pick>summary h3{flex:1;min-width:140px}
 .empty{padding:20px 16px;color:var(--muted);text-align:center}
 footer{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
 footer p{margin:0;max-width:70ch}
-.cloud{border-color:var(--prog);gap:8px}
-.cloudrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.cloudic{color:var(--prog);flex:none}
-.cloudtx{flex:1;min-width:200px}
-.cloudtx h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.cloudtx p{margin:2px 0 0;color:var(--muted);font-size:13px}
-.cloudact{display:flex;gap:8px;flex-wrap:wrap}
-.cloudact .btn{padding:7px 16px}
-.cloudmsg{margin:0;font-size:13px;color:var(--muted)}
-.cloudmsg:empty{display:none}
+.savegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.opt.cloud{border-color:var(--prog);background:var(--prog-soft)}
+.opt>p{margin:0;color:var(--muted);font-size:13px}
+.opth{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cloudic{color:var(--prog);flex:none} .localic{color:var(--muted);flex:none}
+.tag.rec{background:var(--prog);color:var(--surface);font-weight:600}
+.optact{display:flex;gap:8px;flex-wrap:wrap}
+.optmsg{font-size:13px}
+.optmsg:empty{display:none}
 .cloudmore{font-size:12.5px;color:var(--muted)}
 .cloudmore summary{cursor:pointer;width:fit-content}
-.cloudmore p{margin:6px 0 0;max-width:72ch}
+.cloudmore p{margin:6px 0 0}
+#bk-text{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)}
 body.wait #app{opacity:.55;pointer-events:none}
 @media (max-width:520px){
   .tiles{grid-template-columns:repeat(2,1fr)}
@@ -189,36 +190,43 @@ body.wait #app{opacity:.55;pointer-events:none}
     </div>
     <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><button type="button" class="btn2 langb" id="lang-btn" lang="en">EN</button></div>
   </div>
-  <section class="card cloud" id="drv" hidden aria-labelledby="drv-h">
-    <div class="cloudrow">
-      <svg class="cloudic" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.4 9.2 4.4 4.4 0 0 0 7 18z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.5v-5m0 0-2 2m2-2 2 2"/></svg>
-      <div class="cloudtx">
-        <h2 id="drv-h"><span data-i18n="drv_h">云端同步</span> <span class="pill na" id="drv-st" data-i18n="d_off">未绑定</span></h2>
+  <section class="card save" aria-labelledby="save-h">
+    <h2 id="save-h" data-i18n="save_h">保存进度</h2>
+    <div class="savegrid">
+      <div class="opt cloud" id="drv" hidden>
+        <div class="opth">
+          <svg class="cloudic" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.4 9.2 4.4 4.4 0 0 0 7 18z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.5v-5m0 0-2 2m2-2 2 2"/></svg>
+          <h3 id="drv-h" data-i18n="drv_h">云端同步</h3><span class="tag rec" data-i18n="rec">推荐</span>
+          <span class="pill na" id="drv-st" data-i18n="d_off">未绑定</span>
+        </div>
         <p data-i18n="drv_p">绑定 Google 账号后，进度自动存到你自己的 Google Drive，换设备登录同一账号就能接着用。</p>
+        <div class="optact">
+          <button type="button" class="btn" id="drv-go" data-i18n="d_go">登录 Google，绑定云端</button>
+          <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
+        </div>
+        <p id="drv-msg" class="optmsg" role="status"></p>
+        <details class="cloudmore"><summary data-i18n="drv_more">这是怎么存的？</summary>
+          <p data-i18n="drv_priv">进度存在你 Google Drive 里一个隐藏的应用文件夹。</p>
+          <p data-i18n="drv_note">建议用个人 Gmail。</p>
+        </details>
       </div>
-      <div class="cloudact">
-        <button type="button" class="btn" id="drv-go" data-i18n="d_go">登录 Google，绑定云端</button>
-        <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
+      <div class="opt local">
+        <div class="opth">
+          <svg class="localic" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <h3 id="bk-h" data-i18n="bk_h">本地备份</h3>
+        </div>
+        <p data-i18n="bk_p">不用登录：复制一段进度文本自己保存，换设备时粘贴导入。</p>
+        <div class="optact">
+          <button type="button" class="btn2" id="bk-copy" data-i18n="bk_copy">复制我的进度</button>
+          <button type="button" class="btn2" id="bk-import" data-i18n="bk_import">导入进度</button>
+          <button type="button" class="btn2" id="bk-reset" data-i18n="bk_reset">清空重来</button>
+        </div>
+        <p id="bk-msg" class="optmsg" role="status"></p>
+        <textarea id="bk-text" hidden rows="4" aria-label="进度数据" data-i18n-aria="bk_text"></textarea>
       </div>
     </div>
-    <p id="drv-msg" class="cloudmsg" role="status"></p>
-    <details class="cloudmore"><summary data-i18n="drv_more">这是怎么存的？</summary>
-      <p data-i18n="drv_priv">进度存在你 Google Drive 里一个隐藏的应用文件夹。这个页面只能读写它自己建的那一个文件，看不到你 Drive 里的其他内容；开发者也看不到任何人的进度。点“断开”会撤销授权，本地进度和 Drive 上的文件都保留。</p>
-      <p data-i18n="drv_note">建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。</p>
-    </details>
   </section>
   <div id="app"></div>
-  <section class="card" aria-labelledby="bk-h">
-    <h2 id="bk-h" data-i18n="bk_h">备份与导入</h2>
-    <p class="vsub" data-i18n="bk_p">每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。</p>
-    <div class="planfoot">
-      <button type="button" class="btn2" id="bk-copy" data-i18n="bk_copy">复制我的进度</button>
-      <button type="button" class="btn2" id="bk-import" data-i18n="bk_import">导入进度</button>
-      <button type="button" class="btn2" id="bk-reset" data-i18n="bk_reset">清空重来</button>
-      <p id="bk-msg" role="status"></p>
-    </div>
-    <textarea id="bk-text" hidden rows="4" aria-label="进度数据" data-i18n-aria="bk_text" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)"></textarea>
-  </section>
   <footer>
     <p data-i18n="ft1">课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。</p>
     <p data-i18n="ft2">所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。</p>
@@ -254,14 +262,14 @@ zh: {
   drv_h:'云端同步', drv_p:'绑定 Google 账号后，进度自动存到你自己的 Google Drive，换设备登录同一账号就能接着用。', drv_more:'这是怎么存的？',
   drv_priv:'进度存在你 Google Drive 里一个隐藏的应用文件夹。这个页面只能读写它自己建的那一个文件，看不到你 Drive 里的其他内容；开发者也看不到任何人的进度。点“断开”会撤销授权，本地进度和 Drive 上的文件都保留。',
   drv_note:'建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。',
-  bk_h:'备份与导入', bk_p:'每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。',
+  save_h:'保存进度', rec:'推荐', bk_h:'本地备份', bk_p:'不用登录：复制一段进度文本自己保存，换设备时粘贴导入。',
   bk_copy:'复制我的进度', bk_import:'导入进度', bk_reset:'清空重来', bk_text:'进度数据',
   bk_copied:'已复制。粘贴到备忘录或发给自己保存。', bk_manual:'浏览器不让自动复制，请手动复制框里的内容。',
   bk_paste:'把之前复制的进度粘贴到框里，再点一次“导入进度”。', bk_imported:'已导入。', bk_bad:'内容格式不对，请粘贴完整的复制内容。',
   bk_confirm:'再点一次确认清空', bk_warn:'会清空你所有勾选和规划，不能恢复。', bk_cleared:'已清空。',
   ft1:'课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。',
   ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：',
-  local_msg:'进度保存在这个浏览器里，只有你看得到。换设备前用下方“复制我的进度”备份',
+  local_msg:'进度保存在这个浏览器里，只有你看得到。换设备前绑定云端，或用“复制我的进度”备份',
   saving:'保存中…', saved_acct:'已保存到你的账户，换设备也能看到', save_fail:'没能保存到云端，改动暂存在这个浏览器', synced_acct:'已同步你的账户',
   d_off:'未绑定', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新登录', d_err:'同步出错',
   d_go:'登录 Google，绑定云端', d_reconnect:'重新登录', d_retry:'重试', d_off_btn:'断开',
@@ -317,14 +325,14 @@ en: {
   drv_h:'Cloud sync', drv_p:'Sign in with Google and your progress is saved to your own Google Drive automatically, so you can pick up on any device with the same account.', drv_more:'How is it stored?',
   drv_priv:'Your progress is kept in a hidden app folder in your Google Drive. This page can only read and write the one file it creates and cannot see anything else in your Drive; the developer cannot see anyone’s progress either. “Disconnect” revokes access and keeps both your local progress and the Drive file.',
   drv_note:'A personal Gmail account works best. Rutgers ScarletMail accounts may block third-party apps; if connecting fails, try a personal account.',
-  bk_h:'Backup & import', bk_p:'Everyone’s progress is saved only in their own account or browser. Before switching browsers or computers, copy your progress, then import it on the new device.',
+  save_h:'Save your progress', rec:'Recommended', bk_h:'Local backup', bk_p:'No sign-in needed: copy your progress as text, keep it somewhere safe, and paste it to import on another device.',
   bk_copy:'Copy my progress', bk_import:'Import progress', bk_reset:'Start over', bk_text:'Progress data',
   bk_copied:'Copied. Paste it into a note or send it to yourself.', bk_manual:'Your browser blocked copying. Please copy the text in the box yourself.',
   bk_paste:'Paste the progress you copied into the box, then click “Import progress” again.', bk_imported:'Imported.', bk_bad:'That doesn’t look right. Paste the full copied text.',
   bk_confirm:'Click again to confirm', bk_warn:'This clears all your check marks and plans and cannot be undone.', bk_cleared:'Cleared.',
   ft1:'Requirements follow the FA26 advising slides and the myRBS site (checked 2026-11). Degree Navigator and your advisor have the final word.',
   ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:',
-  local_msg:'Progress is saved in this browser, and only you can see it. Before switching devices, back it up with “Copy my progress” below.',
+  local_msg:'Progress is saved in this browser, and only you can see it. Before switching devices, turn on cloud sync or back it up with “Copy my progress”.',
   saving:'Saving…', saved_acct:'Saved to your account; available on your other devices too', save_fail:'Couldn’t save to the cloud; changes are kept in this browser for now', synced_acct:'Synced with your account',
   d_off:'Not linked', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Sign-in needed', d_err:'Sync error',
   d_go:'Sign in with Google to sync', d_reconnect:'Sign in again', d_retry:'Retry', d_off_btn:'Disconnect',
