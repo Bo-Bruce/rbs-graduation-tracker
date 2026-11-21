@@ -1,0 +1,19 @@
+# Project notes for Claude Code
+
+Single-file static web app (`index.html`) for Rutgers Business School–New Brunswick students to track graduation progress. Deployed on Vercel as a static site. UI language: Chinese (course names stay in English).
+
+## Key rules encoded (verify before changing)
+- Requirements follow the FA26 advising slides first, then myRBS pages. Accounting & AIS has **no electives**; Foundational Core has no Computer Applications.
+- Two Business Core versions: Fall 2025-and-earlier (39 cr) vs Fall 2026 (36 cr), chosen by the user.
+- Only one course may double count between two RBS majors; concentration courses may not double count with a major (except Fixed Income & Credit Analysis inside Finance, Professional Selling inside Marketing, and 33:390:435 for Real Estate + Finance).
+- Finance concentration ("390 CERT") can take 33:390:380 / 400 / 420; most other 33:390 electives are Finance-majors-only (2024–26 catalog). A B in 33:390:300 is required to take any other Finance course.
+- Graduation minimum 120 credits; 19-credit-per-term warning.
+
+## Storage
+- `window.claude` exists only inside a Claude artifact; elsewhere the page falls back to `localStorage` key `rbs-nb-tracker-v1`. Keep that fallback working.
+- Planned: Google Drive sync with Google Identity Services token client + Drive REST `appDataFolder` (`https://www.googleapis.com/auth/drive.appdata`, non-sensitive). Last-writer-wins by `state.rev`. Client ID is public and can live in the page.
+
+## Conventions
+- No build step, no frameworks. Keep everything in `index.html`.
+- Show course names alongside course numbers everywhere.
+- Test logic by extracting the `<script>` and running it with Node (`module.exports` at the bottom exposes the pure functions).

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RBS–NB 毕业进度</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* layout: one column, summary first (combo -> verdict -> what-if), then requirement ledgers */
+  --bg:#f3f4f6; --surface:#ffffff; --ink:#15171c; --muted:#5b616d; --line:#d9dce3;
+  --accent:#c8102e; --accent-ink:#ffffff; --accent-soft:#fbe9ec;
+  --good:#18794a; --good-soft:#e3f4ea; --warn:#a15c00; --warn-soft:#fdf1dc; --bad:#b3261e; --bad-soft:#fde8e6;
+  --prog:#2563a8; --prog-soft:#e4eefa;
+  --display:"Archivo","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --body:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111317; --surface:#1a1d23; --ink:#eceef2; --muted:#9aa1ad; --line:#2d323b;
+    --accent:#ff5f74; --accent-ink:#1a0306; --accent-soft:#3a1a20;
+    --good:#5fd197; --good-soft:#15301f; --warn:#f0b354; --warn-soft:#33270f; --bad:#ff8f85; --bad-soft:#3a1916;
+    --prog:#82b6f0; --prog-soft:#162638;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111317; --surface:#1a1d23; --ink:#eceef2; --muted:#9aa1ad; --line:#2d323b;
+  --accent:#ff5f74; --accent-ink:#1a0306; --accent-soft:#3a1a20;
+  --good:#5fd197; --good-soft:#15301f; --warn:#f0b354; --warn-soft:#33270f; --bad:#ff8f85; --bad-soft:#3a1916;
+  --prog:#82b6f0; --prog-soft:#162638;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-text-size-adjust:100%}
+main{max-width:880px;margin:0 auto;padding:24px 16px 64px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:26px;line-height:1.15}
+h2{font-size:17px}
+h3{font-size:14px}
+a{color:var(--accent)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top p{margin:4px 0 0;color:var(--muted);font-size:13px}
+#sync{font-size:12px;color:var(--muted);white-space:nowrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:13.5px;line-height:1.3}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.chip[disabled]{opacity:.45;cursor:not-allowed;text-decoration:line-through}
+.field{display:flex;flex-direction:column;gap:6px}
+.inline{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted)}
+.check input{margin-top:3px;accent-color:var(--accent)}
+/* verdict */
+.verdict{border-left:6px solid var(--line)}
+.verdict.good{border-left-color:var(--good)} .verdict.tight{border-left-color:var(--warn)} .verdict.late{border-left-color:var(--bad)}
+.vhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vhead strong{font:700 22px/1.2 var(--display)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good)} .pill.tight{background:var(--warn-soft);color:var(--warn)} .pill.late{background:var(--bad-soft);color:var(--bad)} .pill.na{background:var(--bg);color:var(--muted)}
+.vsub{margin:0;color:var(--muted)}
+.vsub b{color:var(--ink);font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{background:var(--bg);border-radius:8px;padding:8px 10px}
+.tile b{display:block;font:700 22px/1.2 var(--display);font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;color:var(--muted)}
+.bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--bg)}
+.bar i{display:block;height:100%}
+.bar .d{background:var(--good)} .bar .p{background:var(--prog)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+.ctl{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;border-top:1px solid var(--line);padding-top:12px}
+.ctl select,.ctl input[type=number],.add input,.slot input{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 8px}
+.ctl input[type=number]{width:72px}
+.notes{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.notes li{background:var(--warn-soft);color:var(--warn);border-radius:6px;padding:6px 10px}
+.notes li.info{background:var(--bg);color:var(--muted)}
+/* what-if */
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.on td{background:var(--accent-soft)}
+tr.grp td{font-size:12px;color:var(--muted);font-weight:600;padding-top:14px;border-bottom:0}
+td small{color:var(--muted);display:block}
+.use{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:3px 10px;cursor:pointer;font-size:12.5px;white-space:nowrap}
+.use:hover{border-color:var(--accent);color:var(--accent)}
+/* requirement ledgers */
+.sec{padding:0;gap:0;overflow:hidden}
+.sec>header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sec>header h2{flex:1;min-width:160px}
+.kind{font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
+.cnt{font:500 13px var(--mono);color:var(--muted)}
+.mini{width:90px;height:6px}
+.secnote{margin:0;padding:8px 16px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line)}
+.row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:var(--good);cursor:pointer}
+.row label{cursor:pointer;display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;min-width:0}
+.code{font:500 12.5px var(--mono);color:var(--muted);white-space:nowrap}
+.ttl{font-weight:500}
+.row.s2 .ttl{color:var(--muted);text-decoration:line-through}
+.row.s1{background:var(--prog-soft)}
+.tag{font-size:11px;border-radius:4px;padding:1px 6px;background:var(--bg);color:var(--muted);white-space:nowrap}
+.tag.lock{background:var(--warn-soft);color:var(--warn)} .tag.bad{background:var(--bad-soft);color:var(--bad)}
+.pg{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:1px 9px;font-size:12px;cursor:pointer;color:var(--muted);white-space:nowrap}
+.pg[aria-pressed="true"]{background:var(--prog);border-color:var(--prog);color:var(--surface);font-weight:600}
+.cr{font:500 12.5px var(--mono);color:var(--muted);width:30px;text-align:right}
+.cr.wide{width:auto;display:inline-flex;align-items:center;gap:4px}
+.acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tm{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:1px 4px;font-size:12px;color:var(--muted);max-width:104px}
+.tm.set{border-color:var(--accent);color:var(--accent);font-weight:600}
+.terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.term{border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-width:0}
+.term.now{background:var(--prog-soft)}
+.term.past{background:var(--bg)}
+.term.past li{color:var(--muted)}
+.term>header{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.term>header h3{flex:1}
+.term ul{list-style:none;margin:0;padding:4px 0;display:flex;flex-direction:column}
+.term li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:baseline;padding:4px 10px;font-size:13px}
+.term li .code{display:block;font-size:11.5px}
+.term li .tag{grid-column:1/-1;justify-self:start;white-space:normal}
+.term .none{padding:10px;color:var(--muted);font-size:12.5px}
+.planfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.planfoot p{margin:0;flex:1;min-width:200px;color:var(--muted);font-size:13px}
+.planfoot p b{color:var(--ink)}
+.btn2{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 12px;cursor:pointer}
+.btn2:hover{border-color:var(--accent);color:var(--accent)}
+.slot{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.slot input[type=text]{width:118px;font:500 12.5px var(--mono)}
+.slot input.nm{width:210px;font:inherit;font-size:13.5px}
+.slot input[type=number]{width:52px}
+details.pick{border-bottom:1px solid var(--line)}
+details.pick:last-child{border-bottom:0}
+details.pick>summary{cursor:pointer;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;list-style:none;background:var(--bg)}
+details.pick>summary::-webkit-details-marker{display:none}
+details.pick>summary::before{content:"▸";color:var(--muted);font-size:12px}
+details.pick[open]>summary::before{content:"▾"}
+details.pick>summary h3{flex:1;min-width:140px}
+.pnote{margin:0;padding:6px 16px;font-size:12.5px;color:var(--muted)}
+.add{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;align-items:center}
+.add input[type=text]{flex:1;min-width:160px}
+.add input[type=number]{width:64px}
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:5px 14px;cursor:pointer;font-weight:600}
+.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px}
+.x:hover{color:var(--bad)}
+.empty{padding:20px 16px;color:var(--muted);text-align:center}
+footer{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+footer p{margin:0;max-width:70ch}
+body.wait #app{opacity:.55;pointer-events:none}
+@media (max-width:520px){
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .row .cr:not(.wide){display:none}
+}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .25s}}
+</style>
+</head>
+<body class="wait">
+<main>
+  <div class="top">
+    <div>
+      <h1>RBS–NB 毕业进度</h1>
+      <p>Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。</p>
+    </div>
+    <span id="sync" role="status">正在读取已保存的进度…</span>
+  </div>
+  <div id="app"></div>
+  <section class="card" aria-labelledby="bk-h">
+    <h2 id="bk-h">备份与导入</h2>
+    <p class="vsub">每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。</p>
+    <div class="planfoot">
+      <button type="button" class="btn2" id="bk-copy">复制我的进度</button>
+      <button type="button" class="btn2" id="bk-import">导入进度</button>
+      <button type="button" class="btn2" id="bk-reset">清空重来</button>
+      <p id="bk-msg" role="status"></p>
+    </div>
+    <textarea id="bk-text" hidden rows="4" aria-label="进度数据" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)"></textarea>
+  </section>
+  <footer>
+    <p>课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。</p>
+    <p>所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。</p>
+    <p>来源：
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/degree-requirements">Degree requirements</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/accounting-information-systems-major">Accounting &amp; AIS</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/business-analytics-and-information-technology-major">BAIT</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/finance-major">Finance</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/leadership-and-management-major">Leadership &amp; Management</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/marketing-major">Marketing</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/supply-chain-management-major">Supply Chain Management</a> ·
+      <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/concentrations">Concentrations</a>
+    </p>
+  </footer>
+</main>
+<script>
+/* ---------- data ---------- */
+const RAW = `
+01:220:102|Introduction to Microeconomics|3|
+01:220:103|Introduction to Macroeconomics|3|
+01:960:285|Introductory Statistics for Business|3|
+01:198:170|Computer Applications for Business|3|
+33:011:301|Foundations for Your Career Journey|1|
+33:011:302|Building Your Brand|1|33:011:301
+33:011:303|Conquering Your Transition|1|33:011:302
+33:010:272|Intro to Financial Accounting|3|
+33:010:275|Intro to Managerial Accounting|3|33:010:272
+33:136:385|Statistical Methods in Business|3|01:960:285&CALC
+33:136:386|Business Operations Analytics|3|
+33:390:300|Financial Management|3|01:220:103&01:960:285&33:010:272
+33:620:301|Intro to Management|3|
+33:620:369|International Business|3|
+33:620:302|Management Skills|3|
+33:620:492|Business Policy and Strategy (seniors only)|3|33:390:300&33:630:301&33:620:301/33:620:369
+33:630:301|Intro to Marketing|3|
+33:799:301|Intro to Supply Chain Management|3|
+33:136:370|Management Information Systems|3|
+33:010:458|Accounting Information Systems|3|33:010:415/01:198:170
+33:522:334|Business Ethics|3|01:220:102&33:010:272
+33:140:320|Business Law I|3|01:220:102&33:010:272
+33:010:325|Intermediate Accounting I|3|33:010:272
+33:010:326|Intermediate Accounting II|3|33:010:325
+33:010:401|Advanced Accounting (seniors only)|3|33:010:326
+33:010:415|Concepts of Auditing|3|33:010:325
+33:010:416|Audit Analytics|3|33:010:415
+33:010:421|Income Tax Accounting|3|33:010:325
+33:010:422|Topics in Income Taxation|3|33:010:421
+33:010:451|Cost Accounting|3|33:010:275
+ACCT-ELEC|Business elective (e.g. 33:140:321 Business Law II; MIS does not count)|3|
+33:136:388|Foundations of Business Programming|3|
+33:136:485|Time Series Modeling for Business|3|33:136:385
+33:136:470|Business Data Management|3|33:136:370/33:010:458&33:136:388
+33:136:400|Business Decision Analytics under Uncertainty|3|33:136:386
+33:136:494|Data Mining for Business Intelligence|3|
+33:136:465|Enterprise Architecture|3|33:136:370/33:010:458&33:136:388
+33:136:471|Information System Security|3|33:136:370/33:010:458
+33:136:487|Large Scale Business Data Analysis|3|33:136:370/33:010:458
+33:136:486|Optimization Modeling|3|33:136:386
+33:136:440|Relational Database and Web Applications|3|33:136:370/33:010:458
+33:136:405|Risk Modeling|3|33:136:386
+33:136:455|Introduction to ERP|3|33:136:370/33:010:458
+33:136:450|Investment Modeling with R|3|33:136:370/33:010:458
+01:960:467|Applied Multivariate Analysis|3|
+01:198:425|Computer Methods in Statistics|4|
+01:198:419|Computer Security|4|
+01:198:344|Design and Analysis of Computer Algorithms|4|
+01:220:481|Economics of Uncertainty|3|
+01:220:482|Game Theory|3|
+01:198:352|Internet Technology|4|
+01:198:440|Introduction to Artificial Intelligence|4|
+01:960:476|Introduction to Sampling|3|
+01:640:478|Introduction to Stochastic Processes|3|
+01:640:354|Linear Optimization|3|
+01:220:485|Mathematical Economics|3|
+01:220:487|Operations Research II|3|
+01:198:336|Principles of Information and Data Management|4|
+01:198:314|Principles of Programming Languages|3|
+01:960:463|Regression Methods|3|
+01:198:431|Software Engineering|4|
+01:198:439|Intro to Data Science|4|
+01:198:213|Software Methodology|4|
+01:640:424|Stochastic Models in Operations Research|3|
+33:390:380|Investment Analysis|3|33:390:300
+33:390:400|Corporate Finance|3|33:390:300
+33:390:420|Derivatives|3|33:390:380
+33:390:440|Advanced Corporate Finance|3|33:390:400
+33:010:472|Analysis of Financial Statements|3|33:010:326/33:390:400
+33:390:410|Asset Pricing and Portfolio Analysis|3|33:390:380
+33:390:460|Corporate Risk Management|3|33:390:420
+33:390:331|Ethics in Finance|3|33:390:300
+33:390:450|Financial Analysis, Planning & Forecasting|3|33:390:300
+33:390:490|Fixed Income|3|33:390:380
+33:390:320|Global Capital Markets|3|33:390:300
+33:390:415|Indexing and ETFs|3|33:390:380&33:136:385
+33:390:375|International Financial Management|3|33:390:300
+33:390:385|Investment Banking Analysis|3|33:390:400
+33:390:465|Pension Fund Investment & Management|3|33:390:300
+33:390:435|Real Estate Finance & Mortgage Backed Securities|3|33:390:300
+33:390:480|Research in Finance|3|33:390:300
+33:390:430|Treasury Management|3|33:390:300
+33:390:491|Special Topic: Credit Analysis|3|33:390:380
+33:390:445|Digital Assets, Blockchain and the Future of Finance|3|33:390:300
+33:620:410|Executive Leadership|3|33:620:302
+33:620:362|Effective Leadership Communications|3|
+33:620:330|Women Leading in Business|3|
+33:620:320|Cross Cultural Management|3|
+33:620:350|Negotiations|3|
+33:620:370|Diversity, Equity, and Inclusion in Management and Organizations|3|
+33:620:430|Team Building & Group Processes|3|
+33:620:471|Special Topic: Leading with A.I.|3|
+33:620:355|Managing Technological Innovation: In-House Entrepreneurship|3|
+33:620:365|Management of Human Resources|3|
+33:620:402|Global Management & Strategy|3|
+33:620:425|Management Consulting|3|
+33:620:475|International Entrepreneurship|3|
+33:620:479|Doing Business In...|3|
+33:620:486|Special Topics in the Music Industry|3|
+33:620:493|Special Topics in Sports Business|3|
+33:620:498|Independent Management Projects|3|
+33:382:302|Introduction to Entrepreneurship|3|
+33:382:303|Managing Growing Ventures|3|33:382:302
+33:382:310|Social Entrepreneurship|3|
+33:382:340|Creativity, Innovation, and Entrepreneurship|3|
+33:382:342|Urban Entrepreneurship and Economic Development|3|
+33:382:360|Technology Ventures|3|
+33:382:496|Entrepreneurship Practicum|3|
+33:382:355|Managing Technological Innovation|3|
+33:382:352|Multicultural Market|3|
+33:382:486|Music Industry|3|
+33:630:385|Marketing Research|3|33:136:385&33:630:301
+33:630:374|Consumer Behavior|3|33:630:301
+33:630:452|Marketing Strategy and Decision-Making (seniors only)|3|33:630:385
+33:630:482|Advertising Strategy|3|33:630:363
+33:630:498|Brand Management|3|33:630:301
+33:630:370|Business-to-Business Marketing|3|33:630:301
+33:630:497|Digital Marketing|3|33:630:301
+33:630:487|Independent Study in Marketing|3|33:630:301
+33:630:371|International Marketing|3|33:630:301
+33:630:363|Introduction to Advertising|3|33:630:301
+33:630:489|Marketing Analytics|3|33:630:385
+33:630:428|Non Profit Marketing|3|33:630:301
+33:630:499|Marketing Consulting for Small Business|3|33:630:301
+33:630:369|New Product Planning|3|33:630:301
+33:630:368|Retail Marketing|3|33:630:301
+33:630:401|Sales Management|3|33:630:301
+33:630:481|Marketing Technology|3|33:630:301
+33:630:372|Services Marketing|3|33:630:301
+33:630:488|A.I. in Marketing|3|33:630:301
+33:630:480|Special Topic: Social Media & Mobile Marketing|3|33:630:301
+33:630:485|Intro to Professional Selling|3|33:630:301
+33:799:305|Global Procurement and Sourcing Strategies|3|33:799:301
+33:799:330|Business Logistics and Transportation|3|33:799:301
+33:799:310|Demand Planning and Fulfillment|3|33:799:301
+33:799:380|Introduction to Project Management|3|33:799:301
+33:799:493|Internship in SCM|3|33:799:301
+33:799:421|Co-op in SCM|3|33:799:301
+33:799:420|SCM Industry Client Projects (seniors only)|3|33:799:305/33:799:330
+33:799:430|Security & Risk Management|3|33:799:305/33:799:330
+33:799:440|Supply Chain Environmental Management / Green Purchasing|3|33:799:301
+33:799:460|Introduction to Six Sigma and Lean Manufacturing|3|33:799:301
+33:799:410|Service Management|3|33:799:301
+33:799:498|Independent Studies in SCM|3|33:799:301
+33:799:450|Fundamentals of SCM with SAP|3|33:799:301
+33:799:470|Business Intelligence for Supply Chain and Marketing|3|33:799:301
+33:799:491|Supply Chain Finance|3|33:799:301
+33:799:475|Supply Chain Analytics Essentials|3|33:799:301
+33:799:340|Smart Manufacturing for Global Supply Chains|3|33:799:301
+33:799:455|Supply Chain Transformation in the Digital Era|3|33:799:301
+33:851:350|Real Estate Law|3|
+33:851:380|Essentials of Real Estate Finance|3|
+33:851:470|Commercial Debt Markets|3|
+33:851:432|Development|3|
+`;
+const CAT = {};
+RAW.trim().split('\n').forEach(l => { const [c,t,cr,p] = l.split('|'); CAT[c] = {t, cr:+cr, pre: p ? p.split('&').map(g => g.split('/')) : []}; });
+
+const SLOTS = {
+  'CALC':  {t:'Calculus', hint:'01:640:135 / 130 / 151'},
+  'RC-CCO':{t:'Contemporary Challenges · Our Common Future [CCO]', hint:'必须在 Rutgers–NB 修'},
+  'RC-CCD':{t:'Contemporary Challenges · Diversities and Social Inequalities [CCD]', hint:'必须在 Rutgers–NB 修'},
+  'RC-NS1':{t:'Natural Sciences [NS] · 1'},
+  'RC-NS2':{t:'Natural Sciences [NS] · 2'},
+  'RC-HST':{t:'Historical Analysis [HST]'},
+  'RC-SCL':{t:'Social Analysis [SCL]'},
+  'RC-AH1':{t:'Arts and Humanities [AHo/AHp/AHq/AHr] · 1'},
+  'RC-AH2':{t:'Arts and Humanities [AHo/AHp/AHq/AHr] · 2', hint:'和第 1 门要满足不同的 goal'},
+  'RC-WC': {t:'College Writing [WC]'},
+  'RC-WCr':{t:'Revision-Based Writing [WCr]', hint:'必须在 Rutgers–NB 修'},
+  'RC-WCd':{t:'Discipline-Based Writing [WCd]', hint:'不能和 WCr 用同一门课'},
+  'RC-QQ': {t:'Quantitative Information [QQ]'},
+  'RC-QR': {t:'Mathematical or Formal Reasoning [QR]'}
+};
+const MAJORS = {acct:'Accounting & AIS', bait:'BAIT', fin:'Finance', lm:'Leadership & Management', mkt:'Marketing', scm:'Supply Chain Management'};
+const CONCS = {ba:'Business Analytics', ent:'Entrepreneurship', fin:'Finance', fi:'Fixed Income & Credit Analysis', gb:'Global Business', ls:'Leadership Skills', mis:'Management Information Systems', ps:'Professional Selling', re:'Real Estate'};
+
+const FIN_EL = ['33:390:440','33:010:472','33:390:410','33:390:460','33:390:331','33:390:450','33:390:490','33:390:320','33:390:415','33:390:375','33:010:325','33:390:385','33:390:465','33:390:435','33:390:480','33:390:430','33:390:491','33:390:445'];
+const BAIT_G1 = ['33:136:494','33:136:465','33:136:471','33:136:487','33:136:486','33:136:440','33:136:405','33:136:455','33:136:450'];
+const BAIT_G2 = ['01:960:467','01:198:425','01:198:419','01:198:344','01:220:481','33:799:450','01:220:482','01:198:352','01:198:440','01:960:476','01:640:478','01:640:354','01:220:485','01:220:487','01:198:336','01:198:314','01:960:463','01:198:431','01:198:439','01:198:213','33:630:489','33:630:488','01:640:424'];
+const LM_S1 = ['33:620:362','33:620:330','33:620:320','33:620:350','33:620:370','33:620:430','33:620:471'];
+const LM_S2 = ['33:620:355','33:620:365','33:620:402','33:620:425','33:620:475','33:620:479','33:620:486','33:620:493','33:620:498','33:382:302','33:382:303','33:382:310','33:382:340','33:382:342','33:382:360'];
+const MKT_EL = ['33:630:482','33:630:498','33:630:370','33:630:497','33:630:487','33:630:371','33:630:363','33:630:489','33:630:428','33:630:499','33:630:369','33:630:368','33:630:401','33:630:481','33:630:372','33:630:488','33:630:480','33:630:485','33:799:410','33:799:455','33:799:470'];
+const SCM_799 = ['33:799:430','33:799:440','33:799:460','33:799:410','33:799:498','33:799:450','33:799:470','33:799:491','33:799:475','33:799:340'];
+const SCM_OTHER = ['33:630:370','33:620:350','33:630:369','33:630:368','33:630:385','33:630:401'];
+const GB_EL = ['33:620:320','33:620:479','33:620:410','33:390:320','33:390:375','33:620:475','33:630:371','33:620:370','33:620:350','33:799:305'];
+
+/* ---------- plan builder ---------- */
+function concBlock(c, majors){
+  const M = new Set(majors);
+  if ((c==='ba'||c==='mis') && M.has('bait')) return 'BAIT major 不能申报';
+  if (c==='fin' && M.has('fin')) return 'Finance major 不能申报';
+  if (c==='fi' && !M.has('fin')) return '仅限 Finance major';
+  if (c==='ls' && M.has('lm')) return 'L&M major 不能申报';
+  return '';
+}
+function build(cfg){
+  const M = new Set(cfg.majors), nw = cfg.cur==='new', out = [];
+  const c = (code, x) => Object.assign({k:'c', code}, x||{});
+  const s = code => ({k:'s', code});
+  const p = (id, title, need, opts, x) => Object.assign({k:'p', id, title, need, opts}, x||{});
+
+  const found = [c('01:220:102'), c('01:220:103'), s('CALC'), c('01:960:285')];
+  out.push({id:'found', kind:'core', title:'Foundational Core', items:found});
+
+  const acct = M.has('acct'), need386 = M.has('bait') || cfg.conc==='ba';
+  const core = ['33:011:301','33:011:302','33:011:303','33:010:272'].map(x=>c(x));
+  if (!nw) core.push(c('33:010:275'), c('33:136:385'), c('33:136:386'), c('33:390:300'), c('33:620:301'));
+  else core.push(c('33:136:385'), c('33:390:300'), c('33:620:369'));
+  core.push(c('33:620:302'), c('33:620:492'), c('33:630:301'), c('33:799:301'));
+  core.push(acct ? c('33:010:458') : p('core-mis', 'MIS 或 AIS', 1, ['33:136:370','33:010:458']));
+  if (nw){
+    if (acct) core.push(c('33:010:275'));
+    if (need386) core.push(c('33:136:386'));
+    if (!acct && !need386) core.push(p('core-ops', 'Business Operations Analytics 或 Managerial Accounting', 1, ['33:136:386','33:010:275']));
+  }
+  core.push(acct ? c('33:140:320') : p('core-law', 'Business Ethics 或 Business Law', 1, ['33:522:334','33:140:320']));
+  out.push({id:'core', kind:'core', title:'Business Core', note: nw ? 'Fall 2026 版（36 学分）' : 'Fall 2025 及以前版（39 学分）', items:core});
+
+  for (const m of cfg.majors){
+    const sec = {id:'m-'+m, kind:'major', title:MAJORS[m]+' major', items:[]};
+    if (m==='acct'){
+      sec.items = ['33:010:325','33:010:326','33:010:401','33:010:415','33:010:416','33:010:421','33:010:422','33:010:451'].map(x=>c(x));
+      sec.note = '没有 elective。AIS、Business Law I、Managerial Accounting 已算在 Business Core 里。';
+    }
+    if (m==='bait'){
+      sec.items = ['33:136:388','33:136:485','33:136:470','33:136:400'].map(x=>c(x));
+      sec.items.push(p('bait-el', 'BAIT electives', 3, BAIT_G1.concat(BAIT_G2), {note:'Group 1（33:136 课）至少 1 门；Group 2 最多 2 门。', subs:[{name:'Group 1', codes:BAIT_G1, min:1}, {name:'Group 2', codes:BAIT_G2, max:2}]}));
+    }
+    if (m==='fin'){
+      sec.items = ['33:390:380','33:390:400','33:390:420'].map(x=>c(x));
+      sec.items.push(p('fin-el', 'Finance electives', 4, FIN_EL));
+      sec.note = 'Financial Management 需要 B 或以上才能留在 Finance major。';
+    }
+    if (m==='lm'){
+      sec.items = [c('33:620:410')];
+      if (!nw) sec.items.push(c('33:620:369'));
+      const s2 = nw ? ['33:620:301'].concat(LM_S2) : LM_S2;
+      sec.items.push(p('lm-el', 'Management electives', 4, LM_S1.concat(s2), {note:'Set One 至少 2 门；Set Two 最多 2 门。', subs:[{name:'Set One', codes:LM_S1, min:2}, {name:'Set Two', codes:s2, max:2}]}));
+    }
+    if (m==='mkt'){
+      sec.items = ['33:630:385','33:630:374','33:630:452'].map(x=>c(x));
+      sec.items.push(p('mkt-el', 'Marketing electives', 4, MKT_EL));
+    }
+    if (m==='scm'){
+      sec.items = ['33:799:305','33:799:330','33:799:310','33:799:380'].map(x=>c(x));
+      sec.items.push(p('scm-exp', 'Experiential learning', 1, ['33:799:493','33:799:421','33:799:420']));
+      const other = SCM_OTHER.concat(M.has('fin') ? ['33:390:430'] : [], M.has('acct') ? ['33:010:451'] : []);
+      sec.items.push(p('scm-el', 'SCM electives', 3, SCM_799.concat(other), {note:'至少 2 门来自 33:799；其他系最多 1 门。', subs:[{name:'其他系', codes:other, max:1}]}));
+    }
+    out.push(sec);
+  }
+
+  const k = cfg.conc;
+  if (k && CONCS[k]){
+    const sec = {id:'k-'+k, kind:'conc', title:CONCS[k]+' concentration', items:[], share:()=>false, note:'Concentration 的课不能和 major 的课 double count。'};
+    if (k==='ba'){ sec.items = [c('33:136:400'), c('33:136:485'), p('ba-el','Elective',1,['33:136:494','33:136:450','33:136:487','33:136:486','33:136:405'])]; sec.note += ' 先修 Business Operations Analytics。'; }
+    if (k==='ent'){ sec.items = [c('33:382:302'), c('33:382:303'), p('ent-el','Elective',1,['33:382:340','33:382:496','33:620:475','33:382:355','33:382:352','33:382:486','33:630:369','33:382:310','33:382:360','33:382:342'])]; }
+    if (k==='fin'){ sec.items = ['33:390:380','33:390:400','33:390:420'].map(x=>c(x)); sec.note += ' 申报需要 Financial Management ≥ B。'; }
+    if (k==='fi'){ sec.items = ['33:390:385','33:390:490','33:390:491'].map(x=>c(x)); sec.share = ()=>true; sec.note = 'Finance major 内的 track：这 3 门同时算作 Finance electives，另外再选 1 门 Finance elective。'; }
+    if (k==='gb'){
+      sec.items = [c('33:620:402')];
+      if (nw) sec.items.push(p('gb-el','Electives',2,GB_EL)); else sec.items.push(c('33:620:369'), p('gb-el','Elective',1,GB_EL));
+      if (M.has('lm')) sec.note += ' 官网不推荐 L&M major 选这个（重叠多）。';
+    }
+    if (k==='ls'){ sec.items = [c('33:620:410'), p('ls-el','Electives',2,['33:620:362','33:620:350','33:620:320','33:620:370','33:620:430','33:620:330'],{note:'Effective Leadership Communications 和 Negotiations 至少选 1 门。', subs:[{name:'Communications / Negotiations', codes:['33:620:362','33:620:350'], min:1}]})]; }
+    if (k==='mis'){ sec.items = [c('33:136:470'), c('33:136:388'), p('mis-el','Elective',1,['33:136:494','33:136:465','33:136:471','33:136:450'])]; }
+    if (k==='ps'){
+      sec.items = [c('33:630:485'), c('33:630:401'), p('ps-el','Elective',1,['33:620:350','33:630:368','33:630:369','33:630:370'])];
+      if (M.has('mkt')){ sec.share = ()=>true; sec.note = 'Marketing major 内的 track：这些课同时算作 Marketing electives（Negotiations 除外）。'; }
+    }
+    if (k==='re'){
+      const f = M.has('fin');
+      sec.items = ['33:851:350', f ? '33:390:435' : '33:851:380', '33:851:470', '33:851:432'].map(x=>c(x));
+      sec.note += ' 申报需要 Financial Management ≥ B。';
+      if (f){ sec.share = code => code==='33:390:435'; sec.note += ' 33:390:435 可同时算 Finance elective。'; }
+    }
+    out.push(sec);
+  }
+
+  out.push({id:'rc', kind:'gen', title:'Rutgers Core', note:'一门课如果同时满足两个 goal，第二格的学分填 0。', items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
+  return out;
+}
+
+/* ---------- evaluation (pure) ---------- */
+function crOf(code, state){
+  if (SLOTS[code]) { const v = state.slots[code]; return v && v.cr != null ? +v.cr : 3; }
+  return CAT[code] ? CAT[code].cr : 3;
+}
+function prereqs(code, cfg){
+  if (code==='33:010:458' && cfg.cur==='new') return [['33:010:415']];
+  return CAT[code] ? CAT[code].pre : [];
+}
+function evaluate(cfg, state){
+  const S = code => state.st[code] || 0;
+  const secs = build(cfg), owner = {}, dbl = [], titles = {};
+  secs.forEach(sec => titles[sec.id] = sec.title);
+  for (const sec of secs) for (const it of sec.items) if (it.k==='c'){
+    const o = owner[it.code];
+    if (!o) owner[it.code] = {sec:sec.id, kind:sec.kind};
+    else if (o.kind==='major' && sec.kind==='conc' && !sec.share(it.code)) it.blocked = titles[o.sec];
+    else it.shared = titles[o.sec];
+  }
+  const concCodes = new Set();
+  secs.filter(x=>x.kind==='conc').forEach(sec => sec.items.forEach(it => it.k==='c' ? concCodes.add(it.code) : (it.opts||[]).forEach(x=>concCodes.add(x))));
+  for (const sec of secs) for (const it of sec.items) if (it.k==='p'){
+    it.skip = {}; it.taken = [];
+    const cnt = (it.subs||[]).map(()=>0);
+    const P = x => S(x) || (state.plan[x] ? 0.5 : 0);
+    const cand = it.opts.filter(x=>P(x)>0).sort((a,b)=> (P(b)-P(a)) || ((concCodes.has(a)?1:0)-(concCodes.has(b)?1:0)));
+    for (const code of cand){
+      if (it.taken.length >= it.need){ it.skip[code] = '超出所需门数，算 free elective'; continue; }
+      const si = (it.subs||[]).findIndex(x=>x.codes.includes(code));
+      if (si>=0 && it.subs[si].max!=null && cnt[si] >= it.subs[si].max){ it.skip[code] = it.subs[si].name+' 已到上限'; continue; }
+      const o = owner[code]; let ok = false;
+      if (!o){ ok = true; owner[code] = {sec:sec.id, kind:sec.kind}; }
+      else if (o.sec===sec.id) ok = false;
+      else if (o.kind==='core') ok = false;
+      else if (o.kind==='major' && sec.kind==='major'){ if (dbl.length<1){ ok = true; dbl.push(code); } }
+      else if (sec.kind==='conc' && sec.share(code)) ok = true;
+      else if (sec.kind==='major' && o.kind==='conc'){ const cs = secs.find(x=>x.id===o.sec); if (cs.share(code)) ok = true; }
+      if (ok){ it.taken.push(code); if (si>=0) cnt[si]++; }
+      else it.skip[code] = '已用于 '+titles[o.sec];
+    }
+    const minGap = (it.subs||[]).reduce((a,x,i)=> a + (x.min ? Math.max(0, x.min-cnt[i]) : 0), 0);
+    it.left = Math.max(it.need - it.taken.length, minGap);
+    it.done = it.taken.filter(x=>S(x)===2).length;
+  }
+  // totals
+  let left = 0; const seen = new Set(), fixedLeft = [], slotLeft = [];
+  for (const sec of secs){
+    let tot = 0, done = 0, prog = 0;
+    for (const it of sec.items){
+      if (it.k==='p'){ tot += it.need; done += Math.min(it.done, it.need); prog += Math.min(it.taken.length, it.need) - Math.min(it.done, it.need); left += it.left*3; it.taken.forEach(x => { if (S(x)===0 && !seen.has(x)){ left += crOf(x,state); seen.add(x); } }); continue; }
+      tot++;
+      if (it.blocked){ left += 3; continue; }
+      const st = S(it.code);
+      if (st===2) done++; else if (st===1) prog++;
+      else if (!seen.has(it.code)){ left += crOf(it.code, state); (it.k==='c' ? fixedLeft : slotLeft).push(it.code); }
+      seen.add(it.code);
+    }
+    sec.tot = tot; sec.done = done; sec.prog = prog;
+  }
+  let earned = 0, inprog = 0;
+  for (const code in state.st){ const st = state.st[code]; if (st===2) earned += crOf(code, state); else if (st===1) inprog += crOf(code, state); }
+  for (const x of state.custom){ const cr = +x.cr||0; if (x.st===2) earned += cr; else if (x.st===1) inprog += cr; else left += cr; }
+  const need = Math.max(left, 120 - earned - inprog, 0);
+  // longest prerequisite chain among courses still to take
+  const memo = {};
+  const depth = (code, stack) => {
+    if (S(code) >= 1) return {n:0, path:[]};
+    if (memo[code]) return memo[code];
+    if (stack.includes(code)) return {n:0, path:[]};
+    let best = {n:0, path:[]};
+    for (const g of prereqs(code, cfg)){
+      let alt = null;
+      for (const a of g){ const d = depth(a, stack.concat(code)); if (!alt || d.n < alt.n) alt = d; }
+      if (alt && alt.n > best.n) best = alt;
+    }
+    return memo[code] = {n:best.n+1, path:best.path.concat(code)};
+  };
+  let chain = {n:0, path:[]};
+  for (const code of fixedLeft){ const d = depth(code, []); if (d.n > chain.n) chain = d; }
+  return {secs, earned, inprog, left, need, total: earned+inprog+need, over: earned+inprog+left-120, chain, dbl, fixedLeft, slotLeft};
+}
+function curTerm(d){ d = d || new Date(); const y = d.getFullYear(), m = d.getMonth()+1; return y*2 + (m>=9 ? 1 : 0); }
+function termName(i){ return (i%2 ? 'Fall ' : 'Spring ') + Math.floor(i/2); }
+function gradOf(cfg, cur){ return cfg.grad && cfg.grad > cur ? cfg.grad : cur+5; }
+function verdict(ev, cfg, cur){
+  cur = cur == null ? curTerm() : cur;
+  const sems = gradOf(cfg, cur) - cur, need = Math.max(0, ev.need - (+cfg.extra||0)), load = +cfg.load||15;
+  const avg = sems ? need/sems : Infinity, chainBad = ev.chain.n > sems;
+  const level = need===0 ? 'good' : (avg<=load && !chainBad) ? 'good' : (avg<=19 && !chainBad) ? 'tight' : 'late';
+  const proj = cur + Math.max(Math.ceil(need/load), ev.chain.n, need>0 ? 1 : 0);
+  return {level, sems, need, avg, proj, chainBad};
+}
+
+function preOK(code, cfg, state, t){
+  return prereqs(code, cfg).every(g => g.some(a => (state.st[a]||0) >= 1 || (state.plan[a] && state.plan[a] < t)));
+}
+function autoPlan(cfg, state, cur){
+  const grad = gradOf(cfg, cur), sems = grad - cur; if (sems <= 0) return 0;
+  const ev = evaluate(cfg, state);
+  const items = ev.fixedLeft.concat(ev.slotLeft).filter(c => !state.plan[c]).map((code,i) => ({code, i, cr:crOf(code, state)}));
+  const cust = state.custom.filter(x => !x.st && !x.term);
+  const loadT = {}; let concrete = 0;
+  for (const c in state.plan) if (!(state.st[c]||0)){ loadT[state.plan[c]] = (loadT[state.plan[c]]||0) + crOf(c, state); concrete += crOf(c, state); }
+  state.custom.forEach(x => { if (!x.st && x.term){ loadT[x.term] = (loadT[x.term]||0) + (+x.cr||0); concrete += (+x.cr||0); } });
+  items.forEach(x => concrete += x.cr); cust.forEach(x => concrete += (+x.cr||0));
+  const cap = Math.min(+cfg.load||15, Math.ceil(concrete/sems) + 1);
+  const set = new Set(items.map(x => x.code)), hm = {};
+  const height = code => { if (hm[code] != null) return hm[code]; hm[code] = 0; let b = 0;
+    for (const o of items) if (o.code !== code && prereqs(o.code, cfg).some(g => g.includes(code))) b = Math.max(b, 1 + height(o.code));
+    return hm[code] = b; };
+  items.sort((a,b) => (height(b.code) - height(a.code)) || (a.i - b.i));
+  let placed = 0;
+  for (let t = cur+1; t <= grad; t++){
+    for (const x of items){
+      if (state.plan[x.code]) continue;
+      if (/seniors only/.test((CAT[x.code]||{}).t || '') && t < grad-1) continue;
+      if (!preOK(x.code, cfg, state, t)) continue;
+      if ((loadT[t]||0) + x.cr > cap) continue;
+      state.plan[x.code] = t; loadT[t] = (loadT[t]||0) + x.cr; placed++;
+    }
+    for (const x of cust){ if (x.term) continue; if ((loadT[t]||0) + (+x.cr||0) > cap) continue; x.term = t; loadT[t] = (loadT[t]||0) + (+x.cr||0); placed++; }
+  }
+  return placed;
+}
+
+/* ---------- state + storage ---------- */
+const BLANK = () => ({v:1, rev:0, cur:'old', majors:[], conc:'', dn:true, st:{}, slots:{}, plan:{}, took:{}, custom:[], grad:0, load:15, extra:0});
+function normalize(x){ const b = BLANK(); if (!x || typeof x!=='object') return b; const o = Object.assign(b, x); o.majors = (o.majors||[]).filter(m=>MAJORS[m]); if (!CONCS[o.conc]) o.conc=''; o.st = o.st||{}; o.slots = o.slots||{}; o.plan = o.plan||{}; o.took = o.took||{}; o.custom = Array.isArray(o.custom) ? o.custom : []; delete o.plan['ACCT-ELEC']; const c0 = curTerm(); for (const k in o.plan) if (!(o.plan[k] > c0)) delete o.plan[k]; return o; }
+let state = BLANK(), ready = false, ref = null, writing = false, dirty = false, timer = 0, readOnly = false;
+const openSet = {};
+const LS = 'rbs-nb-tracker-v1';
+function cacheGet(){ try { return JSON.parse(localStorage.getItem(LS)); } catch(e){ return null; } }
+function cacheSet(){ try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){} }
+const LOCAL_MSG = '进度保存在这个浏览器里，只有你看得到。换设备前用下方“复制我的进度”备份';
+function sync(t){ const el = document.getElementById('sync'); if (el) el.textContent = t; }
+function flush(){
+  if (!ref || readOnly) return;
+  if (writing){ dirty = true; return; }
+  writing = true; sync('保存中…');
+  ref.set({rev: state.rev, json: JSON.stringify(state)}).then(() => {
+    writing = false; if (dirty){ dirty = false; flush(); } else sync('已保存到你的账户，换设备也能看到');
+  }).catch(e => {
+    writing = false;
+    if (e && e.code==='invalid_argument'){ readOnly = true; ref = null; sync(LOCAL_MSG); }
+    else sync('没能保存到云端，改动暂存在这个浏览器');
+  });
+}
+function commit(){
+  state.rev = Date.now(); cacheSet(); render();
+  if (ref){ clearTimeout(timer); timer = setTimeout(flush, 700); }
+}
+function setReady(msg){ ready = true; document.body.classList.remove('wait'); if (msg) sync(msg); render(); }
+
+/* ---------- rendering ---------- */
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const idOf = (a,b) => (a+'-'+b).replace(/[^A-Za-z0-9_-]/g,'-');
+const fmt = n => (Math.round(n*10)/10).toString();
+const cfgOf = () => ({cur:state.cur, majors:state.majors, conc:state.conc, dn:state.dn, grad:state.grad, load:state.load, extra:state.extra});
+
+function termSel(id, attr, val, past){
+  const cur = curTerm(), last = Math.max(gradOf(cfgOf(), cur) + 2, val||0);
+  const sh = t => termName(t).replace('Spring ','Sp ').replace('Fall ','Fa ');
+  if (past){
+    let o = '<option value="">修于…</option><option value="ap"'+(val==='ap'?' selected':'')+'>AP / 转学分</option>';
+    for (let t = cur; t >= cur-8; t--) o += '<option value="'+t+'"'+(t===val?' selected':'')+'>'+sh(t)+'</option>';
+    return '<select class="tm" id="'+id+'" '+attr+' aria-label="哪个学期修的">'+o+'</select>';
+  }
+  let o = '<option value="">排到…</option>';
+  for (let t = cur+1; t <= last; t++) o += '<option value="'+t+'"'+(t===val?' selected':'')+'>'+termName(t).replace('Spring ','Sp ').replace('Fall ','Fa ')+'</option>';
+  return '<select class="tm'+(val?' set':'')+'" id="'+id+'" '+attr+' aria-label="排到哪个学期">'+o+'</select>';
+}
+function nameOf(code){
+  if (SLOTS[code]){ const v = state.slots[code]||{}; return {code:v.label||'', t:v.name||SLOTS[code].t}; }
+  return {code: code.includes(':') ? code : '', t: CAT[code] ? CAT[code].t : code};
+}
+function planHTML(ev, v, cur, grad){
+  const cfg = cfgOf(), by = {}; let plannedCr = 0, maxT = grad, minT = cur;
+  const put = (t, e) => { (by[t] = by[t]||[]).push(e); if (t > maxT) maxT = t; if (t < minT) minT = t; };
+  const ap = [];
+  for (const code in state.st) if (state.st[code]===2){
+    const n = nameOf(code), e = {code:n.code, t:n.t, cr:crOf(code, state)}, tk = state.took[code];
+    if (!e.cr) continue;
+    if (tk==='ap') ap.push(e); else if (tk && tk <= cur) put(tk, e);
+  }
+  state.custom.forEach(x => { if (x.st===2){ const e = {code:'', t:x.name, cr:+x.cr||0}; if (x.took==='ap') ap.push(e); else if (x.took && x.took <= cur) put(x.took, e); } });
+  for (const code in state.st) if (state.st[code]===1){ const n = nameOf(code); put(cur, {code:n.code, t:n.t, cr:crOf(code, state)}); }
+  state.custom.forEach(x => { if (x.st===1) put(cur, {code:'', t:x.name, cr:+x.cr||0}); else if (!x.st && x.term > cur){ put(x.term, {code:'', t:x.name, cr:+x.cr||0, cid:x.id}); plannedCr += (+x.cr||0); } });
+  for (const code in state.plan){
+    const t = state.plan[code]; if ((state.st[code]||0) > 0 || t <= cur) continue;
+    const n = nameOf(code), e = {code:n.code, t:n.t, cr:crOf(code, state), key:code};
+    if (!SLOTS[code] && !preOK(code, cfg, state, t)) e.warn = '先修课没排在这学期之前';
+    if (/seniors only/.test(e.t) && t < grad-1) e.warn = 'Seniors only，要排到最后一年';
+    put(t, e); plannedCr += e.cr;
+  }
+  let h = '<section class="card"><h2>学期规划</h2><div class="terms">';
+  if (ap.length) h += '<div class="term past"><header><h3>AP / 转学分</h3><span class="cnt">'+ap.reduce((a,x)=>a+x.cr,0)+' 学分</span><span class="pill good">已修</span></header><ul>'+ap.map(e => '<li><span><span class="code">'+esc(e.code)+'</span>'+esc(e.t)+'</span><span class="cr">'+e.cr+'</span><span></span></li>').join('')+'</ul></div>';
+  for (let t = minT; t <= maxT; t++){
+    const list = by[t]||[], sum = list.reduce((a,x) => a+x.cr, 0);
+    const pill = t < cur ? '<span class="pill good">已修</span>' : t===cur ? '<span class="pill na">本学期</span>' : sum > 19 ? '<span class="pill late">超过 19</span>' : sum > cfg.load ? '<span class="pill tight">超过 '+cfg.load+'</span>' : t > grad ? '<span class="pill late">晚于目标</span>' : sum ? '<span class="pill good">还可排 '+(cfg.load-sum)+'</span>' : '';
+    h += '<div class="term'+(t===cur?' now':t<cur?' past':'')+'"><header><h3>'+termName(t)+'</h3><span class="cnt">'+sum+' 学分</span>'+pill+'</header>';
+    h += list.length ? '<ul>'+list.map(e => '<li><span><span class="code">'+esc(e.code)+'</span>'+esc(e.t)+'</span><span class="cr">'+e.cr+'</span>'+
+      (t<=cur ? '<span></span>' : '<button type="button" class="x" data-act="unplan" '+(e.cid ? 'data-id="'+e.cid+'"' : 'data-code="'+e.key+'"')+' aria-label="取消安排 '+esc(e.t)+'">×</button>')+
+      (e.warn ? '<span class="tag lock">'+esc(e.warn)+'</span>' : '')+'</li>').join('')+'</ul>' : '<p class="none">'+(t<cur ? '没有记录' : '还没排课')+'</p>';
+    h += '</div>';
+  }
+  const un = Math.max(0, v.need - plannedCr);
+  h += '</div><div class="planfoot"><p>'+(un ? '还有 <b>'+un+'</b> 学分没排进学期。在下面每门课右边的“排到…”里选学期，或者点自动排课。' : '全部学分都排进学期了。')+'</p>'+
+    '<button type="button" class="btn" data-act="auto" id="auto">自动排课</button><button type="button" class="btn2" data-act="clearplan" id="clearplan">清空规划</button></div></section>';
+  return h;
+}
+function rowHTML(code, sec, x){
+  x = x || {};
+  const st = state.st[code] || 0, slot = SLOTS[code], info = CAT[code] || {t:code, cr:3, pre:[]}, id = idOf(sec.id, code);
+  const tags = [];
+  if (x.dn) tags.push('<span class="tag" title="只在 Degree Navigator 里出现，官网没列">DN</span>');
+  if (x.blocked) tags.push('<span class="tag bad">已算入 '+esc(x.blocked)+'，需另选一门替代</span>');
+  if (x.skip) tags.push('<span class="tag">'+esc(x.skip)+'</span>');
+  if (!slot && st===0){
+    const miss = prereqs(code, cfgOf()).filter(g => !g.some(a => (state.st[a]||0) >= 1)).map(g => g.map(a => SLOTS[a] ? SLOTS[a].t : (CAT[a] ? CAT[a].t.replace(' (seniors only)','') : a)).join(' 或 '));
+    if (miss.length) tags.push('<span class="tag lock">先修 '+esc(miss.join('，'))+'</span>');
+  }
+  let main;
+  if (slot){
+    const v = state.slots[code] || {};
+    main = '<div class="slot"><label for="'+id+'"><span class="ttl">'+esc(slot.t)+'</span></label>'+
+      '<input type="text" id="'+id+'-l" data-slot="'+code+'" data-f="label" value="'+esc(v.label||'')+'" placeholder="'+esc(slot.hint && slot.hint.includes(':') ? slot.hint : '课程号')+'" aria-label="课程号">'+
+      '<input type="text" class="nm" id="'+id+'-n" data-slot="'+code+'" data-f="name" value="'+esc(v.name||'')+'" placeholder="课程名称" aria-label="课程名称">'+
+      '<input type="number" id="'+id+'-c" data-slot="'+code+'" data-f="cr" min="0" max="6" value="'+(v.cr!=null ? +v.cr : 3)+'" aria-label="学分">'+
+      (slot.hint && !slot.hint.includes(':') ? '<span class="tag">'+esc(slot.hint)+'</span>' : '')+'</div>';
+  } else {
+    main = '<label for="'+id+'"><span class="code">'+esc(code.includes(':') ? code : '')+'</span><span class="ttl">'+esc(info.t)+'</span>'+tags.join('')+'</label>';
+  }
+  return '<div class="row s'+st+'"><input type="checkbox" id="'+id+'" data-act="done" data-code="'+code+'"'+(st===2?' checked':'')+' aria-label="已修完 '+esc(slot ? slot.t : info.t)+'">'+main+
+    '<span class="acts">'+(st===0 ? termSel(id+'-t', 'data-plan="'+code+'"', state.plan[code]) : st===2 ? termSel(id+'-k', 'data-took="'+code+'"', state.took[code], true) : '')+
+    '<button type="button" class="pg" id="'+id+'-p" data-act="prog" data-code="'+code+'" aria-pressed="'+(st===1)+'">在修</button>'+
+    (slot ? '' : '<span class="cr">'+info.cr+'</span>')+'</span></div>';
+}
+function secHTML(sec){
+  const kind = {core:'所有 major', major:'Major', conc:'Concentration', gen:'通识'}[sec.kind];
+  let h = '<section class="card sec"><header><h2>'+esc(sec.title)+'</h2><span class="kind">'+kind+'</span><span class="cnt">'+sec.done+'/'+sec.tot+'</span>'+
+    '<span class="bar mini"><i class="d" style="width:'+(100*sec.done/sec.tot)+'%"></i><i class="p" style="width:'+(100*sec.prog/sec.tot)+'%"></i></span></header>';
+  if (sec.note) h += '<p class="secnote">'+esc(sec.note)+'</p>';
+  for (const it of sec.items){
+    if (it.k==='p'){
+      const open = openSet[it.id] != null ? openSet[it.id] : (it.opts.length <= 6);
+      const lv = it.left===0 ? (it.done>=it.need ? 'good' : 'tight') : 'na';
+      h += '<details class="pick" data-pick="'+it.id+'"'+(open?' open':'')+'><summary><h3>'+esc(it.title)+'</h3><span class="tag">'+it.opts.length+' 门里选 '+it.need+'</span><span class="pill '+lv+'">'+it.taken.length+'/'+it.need+'</span></summary>';
+      if (it.note) h += '<p class="pnote">'+esc(it.note)+'</p>';
+      h += it.opts.map(code => rowHTML(code, {id:it.id}, {skip:it.skip[code]})).join('')+'</details>';
+    } else h += rowHTML(it.code, sec, it);
+  }
+  return h+'</section>';
+}
+function whatIfHTML(base, cur){
+  const rows = [], cfg = cfgOf();
+  const line = (label, c2, on, why, act, val, blocked) => {
+    if (blocked) return '<tr><td>'+esc(label)+'<small>'+esc(why)+'</small></td><td class="n">—</td><td class="n">—</td><td><span class="pill na">不可选</span></td><td></td></tr>';
+    const ev = evaluate(c2, state), v = verdict(ev, c2, cur), extra = ev.left - base.left;
+    const word = {good:'能按时', tight:'偏紧', late:'会延毕'}[v.level];
+    return '<tr class="'+(on?'on':'')+'"><td>'+esc(label)+(why ? '<small>'+esc(why)+'</small>' : '')+'</td><td class="n">'+(extra>0?'+':'')+extra+'</td><td class="n">'+(v.sems ? fmt(v.avg) : '—')+'</td><td><span class="pill '+v.level+'">'+word+'</span></td><td>'+
+      (on ? '<span class="tag">当前</span>' : '<button type="button" class="use" data-act="'+act+'" data-val="'+val+'">选用</button>')+'</td></tr>';
+  };
+  const noConc = Object.assign({}, cfg, {conc:''}), b0 = evaluate(noConc, state);
+  const saved = base; base = b0;
+  rows.push('<tr class="grp"><td colspan="5">加一个 concentration（只能申报 1 个）</td></tr>');
+  rows.push(line('不加 concentration', noConc, !cfg.conc, '', 'conc', ''));
+  for (const k in CONCS){
+    const blk = concBlock(k, cfg.majors);
+    const why = blk || ((k==='fin'||k==='re'||k==='fi') ? '需要 Financial Management ≥ B' : (k==='gb' && cfg.majors.includes('lm') ? '官网不推荐 L&M 选' : ''));
+    rows.push(line(CONCS[k], Object.assign({}, cfg, {conc:k}), cfg.conc===k, why, 'conc', k, !!blk));
+  }
+  base = saved;
+  if (cfg.majors.length < 3){
+    rows.push('<tr class="grp"><td colspan="5">再加一个 major</td></tr>');
+    for (const m in MAJORS) if (!cfg.majors.includes(m)){
+      const c2 = Object.assign({}, cfg, {majors:cfg.majors.concat(m)});
+      if (concBlock(cfg.conc, c2.majors)) c2.conc = '';
+      rows.push(line(MAJORS[m], c2, false, '', 'major', m));
+    }
+  }
+  return '<section class="card"><h2>换个组合会怎样</h2><div class="tw"><table><thead><tr><th>方案</th><th class="n">多修学分</th><th class="n">每学期平均</th><th>结果</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></section>';
+}
+function render(){
+  const app = document.getElementById('app'); if (!app) return;
+  const act = document.activeElement && document.activeElement.id, cfg = cfgOf(), cur = curTerm();
+  let h = '<section class="card"><div class="field"><span class="lbl">CURRICULUM 版本</span><div class="chips">'+
+    '<button type="button" class="chip" id="cur-old" data-act="cur" data-val="old" aria-pressed="'+(cfg.cur==='old')+'">Fall 2025 及以前入学</button>'+
+    '<button type="button" class="chip" id="cur-new" data-act="cur" data-val="new" aria-pressed="'+(cfg.cur==='new')+'">Fall 2026 入学</button></div></div>'+
+    '<div class="field"><span class="lbl">MAJOR（最多 3 个）</span><div class="chips">'+Object.keys(MAJORS).map(m => '<button type="button" class="chip" id="mj-'+m+'" data-act="major" data-val="'+m+'" aria-pressed="'+cfg.majors.includes(m)+'">'+esc(MAJORS[m])+'</button>').join('')+'</div></div>'+
+    '<div class="field"><span class="lbl">CONCENTRATION（最多 1 个）</span><div class="chips">'+Object.keys(CONCS).map(k => { const why = concBlock(k, cfg.majors); return '<button type="button" class="chip" id="cc-'+k+'" data-act="conc" data-val="'+k+'" aria-pressed="'+(cfg.conc===k)+'"'+(why?' disabled title="'+esc(why)+'"':'')+'>'+esc(CONCS[k])+'</button>'; }).join('')+'</div></div>'+'</section>';
+
+  if (!cfg.majors.length) h += '<section class="card"><p class="empty">还没选 major。你的勾选和学期规划都还在，选上 major 后会显示 major 的要求和毕业判断。</p></section>';
+  {
+    const ev = evaluate(cfg, state), v = verdict(ev, cfg, cur), grad = gradOf(cfg, cur);
+    const head = {good:'能按时毕业', tight:'能毕业，但课表偏紧', late:'按这个节奏会延毕'}[v.level];
+    const tot = Math.max(ev.total, 1);
+    h += '<section class="card verdict '+v.level+'"><div class="vhead"><strong>'+head+'</strong><span class="pill '+v.level+'">目标 '+termName(grad)+'</span></div>'+
+      '<p class="vsub">还需 <b>'+v.need+'</b> 学分 ÷ <b>'+v.sems+'</b> 个学期 = 每学期 <b>'+(v.sems ? fmt(v.avg) : '—')+'</b> 学分。'+
+      (v.level==='late' ? '按每学期 '+cfg.load+' 学分，预计 <b>'+termName(v.proj)+'</b> 毕业。' : v.level==='tight' ? '比你设的 '+cfg.load+' 学分多。' : '')+'</p>'+
+      '<div class="tiles"><div class="tile"><b>'+ev.earned+'</b><span>已修</span></div><div class="tile"><b>'+ev.inprog+'</b><span>在修</span></div><div class="tile"><b>'+ev.need+'</b><span>还需</span></div><div class="tile"><b>'+ev.total+'</b><span>毕业时合计（最低 120）</span></div></div>'+
+      '<div class="bar" role="img" aria-label="已修 '+ev.earned+'，在修 '+ev.inprog+'，还需 '+ev.need+'"><i class="d" style="width:'+(100*ev.earned/tot)+'%"></i><i class="p" style="width:'+(100*ev.inprog/tot)+'%"></i></div>'+
+      '<div class="legend"><span><i style="background:var(--good)"></i>已修</span><span><i style="background:var(--prog)"></i>在修（按本学期修完算）</span><span><i style="background:var(--line)"></i>还需</span></div>';
+    const notes = [];
+    if (ev.over > 0) notes.push('<li class="info">这个组合的必修合计比 120 多 '+ev.over+' 学分。</li>');
+    else if (ev.over < 0) notes.push('<li class="info">必修之外还要 '+(-ev.over)+' 学分 free elective 才满 120。</li>');
+    if (v.chainBad) notes.push('<li>先修链太长：'+ev.chain.path.map(x => esc(CAT[x] ? CAT[x].t : x)).join(' → ')+' 需要 '+ev.chain.n+' 个学期，只剩 '+v.sems+' 个。</li>');
+    else if (ev.chain.n >= v.sems && ev.chain.n > 1) notes.push('<li>先修链刚好卡满：'+ev.chain.path.map(x => esc(CAT[x] ? CAT[x].t : x)).join(' → ')+'，每学期都不能断。</li>');
+    if (v.avg > 19 && v.sems) notes.push('<li>每学期超过 19 学分。旧版 catalog 写的注册上限是 19，选课前和 advisor 确认。</li>');
+    if (ev.dbl.length) notes.push('<li class="info">已用掉唯一一次 major 之间的 double count：'+esc(CAT[ev.dbl[0]].t)+'。</li>');
+    if (notes.length) h += '<ul class="notes">'+notes.join('')+'</ul>';
+    h += '<div class="ctl"><div class="field"><label class="lbl" for="grad">目标毕业学期</label><select id="grad" data-set="grad">'+Array.from({length:10}, (_,i) => cur+1+i).map(t => '<option value="'+t+'"'+(t===grad?' selected':'')+'>'+termName(t)+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label class="lbl" for="load">每学期打算修（学分）</label><input type="number" id="load" data-set="load" min="6" max="22" value="'+cfg.load+'"></div>'+
+      '<div class="field"><label class="lbl" for="extra">Summer / Winter 打算修（学分）</label><input type="number" id="extra" data-set="extra" min="0" max="40" value="'+cfg.extra+'"></div></div></section>';
+    h += whatIfHTML(ev, cur);
+    h += planHTML(ev, v, cur, grad);
+    h += ev.secs.map(secHTML).join('');
+    h += '<section class="card sec"><header><h2>其他学分</h2><span class="kind">自己加</span></header><p class="secnote">不属于上面任何要求的课：general elective、minor、转学分、AP。没打勾的会算进还需学分。</p>'+
+      state.custom.map(x => '<div class="row s'+(x.st||0)+'"><input type="checkbox" id="cu-'+x.id+'" data-act="cdone" data-id="'+x.id+'"'+(x.st===2?' checked':'')+' aria-label="已修完 '+esc(x.name)+'"><label for="cu-'+x.id+'"><span class="ttl">'+esc(x.name)+'</span></label>'+
+        '<span class="acts">'+(!x.st ? termSel('cu-'+x.id+'-t', 'data-cplan="'+x.id+'"', x.term) : x.st===2 ? termSel('cu-'+x.id+'-k', 'data-ctook="'+x.id+'"', x.took, true) : '')+'<button type="button" class="pg" id="cu-'+x.id+'-p" data-act="cprog" data-id="'+x.id+'" aria-pressed="'+(x.st===1)+'">在修</button><span class="cr wide">'+(+x.cr||0)+' <button type="button" class="x" data-act="cdel" data-id="'+x.id+'" aria-label="删除 '+esc(x.name)+'">×</button></span></span></div>').join('')+
+      '<form class="add" id="addf"><input type="text" id="add-name" placeholder="课程号或名称" aria-label="课程号或名称" required><input type="number" id="add-cr" min="0" max="12" value="3" aria-label="学分"><button class="btn" type="submit">添加</button></form></section>';
+    app.innerHTML = h;
+  }
+  if (act){ const el = document.getElementById(act); if (el) el.focus({preventScroll:true}); }
+}
+
+/* ---------- events ---------- */
+function setSt(code, v){
+  const c = curTerm();
+  if (v===1) state.took[code] = c;
+  else if (v===2){ if (!state.took[code] && state.plan[code] && state.plan[code] <= c) state.took[code] = state.plan[code]; }
+  else delete state.took[code];
+  if (v){ state.st[code] = v; delete state.plan[code]; } else delete state.st[code];
+}
+if (typeof document !== 'undefined'){
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-act]'); if (!t || !ready) return;
+    const a = t.dataset.act, val = t.dataset.val, code = t.dataset.code, id = t.dataset.id;
+    if (t.tagName==='INPUT' && a!=='done' && a!=='cdone' && a!=='dn') return;
+    if (a==='cur') state.cur = val;
+    else if (a==='major'){
+      const i = state.majors.indexOf(val);
+      if (i>=0) state.majors.splice(i,1); else if (state.majors.length<3) state.majors.push(val); else return;
+      if (state.conc && concBlock(state.conc, state.majors)) state.conc = '';
+    }
+    else if (a==='conc') state.conc = state.conc===val ? '' : val;
+    else if (a==='dn') state.dn = t.checked;
+    else if (a==='done') setSt(code, t.checked ? 2 : 0);
+    else if (a==='prog') setSt(code, state.st[code]===1 ? 0 : 1);
+    else if (a==='unplan'){ if (code) delete state.plan[code]; else { const x = state.custom.find(x => x.id===id); if (x) delete x.term; } }
+    else if (a==='auto') autoPlan(cfgOf(), state, curTerm());
+    else if (a==='clearplan'){ state.plan = {}; state.custom.forEach(x => delete x.term); }
+    else if (a==='cdone' || a==='cprog' || a==='cdel'){
+      const i = state.custom.findIndex(x => x.id===id); if (i<0) return;
+      if (a==='cdel') state.custom.splice(i,1);
+      else if (a==='cdone') state.custom[i].st = t.checked ? 2 : 0;
+      else { state.custom[i].st = state.custom[i].st===1 ? 0 : 1; if (state.custom[i].st===1) state.custom[i].took = curTerm(); }
+    } else return;
+    commit();
+  });
+  document.addEventListener('change', e => {
+    const t = e.target; if (!ready) return;
+    if (t.dataset.slot){
+      const v = state.slots[t.dataset.slot] = state.slots[t.dataset.slot] || {};
+      if (t.dataset.f==='label') v.label = t.value.trim(); else if (t.dataset.f==='name') v.name = t.value.trim(); else v.cr = Math.max(0, Math.min(6, +t.value||0));
+      commit();
+    } else if (t.dataset.plan){
+      if (t.value) state.plan[t.dataset.plan] = +t.value; else delete state.plan[t.dataset.plan];
+      commit();
+    } else if (t.dataset.took){
+      const v = t.value==='ap' ? 'ap' : +t.value; if (v) state.took[t.dataset.took] = v; else delete state.took[t.dataset.took];
+      commit();
+    } else if (t.dataset.ctook){
+      const x = state.custom.find(x => x.id===t.dataset.ctook); if (x){ const v = t.value==='ap' ? 'ap' : +t.value; if (v) x.took = v; else delete x.took; commit(); }
+    } else if (t.dataset.cplan){
+      const x = state.custom.find(x => x.id===t.dataset.cplan); if (x){ if (t.value) x.term = +t.value; else delete x.term; commit(); }
+    } else if (t.dataset.set){
+      const k = t.dataset.set, n = +t.value||0;
+      state[k] = k==='load' ? Math.max(6, Math.min(22, n)) : k==='extra' ? Math.max(0, n) : n;
+      commit();
+    }
+  });
+  document.addEventListener('submit', e => {
+    e.preventDefault(); if (e.target.id!=='addf' || !ready) return;
+    const name = document.getElementById('add-name').value.trim(); if (!name) return;
+    state.custom.push({id:'u'+Date.now().toString(36), name, cr: Math.max(0, +document.getElementById('add-cr').value||0), st:0});
+    commit();
+  });
+  document.addEventListener('toggle', e => { const d = e.target; if (d.dataset && d.dataset.pick) openSet[d.dataset.pick] = d.open; }, true);
+
+  const cached = cacheGet(); if (cached) state = normalize(cached);
+  render();
+  const wait = setTimeout(() => { if (!ready) setReady(LOCAL_MSG); }, 10000);
+  const cl = window.claude && window.claude.use ? window.claude : null;
+  Promise.all(cl ? [cl.use('db'), cl.use('user')] : [null, null]).then(async ([db, user]) => {
+    const uid = user ? await user.id() : null;
+    if (!db || !uid){ clearTimeout(wait); setReady(LOCAL_MSG); return; }
+    ref = db.doc('data/users/' + uid + '/tracker');
+    ref.onSnapshot(snap => {
+      if (snap.metadata && snap.metadata.hasPendingWrites) return;
+      if (snap.exists){
+        const d = snap.data() || {};
+        if (d.rev > state.rev && !writing && !dirty){
+          try { const s = normalize(JSON.parse(d.json)); s.rev = d.rev; state = s; cacheSet(); } catch(err){}
+        }
+      }
+      clearTimeout(wait);
+      if (!ready) setReady(ref ? '已同步你的账户' : LOCAL_MSG); else render();
+      if (snap.exists && (snap.data()||{}).rev < state.rev) flush();
+      else if (!snap.exists && state.rev > 0) flush();
+    }, () => { clearTimeout(wait); ref = null; if (!ready) setReady(LOCAL_MSG); else sync(LOCAL_MSG); });
+  }).catch(() => { clearTimeout(wait); setReady(LOCAL_MSG); });
+
+  document.getElementById('bk-copy').addEventListener('click', async () => {
+    const msg = document.getElementById('bk-msg');
+    try { await navigator.clipboard.writeText(JSON.stringify(state)); msg.textContent = '已复制。粘贴到备忘录或发给自己保存。'; }
+    catch(e){ const t = document.getElementById('bk-text'); t.hidden = false; t.value = JSON.stringify(state); t.select(); msg.textContent = '浏览器不让自动复制，请手动复制框里的内容。'; }
+  });
+  document.getElementById('bk-import').addEventListener('click', () => {
+    const t = document.getElementById('bk-text'), msg = document.getElementById('bk-msg');
+    if (t.hidden || !t.value.trim()){ t.hidden = false; t.value = ''; t.focus(); msg.textContent = '把之前复制的进度粘贴到框里，再点一次“导入进度”。'; return; }
+    try { const s = normalize(JSON.parse(t.value)); state = s; t.hidden = true; t.value = ''; commit(); msg.textContent = '已导入。'; }
+    catch(e){ msg.textContent = '内容格式不对，请粘贴完整的复制内容。'; }
+  });
+  document.getElementById('bk-reset').addEventListener('click', () => {
+    const msg = document.getElementById('bk-msg'), btn = document.getElementById('bk-reset');
+    if (btn.dataset.armed !== '1'){ btn.dataset.armed = '1'; btn.textContent = '再点一次确认清空'; msg.textContent = '会清空你所有勾选和规划，不能恢复。'; return; }
+    btn.dataset.armed = ''; btn.textContent = '清空重来'; state = BLANK(); commit(); msg.textContent = '已清空。';
+  });
+}
+if (typeof module !== 'undefined') module.exports = {evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName};
+</script>
+</body>
+</html>
