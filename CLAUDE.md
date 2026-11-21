@@ -1,6 +1,6 @@
 # Project notes for Claude Code
 
-Single-file static web app (`index.html`) for Rutgers Business School–New Brunswick students to track graduation progress. Deployed on Vercel as a static site. UI language: Chinese or English (course names stay in English in both). All UI text lives in the `I18N` dictionary (`zh` / `en`) and is read with `t(key, ...args)`; add every new string to both languages. Default: saved choice (`localStorage` `rbs-nb-lang`) > browser language (`zh-*` → Chinese, else English).
+Single-file static web app (`index.html`) for Rutgers Business School–New Brunswick students to track graduation progress. Deployed on Vercel as a static site. UI language: Chinese, English or Spanish (course names and RBS terms like major / concentration stay in English). All UI text lives in the `I18N` dictionary (`zh` / `en` / `es`) and is read with `t(key, ...args)`; add every new string to both languages. Default: saved choice (`localStorage` `rbs-nb-lang`) > browser language (`zh-*` → Chinese, `es-*` → Spanish, else English). Missing keys fall back to English.
 
 ## Key rules encoded (verify before changing)
 - Requirements follow the FA26 advising slides first, then myRBS pages. Accounting & AIS has **no electives**; Foundational Core has no Computer Applications.

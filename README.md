@@ -72,4 +72,4 @@ ScarletMail（Rutgers Google 账号）可能被学校拦截第三方应用，建
 ## 计划
 
 - [x] Google Drive 同步（`drive.appdata` scope，纯前端，用 Google Identity Services）— 等填 Client ID
-- [x] 英文界面（浏览器语言是中文时显示中文，其他显示英文；右上角可切换）
+- [x] 中文 / English / Español 界面（按浏览器语言自动选择：zh → 中文，es → Español，其他 → English；右上角可切换）
