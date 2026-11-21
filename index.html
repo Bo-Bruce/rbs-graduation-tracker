@@ -159,6 +159,19 @@ details.pick>summary h3{flex:1;min-width:140px}
 .empty{padding:20px 16px;color:var(--muted);text-align:center}
 footer{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
 footer p{margin:0;max-width:70ch}
+.cloud{border-color:var(--prog);gap:8px}
+.cloudrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cloudic{color:var(--prog);flex:none}
+.cloudtx{flex:1;min-width:200px}
+.cloudtx h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cloudtx p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.cloudact{display:flex;gap:8px;flex-wrap:wrap}
+.cloudact .btn{padding:7px 16px}
+.cloudmsg{margin:0;font-size:13px;color:var(--muted)}
+.cloudmsg:empty{display:none}
+.cloudmore{font-size:12.5px;color:var(--muted)}
+.cloudmore summary{cursor:pointer;width:fit-content}
+.cloudmore p{margin:6px 0 0;max-width:72ch}
 body.wait #app{opacity:.55;pointer-events:none}
 @media (max-width:520px){
   .tiles{grid-template-columns:repeat(2,1fr)}
@@ -176,18 +189,25 @@ body.wait #app{opacity:.55;pointer-events:none}
     </div>
     <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><button type="button" class="btn2 langb" id="lang-btn" lang="en">EN</button></div>
   </div>
-  <div id="app"></div>
-  <section class="card" id="drv" hidden aria-labelledby="drv-h">
-    <h2 id="drv-h" data-i18n="drv_h">Google Drive 同步</h2>
-    <p class="vsub" data-i18n="drv_p">连接后，进度存到你自己 Google Drive 里一个隐藏的应用文件夹，换电脑登录同一个 Google 账号就能接着用。这个页面只能读写它自己建的那个文件，看不到你 Drive 里的其他内容。</p>
-    <div class="planfoot">
-      <span class="pill na" id="drv-st" data-i18n="d_off">未连接</span>
-      <button type="button" class="btn" id="drv-go" data-i18n="d_go">连接 Google Drive</button>
-      <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
-      <p id="drv-msg" role="status"></p>
+  <section class="card cloud" id="drv" hidden aria-labelledby="drv-h">
+    <div class="cloudrow">
+      <svg class="cloudic" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.4 9.2 4.4 4.4 0 0 0 7 18z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 15.5v-5m0 0-2 2m2-2 2 2"/></svg>
+      <div class="cloudtx">
+        <h2 id="drv-h"><span data-i18n="drv_h">云端同步</span> <span class="pill na" id="drv-st" data-i18n="d_off">未绑定</span></h2>
+        <p data-i18n="drv_p">绑定 Google 账号后，进度自动存到你自己的 Google Drive，换设备登录同一账号就能接着用。</p>
+      </div>
+      <div class="cloudact">
+        <button type="button" class="btn" id="drv-go" data-i18n="d_go">登录 Google，绑定云端</button>
+        <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
+      </div>
     </div>
-    <p class="vsub" style="font-size:12.5px" data-i18n="drv_note">建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。</p>
+    <p id="drv-msg" class="cloudmsg" role="status"></p>
+    <details class="cloudmore"><summary data-i18n="drv_more">这是怎么存的？</summary>
+      <p data-i18n="drv_priv">进度存在你 Google Drive 里一个隐藏的应用文件夹。这个页面只能读写它自己建的那一个文件，看不到你 Drive 里的其他内容；开发者也看不到任何人的进度。点“断开”会撤销授权，本地进度和 Drive 上的文件都保留。</p>
+      <p data-i18n="drv_note">建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。</p>
+    </details>
   </section>
+  <div id="app"></div>
   <section class="card" aria-labelledby="bk-h">
     <h2 id="bk-h" data-i18n="bk_h">备份与导入</h2>
     <p class="vsub" data-i18n="bk_p">每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。</p>
@@ -231,8 +251,8 @@ zh: {
   title:'RBS–NB 毕业进度',
   sub:'Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。',
   loading:'正在读取已保存的进度…', lang_btn:'EN', lang_aria:'Switch to English',
-  drv_h:'Google Drive 同步',
-  drv_p:'连接后，进度存到你自己 Google Drive 里一个隐藏的应用文件夹，换电脑登录同一个 Google 账号就能接着用。这个页面只能读写它自己建的那个文件，看不到你 Drive 里的其他内容。',
+  drv_h:'云端同步', drv_p:'绑定 Google 账号后，进度自动存到你自己的 Google Drive，换设备登录同一账号就能接着用。', drv_more:'这是怎么存的？',
+  drv_priv:'进度存在你 Google Drive 里一个隐藏的应用文件夹。这个页面只能读写它自己建的那一个文件，看不到你 Drive 里的其他内容；开发者也看不到任何人的进度。点“断开”会撤销授权，本地进度和 Drive 上的文件都保留。',
   drv_note:'建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。',
   bk_h:'备份与导入', bk_p:'每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。',
   bk_copy:'复制我的进度', bk_import:'导入进度', bk_reset:'清空重来', bk_text:'进度数据',
@@ -243,13 +263,13 @@ zh: {
   ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：',
   local_msg:'进度保存在这个浏览器里，只有你看得到。换设备前用下方“复制我的进度”备份',
   saving:'保存中…', saved_acct:'已保存到你的账户，换设备也能看到', save_fail:'没能保存到云端，改动暂存在这个浏览器', synced_acct:'已同步你的账户',
-  d_off:'未连接', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新连接', d_err:'同步出错',
-  d_go:'连接 Google Drive', d_reconnect:'重新连接', d_retry:'重试', d_off_btn:'断开',
-  d_pulled:'已读取 Drive 上较新的进度。', d_auth_msg:'登录已过期或被取消，点“重新连接”。改动先存在这个浏览器。',
-  d_err_msg:'网络或 Drive 出错，下次改动时会再试。', d_connect_fail:'没能连接，点“重新连接”再试。',
+  d_off:'未绑定', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新登录', d_err:'同步出错',
+  d_go:'登录 Google，绑定云端', d_reconnect:'重新登录', d_retry:'重试', d_off_btn:'断开',
+  d_pulled:'已读取 Drive 上较新的进度。', d_auth_msg:'登录已过期或被取消，点“重新登录”。改动先存在这个浏览器。',
+  d_err_msg:'网络或 Drive 出错，下次改动时会再试。', d_connect_fail:'没能连接，点“重新登录”再试。',
   d_gis_fail:'加载 Google 登录失败，检查网络后再试。', d_not_connected:'没有连接。如果用的是 ScarletMail，换个人 Gmail 试试。',
-  d_disconnected:'已断开。进度还在这个浏览器里，Drive 上的文件没有删除。', d_expired:'上次连接已过期，点“重新连接”恢复同步。',
-  sync_ok:'已同步到你的 Google Drive', sync_busy:'正在同步到 Google Drive…', sync_auth:'Google Drive 需要重新连接，改动先存在这个浏览器',
+  d_disconnected:'已断开。进度还在这个浏览器里，Drive 上的文件没有删除。', d_expired:'上次登录已过期，点“重新登录”恢复同步。',
+  sync_ok:'已同步到你的 Google Drive', sync_busy:'正在同步到 Google Drive…', sync_auth:'云端同步需要重新登录，改动先存在这个浏览器',
   sync_err:'没能同步到 Google Drive，改动先存在这个浏览器', sync_connecting:'正在连接 Google Drive…',
   h_nb:'必须在 Rutgers–NB 修', h_ah2:'和第 1 门要满足不同的 goal', h_wcd:'不能和 WCr 用同一门课',
   cb_bait:'BAIT major 不能申报', cb_fin:'Finance major 不能申报', cb_fi:'仅限 Finance major', cb_lm:'L&M major 不能申报',
@@ -294,8 +314,8 @@ en: {
   title:'RBS–NB Graduation Tracker',
   sub:'For Rutgers Business School–New Brunswick students: pick your majors and concentration, check off finished courses, plan future terms, and see whether you can graduate on time.',
   loading:'Loading saved progress…', lang_btn:'中文', lang_aria:'切换到中文',
-  drv_h:'Google Drive sync',
-  drv_p:'Once connected, your progress is saved to a hidden app folder in your own Google Drive, so you can pick up on another computer by signing in to the same Google account. This page can only read and write the one file it creates; it cannot see anything else in your Drive.',
+  drv_h:'Cloud sync', drv_p:'Sign in with Google and your progress is saved to your own Google Drive automatically, so you can pick up on any device with the same account.', drv_more:'How is it stored?',
+  drv_priv:'Your progress is kept in a hidden app folder in your Google Drive. This page can only read and write the one file it creates and cannot see anything else in your Drive; the developer cannot see anyone’s progress either. “Disconnect” revokes access and keeps both your local progress and the Drive file.',
   drv_note:'A personal Gmail account works best. Rutgers ScarletMail accounts may block third-party apps; if connecting fails, try a personal account.',
   bk_h:'Backup & import', bk_p:'Everyone’s progress is saved only in their own account or browser. Before switching browsers or computers, copy your progress, then import it on the new device.',
   bk_copy:'Copy my progress', bk_import:'Import progress', bk_reset:'Start over', bk_text:'Progress data',
@@ -306,13 +326,13 @@ en: {
   ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:',
   local_msg:'Progress is saved in this browser, and only you can see it. Before switching devices, back it up with “Copy my progress” below.',
   saving:'Saving…', saved_acct:'Saved to your account; available on your other devices too', save_fail:'Couldn’t save to the cloud; changes are kept in this browser for now', synced_acct:'Synced with your account',
-  d_off:'Not connected', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Reconnect needed', d_err:'Sync error',
-  d_go:'Connect Google Drive', d_reconnect:'Reconnect', d_retry:'Retry', d_off_btn:'Disconnect',
-  d_pulled:'Loaded newer progress from Drive.', d_auth_msg:'Sign-in expired or was cancelled. Click “Reconnect”. Changes are kept in this browser for now.',
-  d_err_msg:'Network or Drive error. It will retry on your next change.', d_connect_fail:'Couldn’t connect. Click “Reconnect” to try again.',
+  d_off:'Not linked', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Sign-in needed', d_err:'Sync error',
+  d_go:'Sign in with Google to sync', d_reconnect:'Sign in again', d_retry:'Retry', d_off_btn:'Disconnect',
+  d_pulled:'Loaded newer progress from Drive.', d_auth_msg:'Sign-in expired or was cancelled. Click “Sign in again”. Changes are kept in this browser for now.',
+  d_err_msg:'Network or Drive error. It will retry on your next change.', d_connect_fail:'Couldn’t connect. Click “Sign in again” to try again.',
   d_gis_fail:'Couldn’t load Google sign-in. Check your connection and try again.', d_not_connected:'Not connected. If you used ScarletMail, try a personal Gmail account.',
-  d_disconnected:'Disconnected. Your progress is still in this browser, and the file on Drive was not deleted.', d_expired:'Your last session expired. Click “Reconnect” to resume syncing.',
-  sync_ok:'Synced to your Google Drive', sync_busy:'Syncing to Google Drive…', sync_auth:'Google Drive needs reconnecting; changes are kept in this browser for now',
+  d_disconnected:'Disconnected. Your progress is still in this browser, and the file on Drive was not deleted.', d_expired:'Your last session expired. Click “Sign in again” to resume syncing.',
+  sync_ok:'Synced to your Google Drive', sync_busy:'Syncing to Google Drive…', sync_auth:'Cloud sync needs you to sign in again; changes are kept in this browser for now',
   sync_err:'Couldn’t sync to Google Drive; changes are kept in this browser for now', sync_connecting:'Connecting to Google Drive…',
   h_nb:'Must be taken at Rutgers–NB', h_ah2:'Must meet a different goal than #1', h_wcd:'Cannot be the same course as WCr',
   cb_bait:'Not available to BAIT majors', cb_fin:'Not available to Finance majors', cb_fi:'Finance majors only', cb_lm:'Not available to L&M majors',
