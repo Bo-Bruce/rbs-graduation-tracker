@@ -47,7 +47,9 @@ button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .top p{margin:4px 0 0;color:var(--muted);font-size:13px}
-#sync{font-size:12px;color:var(--muted);white-space:nowrap}
+#sync{font-size:12px;color:var(--muted)}
+.topr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.langb{font-size:12.5px;padding:3px 10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -169,38 +171,38 @@ body.wait #app{opacity:.55;pointer-events:none}
 <main>
   <div class="top">
     <div>
-      <h1>RBS–NB 毕业进度</h1>
-      <p>Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。</p>
+      <h1 data-i18n="title">RBS–NB 毕业进度</h1>
+      <p data-i18n="sub">Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。</p>
     </div>
-    <span id="sync" role="status">正在读取已保存的进度…</span>
+    <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><button type="button" class="btn2 langb" id="lang-btn" lang="en">EN</button></div>
   </div>
   <div id="app"></div>
   <section class="card" id="drv" hidden aria-labelledby="drv-h">
-    <h2 id="drv-h">Google Drive 同步</h2>
-    <p class="vsub">连接后，进度存到你自己 Google Drive 里一个隐藏的应用文件夹，换电脑登录同一个 Google 账号就能接着用。这个页面只能读写它自己建的那个文件，看不到你 Drive 里的其他内容。</p>
+    <h2 id="drv-h" data-i18n="drv_h">Google Drive 同步</h2>
+    <p class="vsub" data-i18n="drv_p">连接后，进度存到你自己 Google Drive 里一个隐藏的应用文件夹，换电脑登录同一个 Google 账号就能接着用。这个页面只能读写它自己建的那个文件，看不到你 Drive 里的其他内容。</p>
     <div class="planfoot">
-      <span class="pill na" id="drv-st">未连接</span>
-      <button type="button" class="btn" id="drv-go">连接 Google Drive</button>
-      <button type="button" class="btn2" id="drv-off" hidden>断开</button>
+      <span class="pill na" id="drv-st" data-i18n="d_off">未连接</span>
+      <button type="button" class="btn" id="drv-go" data-i18n="d_go">连接 Google Drive</button>
+      <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
       <p id="drv-msg" role="status"></p>
     </div>
-    <p class="vsub" style="font-size:12.5px">建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。</p>
+    <p class="vsub" style="font-size:12.5px" data-i18n="drv_note">建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。</p>
   </section>
   <section class="card" aria-labelledby="bk-h">
-    <h2 id="bk-h">备份与导入</h2>
-    <p class="vsub">每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。</p>
+    <h2 id="bk-h" data-i18n="bk_h">备份与导入</h2>
+    <p class="vsub" data-i18n="bk_p">每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。</p>
     <div class="planfoot">
-      <button type="button" class="btn2" id="bk-copy">复制我的进度</button>
-      <button type="button" class="btn2" id="bk-import">导入进度</button>
-      <button type="button" class="btn2" id="bk-reset">清空重来</button>
+      <button type="button" class="btn2" id="bk-copy" data-i18n="bk_copy">复制我的进度</button>
+      <button type="button" class="btn2" id="bk-import" data-i18n="bk_import">导入进度</button>
+      <button type="button" class="btn2" id="bk-reset" data-i18n="bk_reset">清空重来</button>
       <p id="bk-msg" role="status"></p>
     </div>
-    <textarea id="bk-text" hidden rows="4" aria-label="进度数据" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)"></textarea>
+    <textarea id="bk-text" hidden rows="4" aria-label="进度数据" data-i18n-aria="bk_text" style="width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)"></textarea>
   </section>
   <footer>
-    <p>课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。</p>
-    <p>所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。</p>
-    <p>来源：
+    <p data-i18n="ft1">课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。</p>
+    <p data-i18n="ft2">所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。</p>
+    <p><span data-i18n="ft_src">来源：</span>
       <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/degree-requirements">Degree requirements</a> ·
       <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/accounting-information-systems-major">Accounting &amp; AIS</a> ·
       <a href="https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/business-analytics-and-information-technology-major">BAIT</a> ·
@@ -219,6 +221,160 @@ body.wait #app{opacity:.55;pointer-events:none}
 const GOOGLE_CLIENT_ID = '621232733778-o5bnf0a94vof8ouogc767l8ul4b0j1ea.apps.googleusercontent.com';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const DRIVE_FILE = 'tracker.json';
+
+/* ---------- i18n ---------- */
+// Chinese UI for zh-* browsers (Simplified and Traditional), English for everything else.
+// A manual choice is kept in localStorage (per browser, not in `state`, so Drive sync never flips it).
+// Course names stay in English in both languages.
+const I18N = {
+zh: {
+  title:'RBS–NB 毕业进度',
+  sub:'Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。',
+  loading:'正在读取已保存的进度…', lang_btn:'EN', lang_aria:'Switch to English',
+  drv_h:'Google Drive 同步',
+  drv_p:'连接后，进度存到你自己 Google Drive 里一个隐藏的应用文件夹，换电脑登录同一个 Google 账号就能接着用。这个页面只能读写它自己建的那个文件，看不到你 Drive 里的其他内容。',
+  drv_note:'建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。',
+  bk_h:'备份与导入', bk_p:'每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。',
+  bk_copy:'复制我的进度', bk_import:'导入进度', bk_reset:'清空重来', bk_text:'进度数据',
+  bk_copied:'已复制。粘贴到备忘录或发给自己保存。', bk_manual:'浏览器不让自动复制，请手动复制框里的内容。',
+  bk_paste:'把之前复制的进度粘贴到框里，再点一次“导入进度”。', bk_imported:'已导入。', bk_bad:'内容格式不对，请粘贴完整的复制内容。',
+  bk_confirm:'再点一次确认清空', bk_warn:'会清空你所有勾选和规划，不能恢复。', bk_cleared:'已清空。',
+  ft1:'课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。',
+  ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：',
+  local_msg:'进度保存在这个浏览器里，只有你看得到。换设备前用下方“复制我的进度”备份',
+  saving:'保存中…', saved_acct:'已保存到你的账户，换设备也能看到', save_fail:'没能保存到云端，改动暂存在这个浏览器', synced_acct:'已同步你的账户',
+  d_off:'未连接', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新连接', d_err:'同步出错',
+  d_go:'连接 Google Drive', d_reconnect:'重新连接', d_retry:'重试', d_off_btn:'断开',
+  d_pulled:'已读取 Drive 上较新的进度。', d_auth_msg:'登录已过期或被取消，点“重新连接”。改动先存在这个浏览器。',
+  d_err_msg:'网络或 Drive 出错，下次改动时会再试。', d_connect_fail:'没能连接，点“重新连接”再试。',
+  d_gis_fail:'加载 Google 登录失败，检查网络后再试。', d_not_connected:'没有连接。如果用的是 ScarletMail，换个人 Gmail 试试。',
+  d_disconnected:'已断开。进度还在这个浏览器里，Drive 上的文件没有删除。', d_expired:'上次连接已过期，点“重新连接”恢复同步。',
+  sync_ok:'已同步到你的 Google Drive', sync_busy:'正在同步到 Google Drive…', sync_auth:'Google Drive 需要重新连接，改动先存在这个浏览器',
+  sync_err:'没能同步到 Google Drive，改动先存在这个浏览器', sync_connecting:'正在连接 Google Drive…',
+  h_nb:'必须在 Rutgers–NB 修', h_ah2:'和第 1 门要满足不同的 goal', h_wcd:'不能和 WCr 用同一门课',
+  cb_bait:'BAIT major 不能申报', cb_fin:'Finance major 不能申报', cb_fi:'仅限 Finance major', cb_lm:'L&M major 不能申报',
+  p_mis:'MIS 或 AIS', p_ops:'Business Operations Analytics 或 Managerial Accounting', p_law:'Business Ethics 或 Business Law',
+  core_new:'Fall 2026 版（36 学分）', core_old:'Fall 2025 及以前版（39 学分）',
+  n_acct:'没有 elective。AIS、Business Law I、Managerial Accounting 已算在 Business Core 里。',
+  n_bait:'Group 1（33:136 课）至少 1 门；Group 2 最多 2 门。', n_fin:'Financial Management 需要 B 或以上才能留在 Finance major。',
+  n_lm:'Set One 至少 2 门；Set Two 最多 2 门。', n_scm:'至少 2 门来自 33:799；其他系最多 1 门。', sub_other:'其他系',
+  n_conc:'Concentration 的课不能和 major 的课 double count。', n_ba:' 先修 Business Operations Analytics。', n_needB:' 申报需要 Financial Management ≥ B。',
+  n_fi:'Finance major 内的 track：这 3 门同时算作 Finance electives，另外再选 1 门 Finance elective。',
+  n_gb_lm:' 官网不推荐 L&M major 选这个（重叠多）。', n_ls:'Effective Leadership Communications 和 Negotiations 至少选 1 门。',
+  n_ps:'Marketing major 内的 track：这些课同时算作 Marketing electives（Negotiations 除外）。', n_re435:' 33:390:435 可同时算 Finance elective。',
+  n_rc:'一门课如果同时满足两个 goal，第二格的学分填 0。',
+  sk_extra:'超出所需门数，算 free elective', sk_cap:x => x+' 已到上限', sk_used:x => '已用于 '+x,
+  ts_took:'修于…', ts_ap:'AP / 转学分', ts_took_aria:'哪个学期修的', ts_plan:'排到…', ts_plan_aria:'排到哪个学期',
+  w_pre:'先修课没排在这学期之前', w_senior:'Seniors only，要排到最后一年', plan_h:'学期规划', credits:n => n+' 学分',
+  st_done:'已修', st_now:'本学期', over19:'超过 19', over:n => '超过 '+n, late_goal:'晚于目标', room:n => '还可排 '+n,
+  unplan_aria:x => '取消安排 '+x, no_rec:'没有记录', no_plan:'还没排课',
+  plan_left:n => '还有 <b>'+n+'</b> 学分没排进学期。在下面每门课右边的“排到…”里选学期，或者点自动排课。', plan_all:'全部学分都排进学期了。',
+  auto:'自动排课', clearplan:'清空规划',
+  dn_title:'只在 Degree Navigator 里出现，官网没列', blocked:x => '已算入 '+x+'，需另选一门替代', pre:x => '先修 '+x, or:' 或 ', sep:'，',
+  ph_code:'课程号', ph_name:'课程名称', aria_cr:'学分', done_aria:x => '已修完 '+x, inprog:'在修',
+  k_core:'所有 major', k_major:'Major', k_conc:'Concentration', k_gen:'通识', pick:(n,k) => n+' 门里选 '+k,
+  na:'不可选', v_good:'能按时', v_tight:'偏紧', v_late:'会延毕', cur_tag:'当前', use:'选用',
+  g_conc:'加一个 concentration（只能申报 1 个）', no_conc:'不加 concentration', why_B:'需要 Financial Management ≥ B', why_gb:'官网不推荐 L&M 选',
+  g_major:'再加一个 major', wi_h:'换个组合会怎样', th_plan:'方案', th_extra:'多修学分', th_avg:'每学期平均', th_res:'结果',
+  lbl_cur:'CURRICULUM 版本', cur_old:'Fall 2025 及以前入学', cur_new:'Fall 2026 入学', lbl_major:'MAJOR（最多 3 个）', lbl_conc:'CONCENTRATION（最多 1 个）',
+  no_major:'还没选 major。你的勾选和学期规划都还在，选上 major 后会显示 major 的要求和毕业判断。',
+  h_good:'能按时毕业', h_tight:'能毕业，但课表偏紧', h_late:'按这个节奏会延毕', target:x => '目标 '+x,
+  vsub:(n,s,a) => '还需 <b>'+n+'</b> 学分 ÷ <b>'+s+'</b> 个学期 = 每学期 <b>'+a+'</b> 学分。',
+  late_proj:(l,x) => '按每学期 '+l+' 学分，预计 <b>'+x+'</b> 毕业。', tight_more:l => '比你设的 '+l+' 学分多。',
+  t_need:'还需', t_total:'毕业时合计（最低 120）', bar_aria:(a,b,c) => '已修 '+a+'，在修 '+b+'，还需 '+c, lg_prog:'在修（按本学期修完算）',
+  note_over:n => '这个组合的必修合计比 120 多 '+n+' 学分。', note_free:n => '必修之外还要 '+n+' 学分 free elective 才满 120。',
+  note_chain:(p,n,s) => '先修链太长：'+p+' 需要 '+n+' 个学期，只剩 '+s+' 个。', note_chain_tight:p => '先修链刚好卡满：'+p+'，每学期都不能断。',
+  note_19:'每学期超过 19 学分。旧版 catalog 写的注册上限是 19，选课前和 advisor 确认。',
+  note_dbl:x => '已用掉唯一一次 major 之间的 double count：'+x+'。',
+  ctl_grad:'目标毕业学期', ctl_load:'每学期打算修（学分）', ctl_extra:'Summer / Winter 打算修（学分）',
+  other_h:'其他学分', other_kind:'自己加', other_note:'不属于上面任何要求的课：general elective、minor、转学分、AP。没打勾的会算进还需学分。',
+  del_aria:x => '删除 '+x, add_ph:'课程号或名称', add_btn:'添加'
+},
+en: {
+  title:'RBS–NB Graduation Tracker',
+  sub:'For Rutgers Business School–New Brunswick students: pick your majors and concentration, check off finished courses, plan future terms, and see whether you can graduate on time.',
+  loading:'Loading saved progress…', lang_btn:'中文', lang_aria:'切换到中文',
+  drv_h:'Google Drive sync',
+  drv_p:'Once connected, your progress is saved to a hidden app folder in your own Google Drive, so you can pick up on another computer by signing in to the same Google account. This page can only read and write the one file it creates; it cannot see anything else in your Drive.',
+  drv_note:'A personal Gmail account works best. Rutgers ScarletMail accounts may block third-party apps; if connecting fails, try a personal account.',
+  bk_h:'Backup & import', bk_p:'Everyone’s progress is saved only in their own account or browser. Before switching browsers or computers, copy your progress, then import it on the new device.',
+  bk_copy:'Copy my progress', bk_import:'Import progress', bk_reset:'Start over', bk_text:'Progress data',
+  bk_copied:'Copied. Paste it into a note or send it to yourself.', bk_manual:'Your browser blocked copying. Please copy the text in the box yourself.',
+  bk_paste:'Paste the progress you copied into the box, then click “Import progress” again.', bk_imported:'Imported.', bk_bad:'That doesn’t look right. Paste the full copied text.',
+  bk_confirm:'Click again to confirm', bk_warn:'This clears all your check marks and plans and cannot be undone.', bk_cleared:'Cleared.',
+  ft1:'Requirements follow the FA26 advising slides and the myRBS site (checked 2026-11). Degree Navigator and your advisor have the final word.',
+  ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:',
+  local_msg:'Progress is saved in this browser, and only you can see it. Before switching devices, back it up with “Copy my progress” below.',
+  saving:'Saving…', saved_acct:'Saved to your account; available on your other devices too', save_fail:'Couldn’t save to the cloud; changes are kept in this browser for now', synced_acct:'Synced with your account',
+  d_off:'Not connected', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Reconnect needed', d_err:'Sync error',
+  d_go:'Connect Google Drive', d_reconnect:'Reconnect', d_retry:'Retry', d_off_btn:'Disconnect',
+  d_pulled:'Loaded newer progress from Drive.', d_auth_msg:'Sign-in expired or was cancelled. Click “Reconnect”. Changes are kept in this browser for now.',
+  d_err_msg:'Network or Drive error. It will retry on your next change.', d_connect_fail:'Couldn’t connect. Click “Reconnect” to try again.',
+  d_gis_fail:'Couldn’t load Google sign-in. Check your connection and try again.', d_not_connected:'Not connected. If you used ScarletMail, try a personal Gmail account.',
+  d_disconnected:'Disconnected. Your progress is still in this browser, and the file on Drive was not deleted.', d_expired:'Your last session expired. Click “Reconnect” to resume syncing.',
+  sync_ok:'Synced to your Google Drive', sync_busy:'Syncing to Google Drive…', sync_auth:'Google Drive needs reconnecting; changes are kept in this browser for now',
+  sync_err:'Couldn’t sync to Google Drive; changes are kept in this browser for now', sync_connecting:'Connecting to Google Drive…',
+  h_nb:'Must be taken at Rutgers–NB', h_ah2:'Must meet a different goal than #1', h_wcd:'Cannot be the same course as WCr',
+  cb_bait:'Not available to BAIT majors', cb_fin:'Not available to Finance majors', cb_fi:'Finance majors only', cb_lm:'Not available to L&M majors',
+  p_mis:'MIS or AIS', p_ops:'Business Operations Analytics or Managerial Accounting', p_law:'Business Ethics or Business Law',
+  core_new:'Fall 2026 version (36 credits)', core_old:'Fall 2025-and-earlier version (39 credits)',
+  n_acct:'No electives. AIS, Business Law I and Managerial Accounting are already counted in the Business Core.',
+  n_bait:'At least 1 from Group 1 (33:136 courses); at most 2 from Group 2.', n_fin:'You need a B or better in Financial Management to stay in the Finance major.',
+  n_lm:'At least 2 from Set One; at most 2 from Set Two.', n_scm:'At least 2 from 33:799; at most 1 from other departments.', sub_other:'Other departments',
+  n_conc:'Concentration courses cannot double count with major courses.', n_ba:' Prerequisite: Business Operations Analytics.', n_needB:' Declaring requires Financial Management ≥ B.',
+  n_fi:'A track inside the Finance major: these 3 courses also count as Finance electives; take 1 more Finance elective.',
+  n_gb_lm:' The RBS site advises L&M majors against this one (heavy overlap).', n_ls:'Take at least 1 of Effective Leadership Communications and Negotiations.',
+  n_ps:'A track inside the Marketing major: these courses also count as Marketing electives (except Negotiations).', n_re435:' 33:390:435 can also count as a Finance elective.',
+  n_rc:'If one course meets two goals, enter 0 credits in the second slot.',
+  sk_extra:'More than needed; counts as a free elective', sk_cap:x => x+' limit reached', sk_used:x => 'Already used for '+x,
+  ts_took:'Taken in…', ts_ap:'AP / transfer', ts_took_aria:'Term taken', ts_plan:'Plan for…', ts_plan_aria:'Term to plan it in',
+  w_pre:'Prerequisite isn’t planned before this term', w_senior:'Seniors only; plan it in your final year', plan_h:'Term plan', credits:n => n+' cr',
+  st_done:'Done', st_now:'This term', over19:'Over 19', over:n => 'Over '+n, late_goal:'After target', room:n => n+' cr left',
+  unplan_aria:x => 'Remove '+x+' from plan', no_rec:'No records', no_plan:'Nothing planned yet',
+  plan_left:n => '<b>'+n+'</b> credits aren’t in any term yet. Pick a term in “Plan for…” next to each course below, or click Auto-plan.', plan_all:'Every credit is planned into a term.',
+  auto:'Auto-plan', clearplan:'Clear plan',
+  dn_title:'Only listed in Degree Navigator, not on the RBS site', blocked:x => 'Already counted in '+x+'; pick another course instead', pre:x => 'Needs '+x, or:' or ', sep:'; ',
+  ph_code:'Course #', ph_name:'Course title', aria_cr:'Credits', done_aria:x => 'Completed '+x, inprog:'In progress',
+  k_core:'All majors', k_major:'Major', k_conc:'Concentration', k_gen:'Gen ed', pick:(n,k) => 'Pick '+k+' of '+n,
+  na:'Not available', v_good:'On time', v_tight:'Tight', v_late:'Late', cur_tag:'Current', use:'Use',
+  g_conc:'Add a concentration (you can declare only 1)', no_conc:'No concentration', why_B:'Requires Financial Management ≥ B', why_gb:'RBS site advises L&M majors against it',
+  g_major:'Add another major', wi_h:'What if you change your combination?', th_plan:'Option', th_extra:'Extra credits', th_avg:'Avg per term', th_res:'Result',
+  lbl_cur:'CURRICULUM VERSION', cur_old:'Entered Fall 2025 or earlier', cur_new:'Entered Fall 2026', lbl_major:'MAJOR (up to 3)', lbl_conc:'CONCENTRATION (up to 1)',
+  no_major:'No major selected yet. Your check marks and term plan are still here; pick a major to see its requirements and the graduation check.',
+  h_good:'On track to graduate on time', h_tight:'You can graduate, but the schedule is tight', h_late:'At this pace you will graduate late', target:x => 'Target '+x,
+  vsub:(n,s,a) => '<b>'+n+'</b> credits still needed ÷ <b>'+s+'</b> terms = <b>'+a+'</b> credits per term. ',
+  late_proj:(l,x) => 'At '+l+' credits per term, expected graduation is <b>'+x+'</b>.', tight_more:l => 'That’s more than the '+l+' credits you set.',
+  t_need:'Still needed', t_total:'Total at graduation (min 120)', bar_aria:(a,b,c) => 'Done '+a+', in progress '+b+', still needed '+c, lg_prog:'In progress (counted as finished this term)',
+  note_over:n => 'Required courses for this combination add up to '+n+' credits more than 120.', note_free:n => 'You need '+n+' free-elective credits beyond the requirements to reach 120.',
+  note_chain:(p,n,s) => 'Prerequisite chain is too long: '+p+' needs '+n+' terms, and only '+s+' are left.', note_chain_tight:p => 'Prerequisite chain fills every remaining term: '+p+'. You can’t skip a term.',
+  note_19:'More than 19 credits per term. The older catalog lists 19 as the registration cap; check with an advisor before registering.',
+  note_dbl:x => 'Your one allowed double count between majors is used: '+x+'.',
+  ctl_grad:'Target graduation term', ctl_load:'Planned credits per term', ctl_extra:'Summer / Winter credits planned',
+  other_h:'Other credits', other_kind:'Added by you', other_note:'Courses outside the requirements above: general electives, minors, transfer credit, AP. Unchecked ones count toward credits still needed.',
+  del_aria:x => 'Delete '+x, add_ph:'Course number or name', add_btn:'Add'
+}};
+const LANG_KEY = 'rbs-nb-lang';
+function detectLang(){
+  try { const s = localStorage.getItem(LANG_KEY); if (s === 'zh' || s === 'en') return s; } catch(e){}
+  const n = typeof navigator !== 'undefined' ? ((navigator.languages && navigator.languages[0]) || navigator.language || '') : '';
+  return /^zh\b/i.test(n) ? 'zh' : 'en';
+}
+let LANG = detectLang();
+function t(k){
+  const v = k in I18N[LANG] ? I18N[LANG][k] : I18N.zh[k];
+  if (v === undefined) return k;
+  return typeof v === 'function' ? v.apply(null, Array.prototype.slice.call(arguments, 1)) : v;
+}
+function setLang(l, save){ LANG = l === 'zh' ? 'zh' : 'en'; if (save) try { localStorage.setItem(LANG_KEY, LANG); } catch(e){} }
+function applyStatic(){
+  if (typeof document === 'undefined' || !document.documentElement) return;
+  document.documentElement.lang = LANG === 'zh' ? 'zh-Hans' : 'en';
+  document.title = t('title');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  const b = document.getElementById('lang-btn');
+  if (b){ b.textContent = t('lang_btn'); b.setAttribute('aria-label', t('lang_aria')); b.lang = LANG === 'zh' ? 'en' : 'zh-Hans'; }
+}
 
 /* ---------- data ---------- */
 const RAW = `
@@ -382,17 +538,17 @@ RAW.trim().split('\n').forEach(l => { const [c,t,cr,p] = l.split('|'); CAT[c] = 
 
 const SLOTS = {
   'CALC':  {t:'Calculus', hint:'01:640:135 / 130 / 151'},
-  'RC-CCO':{t:'Contemporary Challenges · Our Common Future [CCO]', hint:'必须在 Rutgers–NB 修'},
-  'RC-CCD':{t:'Contemporary Challenges · Diversities and Social Inequalities [CCD]', hint:'必须在 Rutgers–NB 修'},
+  'RC-CCO':{t:'Contemporary Challenges · Our Common Future [CCO]', hint:'h_nb'},
+  'RC-CCD':{t:'Contemporary Challenges · Diversities and Social Inequalities [CCD]', hint:'h_nb'},
   'RC-NS1':{t:'Natural Sciences [NS] · 1'},
   'RC-NS2':{t:'Natural Sciences [NS] · 2'},
   'RC-HST':{t:'Historical Analysis [HST]'},
   'RC-SCL':{t:'Social Analysis [SCL]'},
   'RC-AH1':{t:'Arts and Humanities [AHo/AHp/AHq/AHr] · 1'},
-  'RC-AH2':{t:'Arts and Humanities [AHo/AHp/AHq/AHr] · 2', hint:'和第 1 门要满足不同的 goal'},
+  'RC-AH2':{t:'Arts and Humanities [AHo/AHp/AHq/AHr] · 2', hint:'h_ah2'},
   'RC-WC': {t:'College Writing [WC]'},
-  'RC-WCr':{t:'Revision-Based Writing [WCr]', hint:'必须在 Rutgers–NB 修'},
-  'RC-WCd':{t:'Discipline-Based Writing [WCd]', hint:'不能和 WCr 用同一门课'},
+  'RC-WCr':{t:'Revision-Based Writing [WCr]', hint:'h_nb'},
+  'RC-WCd':{t:'Discipline-Based Writing [WCd]', hint:'h_wcd'},
   'RC-QQ': {t:'Quantitative Information [QQ]'},
   'RC-QR': {t:'Mathematical or Formal Reasoning [QR]'}
 };
@@ -412,10 +568,10 @@ const GB_EL = ['33:620:320','33:620:479','33:620:410','33:390:320','33:390:375',
 /* ---------- plan builder ---------- */
 function concBlock(c, majors){
   const M = new Set(majors);
-  if ((c==='ba'||c==='mis') && M.has('bait')) return 'BAIT major 不能申报';
-  if (c==='fin' && M.has('fin')) return 'Finance major 不能申报';
-  if (c==='fi' && !M.has('fin')) return '仅限 Finance major';
-  if (c==='ls' && M.has('lm')) return 'L&M major 不能申报';
+  if ((c==='ba'||c==='mis') && M.has('bait')) return t('cb_bait');
+  if (c==='fin' && M.has('fin')) return t('cb_fin');
+  if (c==='fi' && !M.has('fin')) return t('cb_fi');
+  if (c==='ls' && M.has('lm')) return t('cb_lm');
   return '';
 }
 function build(cfg){
@@ -432,35 +588,35 @@ function build(cfg){
   if (!nw) core.push(c('33:010:275'), c('33:136:385'), c('33:136:386'), c('33:390:300'), c('33:620:301'));
   else core.push(c('33:136:385'), c('33:390:300'), c('33:620:369'));
   core.push(c('33:620:302'), c('33:620:492'), c('33:630:301'), c('33:799:301'));
-  core.push(acct ? c('33:010:458') : p('core-mis', 'MIS 或 AIS', 1, ['33:136:370','33:010:458']));
+  core.push(acct ? c('33:010:458') : p('core-mis', t('p_mis'), 1, ['33:136:370','33:010:458']));
   if (nw){
     if (acct) core.push(c('33:010:275'));
     if (need386) core.push(c('33:136:386'));
-    if (!acct && !need386) core.push(p('core-ops', 'Business Operations Analytics 或 Managerial Accounting', 1, ['33:136:386','33:010:275']));
+    if (!acct && !need386) core.push(p('core-ops', t('p_ops'), 1, ['33:136:386','33:010:275']));
   }
-  core.push(acct ? c('33:140:320') : p('core-law', 'Business Ethics 或 Business Law', 1, ['33:522:334','33:140:320']));
-  out.push({id:'core', kind:'core', title:'Business Core', note: nw ? 'Fall 2026 版（36 学分）' : 'Fall 2025 及以前版（39 学分）', items:core});
+  core.push(acct ? c('33:140:320') : p('core-law', t('p_law'), 1, ['33:522:334','33:140:320']));
+  out.push({id:'core', kind:'core', title:'Business Core', note: nw ? t('core_new') : t('core_old'), items:core});
 
   for (const m of cfg.majors){
     const sec = {id:'m-'+m, kind:'major', title:MAJORS[m]+' major', items:[]};
     if (m==='acct'){
       sec.items = ['33:010:325','33:010:326','33:010:401','33:010:415','33:010:416','33:010:421','33:010:422','33:010:451'].map(x=>c(x));
-      sec.note = '没有 elective。AIS、Business Law I、Managerial Accounting 已算在 Business Core 里。';
+      sec.note = t('n_acct');
     }
     if (m==='bait'){
       sec.items = ['33:136:388','33:136:485','33:136:470','33:136:400'].map(x=>c(x));
-      sec.items.push(p('bait-el', 'BAIT electives', 3, BAIT_G1.concat(BAIT_G2), {note:'Group 1（33:136 课）至少 1 门；Group 2 最多 2 门。', subs:[{name:'Group 1', codes:BAIT_G1, min:1}, {name:'Group 2', codes:BAIT_G2, max:2}]}));
+      sec.items.push(p('bait-el', 'BAIT electives', 3, BAIT_G1.concat(BAIT_G2), {note:t('n_bait'), subs:[{name:'Group 1', codes:BAIT_G1, min:1}, {name:'Group 2', codes:BAIT_G2, max:2}]}));
     }
     if (m==='fin'){
       sec.items = ['33:390:380','33:390:400','33:390:420'].map(x=>c(x));
       sec.items.push(p('fin-el', 'Finance electives', 4, FIN_EL));
-      sec.note = 'Financial Management 需要 B 或以上才能留在 Finance major。';
+      sec.note = t('n_fin');
     }
     if (m==='lm'){
       sec.items = [c('33:620:410')];
       if (!nw) sec.items.push(c('33:620:369'));
       const s2 = nw ? ['33:620:301'].concat(LM_S2) : LM_S2;
-      sec.items.push(p('lm-el', 'Management electives', 4, LM_S1.concat(s2), {note:'Set One 至少 2 门；Set Two 最多 2 门。', subs:[{name:'Set One', codes:LM_S1, min:2}, {name:'Set Two', codes:s2, max:2}]}));
+      sec.items.push(p('lm-el', 'Management electives', 4, LM_S1.concat(s2), {note:t('n_lm'), subs:[{name:'Set One', codes:LM_S1, min:2}, {name:'Set Two', codes:s2, max:2}]}));
     }
     if (m==='mkt'){
       sec.items = ['33:630:385','33:630:374','33:630:452'].map(x=>c(x));
@@ -470,39 +626,39 @@ function build(cfg){
       sec.items = ['33:799:305','33:799:330','33:799:310','33:799:380'].map(x=>c(x));
       sec.items.push(p('scm-exp', 'Experiential learning', 1, ['33:799:493','33:799:421','33:799:420']));
       const other = SCM_OTHER.concat(M.has('fin') ? ['33:390:430'] : [], M.has('acct') ? ['33:010:451'] : []);
-      sec.items.push(p('scm-el', 'SCM electives', 3, SCM_799.concat(other), {note:'至少 2 门来自 33:799；其他系最多 1 门。', subs:[{name:'其他系', codes:other, max:1}]}));
+      sec.items.push(p('scm-el', 'SCM electives', 3, SCM_799.concat(other), {note:t('n_scm'), subs:[{name:t('sub_other'), codes:other, max:1}]}));
     }
     out.push(sec);
   }
 
   const k = cfg.conc;
   if (k && CONCS[k]){
-    const sec = {id:'k-'+k, kind:'conc', title:CONCS[k]+' concentration', items:[], share:()=>false, note:'Concentration 的课不能和 major 的课 double count。'};
-    if (k==='ba'){ sec.items = [c('33:136:400'), c('33:136:485'), p('ba-el','Elective',1,['33:136:494','33:136:450','33:136:487','33:136:486','33:136:405'])]; sec.note += ' 先修 Business Operations Analytics。'; }
+    const sec = {id:'k-'+k, kind:'conc', title:CONCS[k]+' concentration', items:[], share:()=>false, note:t('n_conc')};
+    if (k==='ba'){ sec.items = [c('33:136:400'), c('33:136:485'), p('ba-el','Elective',1,['33:136:494','33:136:450','33:136:487','33:136:486','33:136:405'])]; sec.note += t('n_ba'); }
     if (k==='ent'){ sec.items = [c('33:382:302'), c('33:382:303'), p('ent-el','Elective',1,['33:382:340','33:382:496','33:620:475','33:382:355','33:382:352','33:382:486','33:630:369','33:382:310','33:382:360','33:382:342'])]; }
-    if (k==='fin'){ sec.items = ['33:390:380','33:390:400','33:390:420'].map(x=>c(x)); sec.note += ' 申报需要 Financial Management ≥ B。'; }
-    if (k==='fi'){ sec.items = ['33:390:385','33:390:490','33:390:491'].map(x=>c(x)); sec.share = ()=>true; sec.note = 'Finance major 内的 track：这 3 门同时算作 Finance electives，另外再选 1 门 Finance elective。'; }
+    if (k==='fin'){ sec.items = ['33:390:380','33:390:400','33:390:420'].map(x=>c(x)); sec.note += t('n_needB'); }
+    if (k==='fi'){ sec.items = ['33:390:385','33:390:490','33:390:491'].map(x=>c(x)); sec.share = ()=>true; sec.note = t('n_fi'); }
     if (k==='gb'){
       sec.items = [c('33:620:402')];
       if (nw) sec.items.push(p('gb-el','Electives',2,GB_EL)); else sec.items.push(c('33:620:369'), p('gb-el','Elective',1,GB_EL));
-      if (M.has('lm')) sec.note += ' 官网不推荐 L&M major 选这个（重叠多）。';
+      if (M.has('lm')) sec.note += t('n_gb_lm');
     }
-    if (k==='ls'){ sec.items = [c('33:620:410'), p('ls-el','Electives',2,['33:620:362','33:620:350','33:620:320','33:620:370','33:620:430','33:620:330'],{note:'Effective Leadership Communications 和 Negotiations 至少选 1 门。', subs:[{name:'Communications / Negotiations', codes:['33:620:362','33:620:350'], min:1}]})]; }
+    if (k==='ls'){ sec.items = [c('33:620:410'), p('ls-el','Electives',2,['33:620:362','33:620:350','33:620:320','33:620:370','33:620:430','33:620:330'],{note:t('n_ls'), subs:[{name:'Communications / Negotiations', codes:['33:620:362','33:620:350'], min:1}]})]; }
     if (k==='mis'){ sec.items = [c('33:136:470'), c('33:136:388'), p('mis-el','Elective',1,['33:136:494','33:136:465','33:136:471','33:136:450'])]; }
     if (k==='ps'){
       sec.items = [c('33:630:485'), c('33:630:401'), p('ps-el','Elective',1,['33:620:350','33:630:368','33:630:369','33:630:370'])];
-      if (M.has('mkt')){ sec.share = ()=>true; sec.note = 'Marketing major 内的 track：这些课同时算作 Marketing electives（Negotiations 除外）。'; }
+      if (M.has('mkt')){ sec.share = ()=>true; sec.note = t('n_ps'); }
     }
     if (k==='re'){
       const f = M.has('fin');
       sec.items = ['33:851:350', f ? '33:390:435' : '33:851:380', '33:851:470', '33:851:432'].map(x=>c(x));
-      sec.note += ' 申报需要 Financial Management ≥ B。';
-      if (f){ sec.share = code => code==='33:390:435'; sec.note += ' 33:390:435 可同时算 Finance elective。'; }
+      sec.note += t('n_needB');
+      if (f){ sec.share = code => code==='33:390:435'; sec.note += t('n_re435'); }
     }
     out.push(sec);
   }
 
-  out.push({id:'rc', kind:'gen', title:'Rutgers Core', note:'一门课如果同时满足两个 goal，第二格的学分填 0。', items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
+  out.push({id:'rc', kind:'gen', title:'Rutgers Core', note:t('n_rc'), items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
   return out;
 }
 
@@ -533,9 +689,9 @@ function evaluate(cfg, state){
     const P = x => S(x) || (state.plan[x] ? 0.5 : 0);
     const cand = it.opts.filter(x=>P(x)>0).sort((a,b)=> (P(b)-P(a)) || ((concCodes.has(a)?1:0)-(concCodes.has(b)?1:0)));
     for (const code of cand){
-      if (it.taken.length >= it.need){ it.skip[code] = '超出所需门数，算 free elective'; continue; }
+      if (it.taken.length >= it.need){ it.skip[code] = t('sk_extra'); continue; }
       const si = (it.subs||[]).findIndex(x=>x.codes.includes(code));
-      if (si>=0 && it.subs[si].max!=null && cnt[si] >= it.subs[si].max){ it.skip[code] = it.subs[si].name+' 已到上限'; continue; }
+      if (si>=0 && it.subs[si].max!=null && cnt[si] >= it.subs[si].max){ it.skip[code] = t('sk_cap', it.subs[si].name); continue; }
       const o = owner[code]; let ok = false;
       if (!o){ ok = true; owner[code] = {sec:sec.id, kind:sec.kind}; }
       else if (o.sec===sec.id) ok = false;
@@ -544,7 +700,7 @@ function evaluate(cfg, state){
       else if (sec.kind==='conc' && sec.share(code)) ok = true;
       else if (sec.kind==='major' && o.kind==='conc'){ const cs = secs.find(x=>x.id===o.sec); if (cs.share(code)) ok = true; }
       if (ok){ it.taken.push(code); if (si>=0) cnt[si]++; }
-      else it.skip[code] = '已用于 '+titles[o.sec];
+      else it.skip[code] = t('sk_used', titles[o.sec]);
     }
     const minGap = (it.subs||[]).reduce((a,x,i)=> a + (x.min ? Math.max(0, x.min-cnt[i]) : 0), 0);
     it.left = Math.max(it.need - it.taken.length, minGap);
@@ -639,18 +795,19 @@ const openSet = {};
 const LS = 'rbs-nb-tracker-v1';
 function cacheGet(){ try { return JSON.parse(localStorage.getItem(LS)); } catch(e){ return null; } }
 function cacheSet(){ try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){} }
-const LOCAL_MSG = '进度保存在这个浏览器里，只有你看得到。换设备前用下方“复制我的进度”备份';
-function sync(t){ const el = document.getElementById('sync'); if (el) el.textContent = t; }
+const LOCAL_MSG = 'local_msg';   // i18n key
+let syncKey = 'loading';
+function sync(k){ syncKey = k; if (typeof document === 'undefined') return; const el = document.getElementById('sync'); if (el) el.textContent = t(k); }
 function flush(){
   if (!ref || readOnly) return;
   if (writing){ dirty = true; return; }
-  writing = true; sync('保存中…');
+  writing = true; sync('saving');
   ref.set({rev: state.rev, json: JSON.stringify(state)}).then(() => {
-    writing = false; if (dirty){ dirty = false; flush(); } else sync('已保存到你的账户，换设备也能看到');
+    writing = false; if (dirty){ dirty = false; flush(); } else sync('saved_acct');
   }).catch(e => {
     writing = false;
     if (e && e.code==='invalid_argument'){ readOnly = true; ref = null; sync(LOCAL_MSG); }
-    else sync('没能保存到云端，改动暂存在这个浏览器');
+    else sync('save_fail');
   });
 }
 function commit(){
@@ -665,7 +822,7 @@ function setReady(msg){ ready = true; document.body.classList.remove('wait'); if
 const DRV_LS = 'rbs-nb-drive-v1';      // {on:true, fileId}  — "this browser is connected"
 const DRV_TK = 'rbs-nb-drive-token';   // {t, exp}           — short-lived access token (drive.appdata only)
 const DRV_API = 'https://www.googleapis.com';
-const drive = {on:false, token:'', exp:0, fileId:'', busy:false, dirty:false, timer:0, client:null, pend:null, gis:null, status:'off', lastPull:0};
+const drive = {on:false, token:'', exp:0, fileId:'', busy:false, dirty:false, timer:0, client:null, pend:null, gis:null, status:'off', lastPull:0, msgKey:''};
 const driveConfigured = () => !!GOOGLE_CLIENT_ID && !/^YOUR_/.test(GOOGLE_CLIENT_ID);
 const authErr = msg => Object.assign(new Error(msg), {auth:true});
 function driveSave(){
@@ -750,12 +907,12 @@ async function driveRun(job){
   try {
     const r = await job();
     while (drive.dirty && drive.on){ drive.dirty = false; await drivePushNow(); }
-    drive.busy = false; if (drive.on) driveUI('ok', r === 'pulled' ? '已读取 Drive 上较新的进度。' : '');
+    drive.busy = false; if (drive.on) driveUI('ok', r === 'pulled' ? 'd_pulled' : '');
     return r;
   } catch(e){
     drive.busy = false;
     if (!drive.on) return;
-    driveUI(e.auth ? 'auth' : 'err', e.auth ? '登录已过期或被取消，点“重新连接”。改动先存在这个浏览器。' : '网络或 Drive 出错，下次改动时会再试。');
+    driveUI(e.auth ? 'auth' : 'err', e.auth ? 'd_auth_msg' : 'd_err_msg');
   }
 }
 async function drivePushNow(){
@@ -771,14 +928,14 @@ function driveQueue(){
 function driveConnect(prompt){
   driveUI('connecting');
   return driveToken(prompt).then(() => { drive.on = true; driveSave(); drive.status = 'syncing'; return driveRun(driveMerge); })
-    .catch(e => { if (drive.on) driveUI('auth', '没能连接，点“重新连接”再试。'); else driveUI('off', e && e.message === 'gis_load' ? '加载 Google 登录失败，检查网络后再试。' : '没有连接。如果用的是 ScarletMail，换个人 Gmail 试试。'); });
+    .catch(e => { if (drive.on) driveUI('auth', 'd_connect_fail'); else driveUI('off', e && e.message === 'gis_load' ? 'd_gis_fail' : 'd_not_connected'); });
 }
 function driveDisconnect(){
   clearTimeout(drive.timer);
   const t = drive.token;
   drive.on = false; drive.token = ''; drive.exp = 0; drive.fileId = ''; drive.dirty = false; driveSave();
   try { if (t && typeof google !== 'undefined') google.accounts.oauth2.revoke(t, () => {}); } catch(e){}
-  driveUI('off', '已断开。进度还在这个浏览器里，Drive 上的文件没有删除。');
+  driveUI('off', 'd_disconnected');
 }
 // Coming back to the tab: pull once if the token is still valid (never opens a popup on its own).
 function driveFocus(){
@@ -790,15 +947,16 @@ function driveUI(st, msg){
   drive.status = st;
   if (typeof document === 'undefined') return;
   const box = document.getElementById('drv'); if (!box) return;
-  const L = {off:['未连接','na'], connecting:['连接中…','na'], pending:['同步中…','tight'], syncing:['同步中…','tight'], ok:['已同步','good'], auth:['需要重新连接','late'], err:['同步出错','late']}[st];
-  const pill = document.getElementById('drv-st'); pill.textContent = L[0]; pill.className = 'pill ' + L[1];
+  const pill = document.getElementById('drv-st');
+  pill.textContent = t('d_' + st); pill.className = 'pill ' + {off:'na', connecting:'na', pending:'tight', syncing:'tight', ok:'good', auth:'late', err:'late'}[st];
   const go = document.getElementById('drv-go');
   go.hidden = !(st === 'off' || st === 'auth' || st === 'err');
-  go.textContent = st === 'auth' ? '重新连接' : st === 'err' ? '重试' : '连接 Google Drive';
-  document.getElementById('drv-off').hidden = st === 'off' || st === 'connecting' && !drive.on;
-  if (msg != null) document.getElementById('drv-msg').textContent = msg;
-  sync(st === 'ok' ? '已同步到你的 Google Drive' : st === 'pending' || st === 'syncing' ? '正在同步到 Google Drive…' :
-    st === 'auth' ? 'Google Drive 需要重新连接，改动先存在这个浏览器' : st === 'err' ? '没能同步到 Google Drive，改动先存在这个浏览器' : st === 'connecting' ? '正在连接 Google Drive…' : LOCAL_MSG);
+  go.textContent = t(st === 'auth' ? 'd_reconnect' : st === 'err' ? 'd_retry' : 'd_go');
+  const off = document.getElementById('drv-off'); off.hidden = st === 'off' || st === 'connecting' && !drive.on; off.textContent = t('d_off_btn');
+  if (msg != null) drive.msgKey = msg;                 // i18n key ('' clears)
+  document.getElementById('drv-msg').textContent = drive.msgKey ? t(drive.msgKey) : '';
+  sync(st === 'ok' ? 'sync_ok' : st === 'pending' || st === 'syncing' ? 'sync_busy' :
+    st === 'auth' ? 'sync_auth' : st === 'err' ? 'sync_err' : st === 'connecting' ? 'sync_connecting' : LOCAL_MSG);
 }
 function driveInit(){
   if (!driveConfigured()) return;
@@ -815,7 +973,7 @@ function driveInit(){
   try { const t = JSON.parse(localStorage.getItem(DRV_TK)); if (t && t.exp > Date.now() + 60000){ drive.token = t.t; drive.exp = t.exp; } } catch(e){}
   gisLoad().catch(() => {});
   if (drive.token) driveRun(driveMerge);
-  else driveUI('auth', '上次连接已过期，点“重新连接”恢复同步。');
+  else driveUI('auth', 'd_expired');
 }
 
 /* ---------- rendering ---------- */
@@ -828,13 +986,13 @@ function termSel(id, attr, val, past){
   const cur = curTerm(), last = Math.max(gradOf(cfgOf(), cur) + 2, val||0);
   const sh = t => termName(t).replace('Spring ','Sp ').replace('Fall ','Fa ');
   if (past){
-    let o = '<option value="">修于…</option><option value="ap"'+(val==='ap'?' selected':'')+'>AP / 转学分</option>';
+    let o = '<option value="">'+t('ts_took')+'</option><option value="ap"'+(val==='ap'?' selected':'')+'>'+t('ts_ap')+'</option>';
     for (let t = cur; t >= cur-8; t--) o += '<option value="'+t+'"'+(t===val?' selected':'')+'>'+sh(t)+'</option>';
-    return '<select class="tm" id="'+id+'" '+attr+' aria-label="哪个学期修的">'+o+'</select>';
+    return '<select class="tm" id="'+id+'" '+attr+' aria-label="'+t('ts_took_aria')+'">'+o+'</select>';
   }
-  let o = '<option value="">排到…</option>';
+  let o = '<option value="">'+t('ts_plan')+'</option>';
   for (let t = cur+1; t <= last; t++) o += '<option value="'+t+'"'+(t===val?' selected':'')+'>'+termName(t).replace('Spring ','Sp ').replace('Fall ','Fa ')+'</option>';
-  return '<select class="tm'+(val?' set':'')+'" id="'+id+'" '+attr+' aria-label="排到哪个学期">'+o+'</select>';
+  return '<select class="tm'+(val?' set':'')+'" id="'+id+'" '+attr+' aria-label="'+t('ts_plan_aria')+'">'+o+'</select>';
 }
 function nameOf(code){
   if (SLOTS[code]){ const v = state.slots[code]||{}; return {code:v.label||'', t:v.name||SLOTS[code].t}; }
@@ -853,57 +1011,57 @@ function planHTML(ev, v, cur, grad){
   for (const code in state.st) if (state.st[code]===1){ const n = nameOf(code); put(cur, {code:n.code, t:n.t, cr:crOf(code, state)}); }
   state.custom.forEach(x => { if (x.st===1) put(cur, {code:'', t:x.name, cr:+x.cr||0}); else if (!x.st && x.term > cur){ put(x.term, {code:'', t:x.name, cr:+x.cr||0, cid:x.id}); plannedCr += (+x.cr||0); } });
   for (const code in state.plan){
-    const t = state.plan[code]; if ((state.st[code]||0) > 0 || t <= cur) continue;
+    const pt = state.plan[code]; if ((state.st[code]||0) > 0 || pt <= cur) continue;
     const n = nameOf(code), e = {code:n.code, t:n.t, cr:crOf(code, state), key:code};
-    if (!SLOTS[code] && !preOK(code, cfg, state, t)) e.warn = '先修课没排在这学期之前';
-    if (/seniors only/.test(e.t) && t < grad-1) e.warn = 'Seniors only，要排到最后一年';
-    put(t, e); plannedCr += e.cr;
+    if (!SLOTS[code] && !preOK(code, cfg, state, pt)) e.warn = t('w_pre');
+    if (/seniors only/.test(e.t) && pt < grad-1) e.warn = t('w_senior');
+    put(pt, e); plannedCr += e.cr;
   }
-  let h = '<section class="card"><h2>学期规划</h2><div class="terms">';
-  if (ap.length) h += '<div class="term past"><header><h3>AP / 转学分</h3><span class="cnt">'+ap.reduce((a,x)=>a+x.cr,0)+' 学分</span><span class="pill good">已修</span></header><ul>'+ap.map(e => '<li><span><span class="code">'+esc(e.code)+'</span>'+esc(e.t)+'</span><span class="cr">'+e.cr+'</span><span></span></li>').join('')+'</ul></div>';
-  for (let t = minT; t <= maxT; t++){
-    const list = by[t]||[], sum = list.reduce((a,x) => a+x.cr, 0);
-    const pill = t < cur ? '<span class="pill good">已修</span>' : t===cur ? '<span class="pill na">本学期</span>' : sum > 19 ? '<span class="pill late">超过 19</span>' : sum > cfg.load ? '<span class="pill tight">超过 '+cfg.load+'</span>' : t > grad ? '<span class="pill late">晚于目标</span>' : sum ? '<span class="pill good">还可排 '+(cfg.load-sum)+'</span>' : '';
-    h += '<div class="term'+(t===cur?' now':t<cur?' past':'')+'"><header><h3>'+termName(t)+'</h3><span class="cnt">'+sum+' 学分</span>'+pill+'</header>';
+  let h = '<section class="card"><h2>'+t('plan_h')+'</h2><div class="terms">';
+  if (ap.length) h += '<div class="term past"><header><h3>'+t('ts_ap')+'</h3><span class="cnt">'+t('credits', ap.reduce((a,x)=>a+x.cr,0))+'</span><span class="pill good">'+t('st_done')+'</span></header><ul>'+ap.map(e => '<li><span><span class="code">'+esc(e.code)+'</span>'+esc(e.t)+'</span><span class="cr">'+e.cr+'</span><span></span></li>').join('')+'</ul></div>';
+  for (let tt = minT; tt <= maxT; tt++){
+    const list = by[tt]||[], sum = list.reduce((a,x) => a+x.cr, 0);
+    const pill = tt < cur ? '<span class="pill good">'+t('st_done')+'</span>' : tt===cur ? '<span class="pill na">'+t('st_now')+'</span>' : sum > 19 ? '<span class="pill late">'+t('over19')+'</span>' : sum > cfg.load ? '<span class="pill tight">'+t('over', cfg.load)+'</span>' : tt > grad ? '<span class="pill late">'+t('late_goal')+'</span>' : sum ? '<span class="pill good">'+t('room', cfg.load-sum)+'</span>' : '';
+    h += '<div class="term'+(tt===cur?' now':tt<cur?' past':'')+'"><header><h3>'+termName(tt)+'</h3><span class="cnt">'+t('credits', sum)+'</span>'+pill+'</header>';
     h += list.length ? '<ul>'+list.map(e => '<li><span><span class="code">'+esc(e.code)+'</span>'+esc(e.t)+'</span><span class="cr">'+e.cr+'</span>'+
-      (t<=cur ? '<span></span>' : '<button type="button" class="x" data-act="unplan" '+(e.cid ? 'data-id="'+e.cid+'"' : 'data-code="'+e.key+'"')+' aria-label="取消安排 '+esc(e.t)+'">×</button>')+
-      (e.warn ? '<span class="tag lock">'+esc(e.warn)+'</span>' : '')+'</li>').join('')+'</ul>' : '<p class="none">'+(t<cur ? '没有记录' : '还没排课')+'</p>';
+      (tt<=cur ? '<span></span>' : '<button type="button" class="x" data-act="unplan" '+(e.cid ? 'data-id="'+e.cid+'"' : 'data-code="'+e.key+'"')+' aria-label="'+esc(t('unplan_aria', e.t))+'">×</button>')+
+      (e.warn ? '<span class="tag lock">'+esc(e.warn)+'</span>' : '')+'</li>').join('')+'</ul>' : '<p class="none">'+(tt<cur ? t('no_rec') : t('no_plan'))+'</p>';
     h += '</div>';
   }
   const un = Math.max(0, v.need - plannedCr);
-  h += '</div><div class="planfoot"><p>'+(un ? '还有 <b>'+un+'</b> 学分没排进学期。在下面每门课右边的“排到…”里选学期，或者点自动排课。' : '全部学分都排进学期了。')+'</p>'+
-    '<button type="button" class="btn" data-act="auto" id="auto">自动排课</button><button type="button" class="btn2" data-act="clearplan" id="clearplan">清空规划</button></div></section>';
+  h += '</div><div class="planfoot"><p>'+(un ? t('plan_left', un) : t('plan_all'))+'</p>'+
+    '<button type="button" class="btn" data-act="auto" id="auto">'+t('auto')+'</button><button type="button" class="btn2" data-act="clearplan" id="clearplan">'+t('clearplan')+'</button></div></section>';
   return h;
 }
 function rowHTML(code, sec, x){
   x = x || {};
   const st = state.st[code] || 0, slot = SLOTS[code], info = CAT[code] || {t:code, cr:3, pre:[]}, id = idOf(sec.id, code);
   const tags = [];
-  if (x.dn) tags.push('<span class="tag" title="只在 Degree Navigator 里出现，官网没列">DN</span>');
-  if (x.blocked) tags.push('<span class="tag bad">已算入 '+esc(x.blocked)+'，需另选一门替代</span>');
+  if (x.dn) tags.push('<span class="tag" title="'+esc(t('dn_title'))+'">DN</span>');
+  if (x.blocked) tags.push('<span class="tag bad">'+esc(t('blocked', x.blocked))+'</span>');
   if (x.skip) tags.push('<span class="tag">'+esc(x.skip)+'</span>');
   if (!slot && st===0){
-    const miss = prereqs(code, cfgOf()).filter(g => !g.some(a => (state.st[a]||0) >= 1)).map(g => g.map(a => SLOTS[a] ? SLOTS[a].t : (CAT[a] ? CAT[a].t.replace(' (seniors only)','') : a)).join(' 或 '));
-    if (miss.length) tags.push('<span class="tag lock">先修 '+esc(miss.join('，'))+'</span>');
+    const miss = prereqs(code, cfgOf()).filter(g => !g.some(a => (state.st[a]||0) >= 1)).map(g => g.map(a => SLOTS[a] ? SLOTS[a].t : (CAT[a] ? CAT[a].t.replace(' (seniors only)','') : a)).join(t('or')));
+    if (miss.length) tags.push('<span class="tag lock">'+esc(t('pre', miss.join(t('sep'))))+'</span>');
   }
   let main;
   if (slot){
     const v = state.slots[code] || {};
     main = '<div class="slot"><label for="'+id+'"><span class="ttl">'+esc(slot.t)+'</span></label>'+
-      '<input type="text" id="'+id+'-l" data-slot="'+code+'" data-f="label" value="'+esc(v.label||'')+'" placeholder="'+esc(slot.hint && slot.hint.includes(':') ? slot.hint : '课程号')+'" aria-label="课程号">'+
-      '<input type="text" class="nm" id="'+id+'-n" data-slot="'+code+'" data-f="name" value="'+esc(v.name||'')+'" placeholder="课程名称" aria-label="课程名称">'+
-      '<input type="number" id="'+id+'-c" data-slot="'+code+'" data-f="cr" min="0" max="6" value="'+(v.cr!=null ? +v.cr : 3)+'" aria-label="学分">'+
-      (slot.hint && !slot.hint.includes(':') ? '<span class="tag">'+esc(slot.hint)+'</span>' : '')+'</div>';
+      '<input type="text" id="'+id+'-l" data-slot="'+code+'" data-f="label" value="'+esc(v.label||'')+'" placeholder="'+esc(slot.hint && slot.hint.includes(':') ? slot.hint : t('ph_code'))+'" aria-label="'+t('ph_code')+'">'+
+      '<input type="text" class="nm" id="'+id+'-n" data-slot="'+code+'" data-f="name" value="'+esc(v.name||'')+'" placeholder="'+t('ph_name')+'" aria-label="'+t('ph_name')+'">'+
+      '<input type="number" id="'+id+'-c" data-slot="'+code+'" data-f="cr" min="0" max="6" value="'+(v.cr!=null ? +v.cr : 3)+'" aria-label="'+t('aria_cr')+'">'+
+      (slot.hint && !slot.hint.includes(':') ? '<span class="tag">'+esc(t(slot.hint))+'</span>' : '')+'</div>';
   } else {
     main = '<label for="'+id+'"><span class="code">'+esc(code.includes(':') ? code : '')+'</span><span class="ttl">'+esc(info.t)+'</span>'+tags.join('')+'</label>';
   }
-  return '<div class="row s'+st+'"><input type="checkbox" id="'+id+'" data-act="done" data-code="'+code+'"'+(st===2?' checked':'')+' aria-label="已修完 '+esc(slot ? slot.t : info.t)+'">'+main+
+  return '<div class="row s'+st+'"><input type="checkbox" id="'+id+'" data-act="done" data-code="'+code+'"'+(st===2?' checked':'')+' aria-label="'+esc(t('done_aria', slot ? slot.t : info.t))+'">'+main+
     '<span class="acts">'+(st===0 ? termSel(id+'-t', 'data-plan="'+code+'"', state.plan[code]) : st===2 ? termSel(id+'-k', 'data-took="'+code+'"', state.took[code], true) : '')+
-    '<button type="button" class="pg" id="'+id+'-p" data-act="prog" data-code="'+code+'" aria-pressed="'+(st===1)+'">在修</button>'+
+    '<button type="button" class="pg" id="'+id+'-p" data-act="prog" data-code="'+code+'" aria-pressed="'+(st===1)+'">'+t('inprog')+'</button>'+
     (slot ? '' : '<span class="cr">'+info.cr+'</span>')+'</span></div>';
 }
 function secHTML(sec){
-  const kind = {core:'所有 major', major:'Major', conc:'Concentration', gen:'通识'}[sec.kind];
+  const kind = t('k_'+sec.kind);
   let h = '<section class="card sec"><header><h2>'+esc(sec.title)+'</h2><span class="kind">'+kind+'</span><span class="cnt">'+sec.done+'/'+sec.tot+'</span>'+
     '<span class="bar mini"><i class="d" style="width:'+(100*sec.done/sec.tot)+'%"></i><i class="p" style="width:'+(100*sec.prog/sec.tot)+'%"></i></span></header>';
   if (sec.note) h += '<p class="secnote">'+esc(sec.note)+'</p>';
@@ -911,7 +1069,7 @@ function secHTML(sec){
     if (it.k==='p'){
       const open = openSet[it.id] != null ? openSet[it.id] : (it.opts.length <= 6);
       const lv = it.left===0 ? (it.done>=it.need ? 'good' : 'tight') : 'na';
-      h += '<details class="pick" data-pick="'+it.id+'"'+(open?' open':'')+'><summary><h3>'+esc(it.title)+'</h3><span class="tag">'+it.opts.length+' 门里选 '+it.need+'</span><span class="pill '+lv+'">'+it.taken.length+'/'+it.need+'</span></summary>';
+      h += '<details class="pick" data-pick="'+it.id+'"'+(open?' open':'')+'><summary><h3>'+esc(it.title)+'</h3><span class="tag">'+t('pick', it.opts.length, it.need)+'</span><span class="pill '+lv+'">'+it.taken.length+'/'+it.need+'</span></summary>';
       if (it.note) h += '<p class="pnote">'+esc(it.note)+'</p>';
       h += it.opts.map(code => rowHTML(code, {id:it.id}, {skip:it.skip[code]})).join('')+'</details>';
     } else h += rowHTML(it.code, sec, it);
@@ -921,70 +1079,70 @@ function secHTML(sec){
 function whatIfHTML(base, cur){
   const rows = [], cfg = cfgOf();
   const line = (label, c2, on, why, act, val, blocked) => {
-    if (blocked) return '<tr><td>'+esc(label)+'<small>'+esc(why)+'</small></td><td class="n">—</td><td class="n">—</td><td><span class="pill na">不可选</span></td><td></td></tr>';
+    if (blocked) return '<tr><td>'+esc(label)+'<small>'+esc(why)+'</small></td><td class="n">—</td><td class="n">—</td><td><span class="pill na">'+t('na')+'</span></td><td></td></tr>';
     const ev = evaluate(c2, state), v = verdict(ev, c2, cur), extra = ev.left - base.left;
-    const word = {good:'能按时', tight:'偏紧', late:'会延毕'}[v.level];
+    const word = t('v_'+v.level);
     return '<tr class="'+(on?'on':'')+'"><td>'+esc(label)+(why ? '<small>'+esc(why)+'</small>' : '')+'</td><td class="n">'+(extra>0?'+':'')+extra+'</td><td class="n">'+(v.sems ? fmt(v.avg) : '—')+'</td><td><span class="pill '+v.level+'">'+word+'</span></td><td>'+
-      (on ? '<span class="tag">当前</span>' : '<button type="button" class="use" data-act="'+act+'" data-val="'+val+'">选用</button>')+'</td></tr>';
+      (on ? '<span class="tag">'+t('cur_tag')+'</span>' : '<button type="button" class="use" data-act="'+act+'" data-val="'+val+'">'+t('use')+'</button>')+'</td></tr>';
   };
   const noConc = Object.assign({}, cfg, {conc:''}), b0 = evaluate(noConc, state);
   const saved = base; base = b0;
-  rows.push('<tr class="grp"><td colspan="5">加一个 concentration（只能申报 1 个）</td></tr>');
-  rows.push(line('不加 concentration', noConc, !cfg.conc, '', 'conc', ''));
+  rows.push('<tr class="grp"><td colspan="5">'+t('g_conc')+'</td></tr>');
+  rows.push(line(t('no_conc'), noConc, !cfg.conc, '', 'conc', ''));
   for (const k in CONCS){
     const blk = concBlock(k, cfg.majors);
-    const why = blk || ((k==='fin'||k==='re'||k==='fi') ? '需要 Financial Management ≥ B' : (k==='gb' && cfg.majors.includes('lm') ? '官网不推荐 L&M 选' : ''));
+    const why = blk || ((k==='fin'||k==='re'||k==='fi') ? t('why_B') : (k==='gb' && cfg.majors.includes('lm') ? t('why_gb') : ''));
     rows.push(line(CONCS[k], Object.assign({}, cfg, {conc:k}), cfg.conc===k, why, 'conc', k, !!blk));
   }
   base = saved;
   if (cfg.majors.length < 3){
-    rows.push('<tr class="grp"><td colspan="5">再加一个 major</td></tr>');
+    rows.push('<tr class="grp"><td colspan="5">'+t('g_major')+'</td></tr>');
     for (const m in MAJORS) if (!cfg.majors.includes(m)){
       const c2 = Object.assign({}, cfg, {majors:cfg.majors.concat(m)});
       if (concBlock(cfg.conc, c2.majors)) c2.conc = '';
       rows.push(line(MAJORS[m], c2, false, '', 'major', m));
     }
   }
-  return '<section class="card"><h2>换个组合会怎样</h2><div class="tw"><table><thead><tr><th>方案</th><th class="n">多修学分</th><th class="n">每学期平均</th><th>结果</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></section>';
+  return '<section class="card"><h2>'+t('wi_h')+'</h2><div class="tw"><table><thead><tr><th>'+t('th_plan')+'</th><th class="n">'+t('th_extra')+'</th><th class="n">'+t('th_avg')+'</th><th>'+t('th_res')+'</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></section>';
 }
 function render(){
   const app = document.getElementById('app'); if (!app) return;
   const act = document.activeElement && document.activeElement.id, cfg = cfgOf(), cur = curTerm();
-  let h = '<section class="card"><div class="field"><span class="lbl">CURRICULUM 版本</span><div class="chips">'+
-    '<button type="button" class="chip" id="cur-old" data-act="cur" data-val="old" aria-pressed="'+(cfg.cur==='old')+'">Fall 2025 及以前入学</button>'+
-    '<button type="button" class="chip" id="cur-new" data-act="cur" data-val="new" aria-pressed="'+(cfg.cur==='new')+'">Fall 2026 入学</button></div></div>'+
-    '<div class="field"><span class="lbl">MAJOR（最多 3 个）</span><div class="chips">'+Object.keys(MAJORS).map(m => '<button type="button" class="chip" id="mj-'+m+'" data-act="major" data-val="'+m+'" aria-pressed="'+cfg.majors.includes(m)+'">'+esc(MAJORS[m])+'</button>').join('')+'</div></div>'+
-    '<div class="field"><span class="lbl">CONCENTRATION（最多 1 个）</span><div class="chips">'+Object.keys(CONCS).map(k => { const why = concBlock(k, cfg.majors); return '<button type="button" class="chip" id="cc-'+k+'" data-act="conc" data-val="'+k+'" aria-pressed="'+(cfg.conc===k)+'"'+(why?' disabled title="'+esc(why)+'"':'')+'>'+esc(CONCS[k])+'</button>'; }).join('')+'</div></div>'+'</section>';
+  let h = '<section class="card"><div class="field"><span class="lbl">'+t('lbl_cur')+'</span><div class="chips">'+
+    '<button type="button" class="chip" id="cur-old" data-act="cur" data-val="old" aria-pressed="'+(cfg.cur==='old')+'">'+t('cur_old')+'</button>'+
+    '<button type="button" class="chip" id="cur-new" data-act="cur" data-val="new" aria-pressed="'+(cfg.cur==='new')+'">'+t('cur_new')+'</button></div></div>'+
+    '<div class="field"><span class="lbl">'+t('lbl_major')+'</span><div class="chips">'+Object.keys(MAJORS).map(m => '<button type="button" class="chip" id="mj-'+m+'" data-act="major" data-val="'+m+'" aria-pressed="'+cfg.majors.includes(m)+'">'+esc(MAJORS[m])+'</button>').join('')+'</div></div>'+
+    '<div class="field"><span class="lbl">'+t('lbl_conc')+'</span><div class="chips">'+Object.keys(CONCS).map(k => { const why = concBlock(k, cfg.majors); return '<button type="button" class="chip" id="cc-'+k+'" data-act="conc" data-val="'+k+'" aria-pressed="'+(cfg.conc===k)+'"'+(why?' disabled title="'+esc(why)+'"':'')+'>'+esc(CONCS[k])+'</button>'; }).join('')+'</div></div>'+'</section>';
 
-  if (!cfg.majors.length) h += '<section class="card"><p class="empty">还没选 major。你的勾选和学期规划都还在，选上 major 后会显示 major 的要求和毕业判断。</p></section>';
+  if (!cfg.majors.length) h += '<section class="card"><p class="empty">'+t('no_major')+'</p></section>';
   {
     const ev = evaluate(cfg, state), v = verdict(ev, cfg, cur), grad = gradOf(cfg, cur);
-    const head = {good:'能按时毕业', tight:'能毕业，但课表偏紧', late:'按这个节奏会延毕'}[v.level];
+    const head = t('h_'+v.level);
     const tot = Math.max(ev.total, 1);
-    h += '<section class="card verdict '+v.level+'"><div class="vhead"><strong>'+head+'</strong><span class="pill '+v.level+'">目标 '+termName(grad)+'</span></div>'+
-      '<p class="vsub">还需 <b>'+v.need+'</b> 学分 ÷ <b>'+v.sems+'</b> 个学期 = 每学期 <b>'+(v.sems ? fmt(v.avg) : '—')+'</b> 学分。'+
-      (v.level==='late' ? '按每学期 '+cfg.load+' 学分，预计 <b>'+termName(v.proj)+'</b> 毕业。' : v.level==='tight' ? '比你设的 '+cfg.load+' 学分多。' : '')+'</p>'+
-      '<div class="tiles"><div class="tile"><b>'+ev.earned+'</b><span>已修</span></div><div class="tile"><b>'+ev.inprog+'</b><span>在修</span></div><div class="tile"><b>'+ev.need+'</b><span>还需</span></div><div class="tile"><b>'+ev.total+'</b><span>毕业时合计（最低 120）</span></div></div>'+
-      '<div class="bar" role="img" aria-label="已修 '+ev.earned+'，在修 '+ev.inprog+'，还需 '+ev.need+'"><i class="d" style="width:'+(100*ev.earned/tot)+'%"></i><i class="p" style="width:'+(100*ev.inprog/tot)+'%"></i></div>'+
-      '<div class="legend"><span><i style="background:var(--good)"></i>已修</span><span><i style="background:var(--prog)"></i>在修（按本学期修完算）</span><span><i style="background:var(--line)"></i>还需</span></div>';
+    h += '<section class="card verdict '+v.level+'"><div class="vhead"><strong>'+head+'</strong><span class="pill '+v.level+'">'+t('target', termName(grad))+'</span></div>'+
+      '<p class="vsub">'+t('vsub', v.need, v.sems, v.sems ? fmt(v.avg) : '—')+
+      (v.level==='late' ? t('late_proj', cfg.load, termName(v.proj)) : v.level==='tight' ? t('tight_more', cfg.load) : '')+'</p>'+
+      '<div class="tiles"><div class="tile"><b>'+ev.earned+'</b><span>'+t('st_done')+'</span></div><div class="tile"><b>'+ev.inprog+'</b><span>'+t('inprog')+'</span></div><div class="tile"><b>'+ev.need+'</b><span>'+t('t_need')+'</span></div><div class="tile"><b>'+ev.total+'</b><span>'+t('t_total')+'</span></div></div>'+
+      '<div class="bar" role="img" aria-label="'+t('bar_aria', ev.earned, ev.inprog, ev.need)+'"><i class="d" style="width:'+(100*ev.earned/tot)+'%"></i><i class="p" style="width:'+(100*ev.inprog/tot)+'%"></i></div>'+
+      '<div class="legend"><span><i style="background:var(--good)"></i>'+t('st_done')+'</span><span><i style="background:var(--prog)"></i>'+t('lg_prog')+'</span><span><i style="background:var(--line)"></i>'+t('t_need')+'</span></div>';
     const notes = [];
-    if (ev.over > 0) notes.push('<li class="info">这个组合的必修合计比 120 多 '+ev.over+' 学分。</li>');
-    else if (ev.over < 0) notes.push('<li class="info">必修之外还要 '+(-ev.over)+' 学分 free elective 才满 120。</li>');
-    if (v.chainBad) notes.push('<li>先修链太长：'+ev.chain.path.map(x => esc(CAT[x] ? CAT[x].t : x)).join(' → ')+' 需要 '+ev.chain.n+' 个学期，只剩 '+v.sems+' 个。</li>');
-    else if (ev.chain.n >= v.sems && ev.chain.n > 1) notes.push('<li>先修链刚好卡满：'+ev.chain.path.map(x => esc(CAT[x] ? CAT[x].t : x)).join(' → ')+'，每学期都不能断。</li>');
-    if (v.avg > 19 && v.sems) notes.push('<li>每学期超过 19 学分。旧版 catalog 写的注册上限是 19，选课前和 advisor 确认。</li>');
-    if (ev.dbl.length) notes.push('<li class="info">已用掉唯一一次 major 之间的 double count：'+esc(CAT[ev.dbl[0]].t)+'。</li>');
+    if (ev.over > 0) notes.push('<li class="info">'+t('note_over', ev.over)+'</li>');
+    else if (ev.over < 0) notes.push('<li class="info">'+t('note_free', -ev.over)+'</li>');
+    if (v.chainBad) notes.push('<li>'+t('note_chain', ev.chain.path.map(x => esc(CAT[x] ? CAT[x].t : x)).join(' → '), ev.chain.n, v.sems)+'</li>');
+    else if (ev.chain.n >= v.sems && ev.chain.n > 1) notes.push('<li>'+t('note_chain_tight', ev.chain.path.map(x => esc(CAT[x] ? CAT[x].t : x)).join(' → '))+'</li>');
+    if (v.avg > 19 && v.sems) notes.push('<li>'+t('note_19')+'</li>');
+    if (ev.dbl.length) notes.push('<li class="info">'+t('note_dbl', esc(CAT[ev.dbl[0]].t))+'</li>');
     if (notes.length) h += '<ul class="notes">'+notes.join('')+'</ul>';
-    h += '<div class="ctl"><div class="field"><label class="lbl" for="grad">目标毕业学期</label><select id="grad" data-set="grad">'+Array.from({length:10}, (_,i) => cur+1+i).map(t => '<option value="'+t+'"'+(t===grad?' selected':'')+'>'+termName(t)+'</option>').join('')+'</select></div>'+
-      '<div class="field"><label class="lbl" for="load">每学期打算修（学分）</label><input type="number" id="load" data-set="load" min="6" max="22" value="'+cfg.load+'"></div>'+
-      '<div class="field"><label class="lbl" for="extra">Summer / Winter 打算修（学分）</label><input type="number" id="extra" data-set="extra" min="0" max="40" value="'+cfg.extra+'"></div></div></section>';
+    h += '<div class="ctl"><div class="field"><label class="lbl" for="grad">'+t('ctl_grad')+'</label><select id="grad" data-set="grad">'+Array.from({length:10}, (_,i) => cur+1+i).map(t => '<option value="'+t+'"'+(t===grad?' selected':'')+'>'+termName(t)+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label class="lbl" for="load">'+t('ctl_load')+'</label><input type="number" id="load" data-set="load" min="6" max="22" value="'+cfg.load+'"></div>'+
+      '<div class="field"><label class="lbl" for="extra">'+t('ctl_extra')+'</label><input type="number" id="extra" data-set="extra" min="0" max="40" value="'+cfg.extra+'"></div></div></section>';
     h += whatIfHTML(ev, cur);
     h += planHTML(ev, v, cur, grad);
     h += ev.secs.map(secHTML).join('');
-    h += '<section class="card sec"><header><h2>其他学分</h2><span class="kind">自己加</span></header><p class="secnote">不属于上面任何要求的课：general elective、minor、转学分、AP。没打勾的会算进还需学分。</p>'+
-      state.custom.map(x => '<div class="row s'+(x.st||0)+'"><input type="checkbox" id="cu-'+x.id+'" data-act="cdone" data-id="'+x.id+'"'+(x.st===2?' checked':'')+' aria-label="已修完 '+esc(x.name)+'"><label for="cu-'+x.id+'"><span class="ttl">'+esc(x.name)+'</span></label>'+
-        '<span class="acts">'+(!x.st ? termSel('cu-'+x.id+'-t', 'data-cplan="'+x.id+'"', x.term) : x.st===2 ? termSel('cu-'+x.id+'-k', 'data-ctook="'+x.id+'"', x.took, true) : '')+'<button type="button" class="pg" id="cu-'+x.id+'-p" data-act="cprog" data-id="'+x.id+'" aria-pressed="'+(x.st===1)+'">在修</button><span class="cr wide">'+(+x.cr||0)+' <button type="button" class="x" data-act="cdel" data-id="'+x.id+'" aria-label="删除 '+esc(x.name)+'">×</button></span></span></div>').join('')+
-      '<form class="add" id="addf"><input type="text" id="add-name" placeholder="课程号或名称" aria-label="课程号或名称" required><input type="number" id="add-cr" min="0" max="12" value="3" aria-label="学分"><button class="btn" type="submit">添加</button></form></section>';
+    h += '<section class="card sec"><header><h2>'+t('other_h')+'</h2><span class="kind">'+t('other_kind')+'</span></header><p class="secnote">'+t('other_note')+'</p>'+
+      state.custom.map(x => '<div class="row s'+(x.st||0)+'"><input type="checkbox" id="cu-'+x.id+'" data-act="cdone" data-id="'+x.id+'"'+(x.st===2?' checked':'')+' aria-label="'+esc(t('done_aria', x.name))+'"><label for="cu-'+x.id+'"><span class="ttl">'+esc(x.name)+'</span></label>'+
+        '<span class="acts">'+(!x.st ? termSel('cu-'+x.id+'-t', 'data-cplan="'+x.id+'"', x.term) : x.st===2 ? termSel('cu-'+x.id+'-k', 'data-ctook="'+x.id+'"', x.took, true) : '')+'<button type="button" class="pg" id="cu-'+x.id+'-p" data-act="cprog" data-id="'+x.id+'" aria-pressed="'+(x.st===1)+'">'+t('inprog')+'</button><span class="cr wide">'+(+x.cr||0)+' <button type="button" class="x" data-act="cdel" data-id="'+x.id+'" aria-label="'+esc(t('del_aria', x.name))+'">×</button></span></span></div>').join('')+
+      '<form class="add" id="addf"><input type="text" id="add-name" placeholder="'+t('add_ph')+'" aria-label="'+t('add_ph')+'" required><input type="number" id="add-cr" min="0" max="12" value="3" aria-label="'+t('aria_cr')+'"><button class="btn" type="submit">'+t('add_btn')+'</button></form></section>';
     app.innerHTML = h;
   }
   if (act){ const el = document.getElementById(act); if (el) el.focus({preventScroll:true}); }
@@ -1054,6 +1212,14 @@ if (typeof document !== 'undefined'){
   });
   document.addEventListener('toggle', e => { const d = e.target; if (d.dataset && d.dataset.pick) openSet[d.dataset.pick] = d.open; }, true);
 
+  applyStatic();
+  document.getElementById('lang-btn').addEventListener('click', () => {
+    setLang(LANG === 'zh' ? 'en' : 'zh', true);
+    applyStatic(); render();
+    if (!document.getElementById('drv').hidden) driveUI(drive.status); else sync(syncKey);
+    document.getElementById('bk-msg').textContent = '';
+    const r = document.getElementById('bk-reset'); r.dataset.armed = ''; r.textContent = t('bk_reset');
+  });
   const cached = cacheGet(); if (cached) state = normalize(cached);
   render();
   const wait = setTimeout(() => { if (!ready) setReady(LOCAL_MSG); }, 10000);
@@ -1071,7 +1237,7 @@ if (typeof document !== 'undefined'){
         }
       }
       clearTimeout(wait);
-      if (!ready) setReady(ref ? '已同步你的账户' : LOCAL_MSG); else render();
+      if (!ready) setReady(ref ? 'synced_acct' : LOCAL_MSG); else render();
       if (snap.exists && (snap.data()||{}).rev < state.rev) flush();
       else if (!snap.exists && state.rev > 0) flush();
     }, () => { clearTimeout(wait); ref = null; if (!ready) setReady(LOCAL_MSG); else sync(LOCAL_MSG); });
@@ -1079,22 +1245,22 @@ if (typeof document !== 'undefined'){
 
   document.getElementById('bk-copy').addEventListener('click', async () => {
     const msg = document.getElementById('bk-msg');
-    try { await navigator.clipboard.writeText(JSON.stringify(state)); msg.textContent = '已复制。粘贴到备忘录或发给自己保存。'; }
-    catch(e){ const t = document.getElementById('bk-text'); t.hidden = false; t.value = JSON.stringify(state); t.select(); msg.textContent = '浏览器不让自动复制，请手动复制框里的内容。'; }
+    try { await navigator.clipboard.writeText(JSON.stringify(state)); msg.textContent = t('bk_copied'); }
+    catch(e){ const ta = document.getElementById('bk-text'); ta.hidden = false; ta.value = JSON.stringify(state); ta.select(); msg.textContent = t('bk_manual'); }
   });
   document.getElementById('bk-import').addEventListener('click', () => {
-    const t = document.getElementById('bk-text'), msg = document.getElementById('bk-msg');
-    if (t.hidden || !t.value.trim()){ t.hidden = false; t.value = ''; t.focus(); msg.textContent = '把之前复制的进度粘贴到框里，再点一次“导入进度”。'; return; }
-    try { const s = normalize(JSON.parse(t.value)); state = s; t.hidden = true; t.value = ''; commit(); msg.textContent = '已导入。'; }
-    catch(e){ msg.textContent = '内容格式不对，请粘贴完整的复制内容。'; }
+    const ta = document.getElementById('bk-text'), msg = document.getElementById('bk-msg');
+    if (ta.hidden || !ta.value.trim()){ ta.hidden = false; ta.value = ''; ta.focus(); msg.textContent = t('bk_paste'); return; }
+    try { const s = normalize(JSON.parse(ta.value)); state = s; ta.hidden = true; ta.value = ''; commit(); msg.textContent = t('bk_imported'); }
+    catch(e){ msg.textContent = t('bk_bad'); }
   });
   document.getElementById('bk-reset').addEventListener('click', () => {
     const msg = document.getElementById('bk-msg'), btn = document.getElementById('bk-reset');
-    if (btn.dataset.armed !== '1'){ btn.dataset.armed = '1'; btn.textContent = '再点一次确认清空'; msg.textContent = '会清空你所有勾选和规划，不能恢复。'; return; }
-    btn.dataset.armed = ''; btn.textContent = '清空重来'; state = BLANK(); commit(); msg.textContent = '已清空。';
+    if (btn.dataset.armed !== '1'){ btn.dataset.armed = '1'; btn.textContent = t('bk_confirm'); msg.textContent = t('bk_warn'); return; }
+    btn.dataset.armed = ''; btn.textContent = t('bk_reset'); state = BLANK(); commit(); msg.textContent = t('bk_cleared');
   });
 }
-if (typeof module !== 'undefined') module.exports = {evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName,
+if (typeof module !== 'undefined') module.exports = {render, setLang, t, I18N, evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName,
   _drive: {drive, driveMerge, driveRun, drivePushNow, driveQueue, driveConnect, driveDisconnect, getState: () => state, setState: s => { state = s; }}};
 </script>
 </body>
