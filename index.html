@@ -175,6 +175,17 @@ body.wait #app{opacity:.55;pointer-events:none}
     <span id="sync" role="status">正在读取已保存的进度…</span>
   </div>
   <div id="app"></div>
+  <section class="card" id="drv" hidden aria-labelledby="drv-h">
+    <h2 id="drv-h">Google Drive 同步</h2>
+    <p class="vsub">连接后，进度存到你自己 Google Drive 里一个隐藏的应用文件夹，换电脑登录同一个 Google 账号就能接着用。这个页面只能读写它自己建的那个文件，看不到你 Drive 里的其他内容。</p>
+    <div class="planfoot">
+      <span class="pill na" id="drv-st">未连接</span>
+      <button type="button" class="btn" id="drv-go">连接 Google Drive</button>
+      <button type="button" class="btn2" id="drv-off" hidden>断开</button>
+      <p id="drv-msg" role="status"></p>
+    </div>
+    <p class="vsub" style="font-size:12.5px">建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。</p>
+  </section>
   <section class="card" aria-labelledby="bk-h">
     <h2 id="bk-h">备份与导入</h2>
     <p class="vsub">每个人的进度只保存在自己的账户或浏览器里，互不影响。换浏览器或换电脑前，先复制进度，到新设备上再导入。</p>
@@ -202,6 +213,13 @@ body.wait #app{opacity:.55;pointer-events:none}
   </footer>
 </main>
 <script>
+/* ---------- config ---------- */
+// Google OAuth "Web application" Client ID. It is public, so it can live in the page.
+// While it is still the placeholder, Drive sync is hidden and the page works exactly as before.
+const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE = 'tracker.json';
+
 /* ---------- data ---------- */
 const RAW = `
 01:220:102|Introduction to Microeconomics|3|
@@ -638,8 +656,167 @@ function flush(){
 function commit(){
   state.rev = Date.now(); cacheSet(); render();
   if (ref){ clearTimeout(timer); timer = setTimeout(flush, 700); }
+  driveQueue();
 }
 function setReady(msg){ ready = true; document.body.classList.remove('wait'); if (msg) sync(msg); render(); }
+
+/* ---------- Google Drive sync (appDataFolder, last writer wins by state.rev) ---------- */
+// Only used outside Claude artifacts. localStorage stays the primary copy; Drive is a mirror.
+const DRV_LS = 'rbs-nb-drive-v1';      // {on:true, fileId}  — "this browser is connected"
+const DRV_TK = 'rbs-nb-drive-token';   // {t, exp}           — short-lived access token (drive.appdata only)
+const DRV_API = 'https://www.googleapis.com';
+const drive = {on:false, token:'', exp:0, fileId:'', busy:false, dirty:false, timer:0, client:null, pend:null, gis:null, status:'off', lastPull:0};
+const driveConfigured = () => !!GOOGLE_CLIENT_ID && !/^YOUR_/.test(GOOGLE_CLIENT_ID);
+const authErr = msg => Object.assign(new Error(msg), {auth:true});
+function driveSave(){
+  try {
+    if (drive.on) localStorage.setItem(DRV_LS, JSON.stringify({on:true, fileId:drive.fileId}));
+    else { localStorage.removeItem(DRV_LS); localStorage.removeItem(DRV_TK); }
+    if (drive.on && drive.token) localStorage.setItem(DRV_TK, JSON.stringify({t:drive.token, exp:drive.exp}));
+  } catch(e){}
+}
+function gisLoad(){
+  if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) return Promise.resolve();
+  return drive.gis = drive.gis || new Promise((ok, no) => {
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = ok; s.onerror = () => { drive.gis = null; no(new Error('gis_load')); };
+    document.head.appendChild(s);
+  });
+}
+// prompt: 'select_account' for the first connect (pick personal Gmail vs ScarletMail), '' to refresh silently.
+function driveToken(prompt){
+  if (drive.pend) return drive.pend.p;
+  return gisLoad().then(() => {
+    if (drive.pend) return drive.pend.p;
+    const pend = drive.pend = {}; pend.p = new Promise((ok, no) => { pend.ok = ok; pend.no = no; });
+    const done = (err) => { drive.pend = null; err ? pend.no(err) : pend.ok(); };
+    if (!drive.client) drive.client = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID, scope: DRIVE_SCOPE,
+      callback: r => {
+        const p = drive.pend; if (!p) return; drive.pend = null;
+        if (!r || r.error) return p.no(authErr((r && r.error) || 'no_token'));
+        if (!google.accounts.oauth2.hasGrantedAllScopes(r, DRIVE_SCOPE)) return p.no(authErr('scope_denied'));
+        drive.token = r.access_token; drive.exp = Date.now() + (+r.expires_in || 3600) * 1000; driveSave(); p.ok();
+      },
+      error_callback: e => { const p = drive.pend; if (!p) return; drive.pend = null; p.no(authErr((e && e.type) || 'popup')); }
+    });
+    try { drive.client.requestAccessToken({prompt}); } catch(e){ done(authErr('popup')); }
+    return pend.p;
+  });
+}
+async function driveFetch(path, opt, retried){
+  opt = opt || {};
+  if (!drive.token || Date.now() > drive.exp - 60000) await driveToken('');
+  const r = await fetch(DRV_API + path, Object.assign({}, opt, {headers: Object.assign({Authorization: 'Bearer ' + drive.token}, opt.headers)}));
+  if (r.status === 401 && !retried){ drive.token = ''; await driveToken(''); return driveFetch(path, opt, true); }
+  if (r.status === 401) throw authErr('401');
+  if (!r.ok) throw Object.assign(new Error('drive ' + r.status), {status: r.status});
+  return r;
+}
+async function driveFind(){
+  const q = encodeURIComponent("name='" + DRIVE_FILE + "' and trashed=false");
+  const j = await (await driveFetch('/drive/v3/files?spaces=appDataFolder&q=' + q + '&orderBy=modifiedTime%20desc&fields=files(id)')).json();
+  return (j.files || [])[0] || null;
+}
+async function driveCreate(body){
+  const b = 'rbs' + Math.random().toString(36).slice(2);
+  const meta = {name: DRIVE_FILE, parents: ['appDataFolder'], mimeType: 'application/json'};
+  const data = '--' + b + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(meta) +
+    '\r\n--' + b + '\r\nContent-Type: application/json\r\n\r\n' + body + '\r\n--' + b + '--';
+  const r = await driveFetch('/upload/drive/v3/files?uploadType=multipart&fields=id', {method: 'POST', headers: {'Content-Type': 'multipart/related; boundary=' + b}, body: data});
+  return (await r.json()).id;
+}
+const driveUpdate = (id, body) => driveFetch('/upload/drive/v3/files/' + id + '?uploadType=media', {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body});
+// Merge: newer state.rev wins. Returns 'pulled' | 'pushed' | 'same'.
+async function driveMerge(){
+  if (!drive.fileId){ const f = await driveFind(); drive.fileId = f ? f.id : ''; driveSave(); }
+  if (!drive.fileId){ drive.fileId = await driveCreate(JSON.stringify(state)); driveSave(); return 'pushed'; }
+  let remote = null;
+  try { remote = await (await driveFetch('/drive/v3/files/' + drive.fileId + '?alt=media')).json(); }
+  catch(e){
+    if (e.status === 404){ drive.fileId = ''; driveSave(); return driveMerge(); }
+    if (!(e instanceof SyntaxError)) throw e;          // unreadable file: overwrite it with ours
+  }
+  drive.lastPull = Date.now();
+  const rr = remote && +remote.rev || 0;
+  if (rr > state.rev){ const s = normalize(remote); s.rev = rr; state = s; cacheSet(); render(); return 'pulled'; }
+  if (rr < state.rev || !remote){ await driveUpdate(drive.fileId, JSON.stringify(state)); return 'pushed'; }
+  return 'same';
+}
+async function driveRun(job){
+  if (drive.busy){ drive.dirty = true; return; }
+  drive.busy = true; driveUI('syncing');
+  try {
+    const r = await job();
+    while (drive.dirty && drive.on){ drive.dirty = false; await drivePushNow(); }
+    drive.busy = false; if (drive.on) driveUI('ok', r === 'pulled' ? '已读取 Drive 上较新的进度。' : '');
+    return r;
+  } catch(e){
+    drive.busy = false;
+    if (!drive.on) return;
+    driveUI(e.auth ? 'auth' : 'err', e.auth ? '登录已过期或被取消，点“重新连接”。改动先存在这个浏览器。' : '网络或 Drive 出错，下次改动时会再试。');
+  }
+}
+async function drivePushNow(){
+  if (!drive.fileId) return driveMerge();
+  try { await driveUpdate(drive.fileId, JSON.stringify(state)); return 'pushed'; }
+  catch(e){ if (e.status === 404){ drive.fileId = ''; driveSave(); return driveMerge(); } throw e; }
+}
+function driveQueue(){
+  if (!drive.on || drive.status === 'auth') return;   // wait for the user to reconnect; merge picks the change up
+  clearTimeout(drive.timer); driveUI('pending');
+  drive.timer = setTimeout(() => driveRun(drivePushNow), 2000);
+}
+function driveConnect(prompt){
+  driveUI('connecting');
+  return driveToken(prompt).then(() => { drive.on = true; driveSave(); drive.status = 'syncing'; return driveRun(driveMerge); })
+    .catch(e => { if (drive.on) driveUI('auth', '没能连接，点“重新连接”再试。'); else driveUI('off', e && e.message === 'gis_load' ? '加载 Google 登录失败，检查网络后再试。' : '没有连接。如果用的是 ScarletMail，换个人 Gmail 试试。'); });
+}
+function driveDisconnect(){
+  clearTimeout(drive.timer);
+  const t = drive.token;
+  drive.on = false; drive.token = ''; drive.exp = 0; drive.fileId = ''; drive.dirty = false; driveSave();
+  try { if (t && typeof google !== 'undefined') google.accounts.oauth2.revoke(t, () => {}); } catch(e){}
+  driveUI('off', '已断开。进度还在这个浏览器里，Drive 上的文件没有删除。');
+}
+// Coming back to the tab: pull once if the token is still valid (never opens a popup on its own).
+function driveFocus(){
+  if (!drive.on || drive.busy || drive.status !== 'ok' || !drive.token || Date.now() > drive.exp - 60000) return;
+  if (Date.now() - drive.lastPull < 30000) return;
+  driveRun(driveMerge);
+}
+function driveUI(st, msg){
+  drive.status = st;
+  if (typeof document === 'undefined') return;
+  const box = document.getElementById('drv'); if (!box) return;
+  const L = {off:['未连接','na'], connecting:['连接中…','na'], pending:['同步中…','tight'], syncing:['同步中…','tight'], ok:['已同步','good'], auth:['需要重新连接','late'], err:['同步出错','late']}[st];
+  const pill = document.getElementById('drv-st'); pill.textContent = L[0]; pill.className = 'pill ' + L[1];
+  const go = document.getElementById('drv-go');
+  go.hidden = !(st === 'off' || st === 'auth' || st === 'err');
+  go.textContent = st === 'auth' ? '重新连接' : st === 'err' ? '重试' : '连接 Google Drive';
+  document.getElementById('drv-off').hidden = st === 'off' || st === 'connecting' && !drive.on;
+  if (msg != null) document.getElementById('drv-msg').textContent = msg;
+  sync(st === 'ok' ? '已同步到你的 Google Drive' : st === 'pending' || st === 'syncing' ? '正在同步到 Google Drive…' :
+    st === 'auth' ? 'Google Drive 需要重新连接，改动先存在这个浏览器' : st === 'err' ? '没能同步到 Google Drive，改动先存在这个浏览器' : st === 'connecting' ? '正在连接 Google Drive…' : LOCAL_MSG);
+}
+function driveInit(){
+  if (!driveConfigured()) return;
+  document.getElementById('drv').hidden = false;
+  document.getElementById('drv-go').addEventListener('click', () => {
+    if (drive.status === 'err' && drive.on) driveRun(drivePushNow);
+    else driveConnect(drive.on ? '' : 'select_account');
+  });
+  document.getElementById('drv-off').addEventListener('click', driveDisconnect);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') driveFocus(); });
+  let saved = null; try { saved = JSON.parse(localStorage.getItem(DRV_LS)); } catch(e){}
+  if (!saved || !saved.on){ driveUI('off'); return; }
+  drive.on = true; drive.fileId = saved.fileId || '';
+  try { const t = JSON.parse(localStorage.getItem(DRV_TK)); if (t && t.exp > Date.now() + 60000){ drive.token = t.t; drive.exp = t.exp; } } catch(e){}
+  gisLoad().catch(() => {});
+  if (drive.token) driveRun(driveMerge);
+  else driveUI('auth', '上次连接已过期，点“重新连接”恢复同步。');
+}
 
 /* ---------- rendering ---------- */
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -883,7 +1060,7 @@ if (typeof document !== 'undefined'){
   const cl = window.claude && window.claude.use ? window.claude : null;
   Promise.all(cl ? [cl.use('db'), cl.use('user')] : [null, null]).then(async ([db, user]) => {
     const uid = user ? await user.id() : null;
-    if (!db || !uid){ clearTimeout(wait); setReady(LOCAL_MSG); return; }
+    if (!db || !uid){ clearTimeout(wait); setReady(LOCAL_MSG); if (!cl) driveInit(); return; }
     ref = db.doc('data/users/' + uid + '/tracker');
     ref.onSnapshot(snap => {
       if (snap.metadata && snap.metadata.hasPendingWrites) return;
@@ -917,7 +1094,8 @@ if (typeof document !== 'undefined'){
     btn.dataset.armed = ''; btn.textContent = '清空重来'; state = BLANK(); commit(); msg.textContent = '已清空。';
   });
 }
-if (typeof module !== 'undefined') module.exports = {evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName};
+if (typeof module !== 'undefined') module.exports = {evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName,
+  _drive: {drive, driveMerge, driveRun, drivePushNow, driveQueue, driveConnect, driveDisconnect, getState: () => state, setState: s => { state = s; }}};
 </script>
 </body>
 </html>

@@ -11,7 +11,7 @@ Single-file static web app (`index.html`) for Rutgers Business School–New Brun
 
 ## Storage
 - `window.claude` exists only inside a Claude artifact; elsewhere the page falls back to `localStorage` key `rbs-nb-tracker-v1`. Keep that fallback working.
-- Planned: Google Drive sync with Google Identity Services token client + Drive REST `appDataFolder` (`https://www.googleapis.com/auth/drive.appdata`, non-sensitive). Last-writer-wins by `state.rev`. Client ID is public and can live in the page.
+- Google Drive sync (`drive*` functions): GIS token client + Drive REST `appDataFolder/tracker.json`, scope `drive.appdata` only — never widen it. Last-writer-wins by `state.rev` on connect; afterwards localStorage first, upload after a 2 s pause. 401 → retry token with `prompt: ''`, else show "重新连接". Hidden while `GOOGLE_CLIENT_ID` is the placeholder and inside Claude artifacts. localStorage keys: `rbs-nb-drive-v1` (connected flag + fileId), `rbs-nb-drive-token` (short-lived access token).
 
 ## Conventions
 - No build step, no frameworks. Keep everything in `index.html`.

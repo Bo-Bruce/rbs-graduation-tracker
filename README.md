@@ -32,6 +32,27 @@ python3 -m http.server 8000
 # 打开 http://localhost:8000
 ```
 
+## Google Drive 同步（可选）
+
+纯前端：Google Identity Services token client + Drive REST，只用 `https://www.googleapis.com/auth/drive.appdata` scope（non-sensitive，不需要 Google 审核）。进度存在用户自己 Drive 的 `appDataFolder/tracker.json`，页面看不到 Drive 里的其他文件。`index.html` 顶部的 `GOOGLE_CLIENT_ID` 还是占位符时，同步区块不显示，页面和以前完全一样。
+
+**Google Cloud 设置：**
+
+1. [Google Cloud Console](https://console.cloud.google.com/) 新建一个 project。
+2. APIs & Services → Library → 启用 **Google Drive API**。
+3. OAuth consent screen（新版叫 Google Auth Platform → Branding / Audience / Data access）：
+   - User type 选 **External**；填 App name、support email、developer contact。
+   - Data access（Scopes）里加 `.../auth/drive.appdata`，不要加别的。
+   - Audience 里点 **Publish app**，状态改成 **In production**。只用 non-sensitive scope，不需要提交审核；留在 Testing 的话只有 test users 能登录，而且 token 授权 7 天就失效。
+4. Credentials → Create credentials → **OAuth client ID** → Application type 选 **Web application**。
+   - **Authorized JavaScript origins**：`https://rbs-graduation-tracker.vercel.app`、本地测试用的 `http://localhost:8000`，需要的话再加 Vercel preview 网址。
+   - Authorized redirect URIs 留空（token client 用 popup，不需要）。
+5. 把生成的 Client ID（`….apps.googleusercontent.com`）填到 `index.html` 顶部的 `GOOGLE_CLIENT_ID`。Client ID 是公开值，可以提交到仓库；**不需要也不要用 client secret**。
+
+**行为：** 连接时比较本地和 Drive 上的 `state.rev`，新的覆盖旧的；之后每次改动先存 localStorage，停 2 秒再上传。access token 大约 1 小时过期：遇到 401 先用 `prompt: ''` 静默重新取 token，浏览器拦截弹窗时显示“重新连接”。“断开”会撤销授权，本地进度和 Drive 文件都保留。
+
+ScarletMail（Rutgers Google 账号）可能被学校拦截第三方应用，建议用个人 Gmail。
+
 ## 结构
 
 所有代码都在 `index.html` 里：
@@ -44,10 +65,11 @@ python3 -m http.server 8000
 | `verdict()` | 判断能否按时毕业 |
 | `autoPlan()` | 按先修顺序和每学期学分上限自动排课 |
 | 存储 | 浏览器 `localStorage`；在 Claude artifact 中运行时改用 Claude 的 `db` 能力 |
+| `drive*` | 可选的 Google Drive 同步（`appDataFolder`），只在 artifact 之外、填了 Client ID 时启用 |
 
 学期编码：`年 × 2 + (Fall ? 1 : 0)`，例如 Spring 2027 = 4054，Fall 2027 = 4055。
 
 ## 计划
 
-- [ ] Google Drive 同步（`drive.appdata` scope，纯前端，用 Google Identity Services）
+- [x] Google Drive 同步（`drive.appdata` scope，纯前端，用 Google Identity Services）— 等填 Client ID
 - [ ] 英文界面
