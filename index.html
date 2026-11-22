@@ -220,7 +220,7 @@ body.wait #app{opacity:.55;pointer-events:none}
   <div class="top">
     <div>
       <h1 data-i18n="title">RBS–NB 毕业进度</h1>
-      <p data-i18n="sub">非官方 · Rutgers Business School–New Brunswick 选课与毕业规划</p>
+      <p data-i18n="sub">Rutgers Business School–New Brunswick：比 Degree Navigator 更直观的选课与毕业规划</p>
     </div>
     <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><select class="langb" id="lang-sel" aria-label="语言"><option value="zh" lang="zh-Hans">中文</option><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></div>
   </div>
@@ -275,6 +275,7 @@ body.wait #app{opacity:.55;pointer-events:none}
   <section class="card trp" id="tr-preview" hidden aria-live="polite"></section>
   <div id="app"></div>
   <footer>
+    <p data-i18n="ft_unoff">非官方工具，由学生制作，与 Rutgers University 无关。</p>
     <p data-i18n="ft1">课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。</p>
     <p data-i18n="ft2">所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。</p>
     <p><a href="/privacy.html" data-i18n="privacy">隐私政策</a></p>
@@ -330,7 +331,7 @@ zh: {
   cf_yes_cloud:'确认换成云端数据', cf_yes_local:'确认本地数据覆盖', cf_back:'返回',
   d_cancelled:'暂不绑定云端，本地数据和云端数据都没有改动。', d_used_local:'已用本地数据覆盖云端数据。', d_used_cloud:'已换成云端数据。',
   title:'RBS–NB 毕业进度',
-  sub:'非官方 · Rutgers Business School–New Brunswick 选课与毕业规划',
+  sub:'Rutgers Business School–New Brunswick：比 Degree Navigator 更直观的选课与毕业规划',
   loading:'正在读取已保存的进度…', lang_aria:'语言',
   drv_h:'云端同步', drv_p:'存到你自己的 Google Drive，换设备也能接着用',
  
@@ -341,7 +342,7 @@ zh: {
   bk_paste:'把之前复制的进度粘贴到框里，再点一次“导入进度”。', bk_imported:'已导入。', bk_bad:'内容格式不对，请粘贴完整的复制内容。',
   bk_confirm:'再点一次确认清空', bk_warn:'会清空你所有勾选和规划，不能恢复。', bk_cleared:'已清空。',
   ft1:'课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。',
-  ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：', privacy:'隐私政策',
+  ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：', privacy:'隐私政策', ft_unoff:'非官方工具，由学生制作，与 Rutgers University 无关。',
   local_msg:'已保存在此浏览器',
   saving:'保存中…', saved_acct:'已保存到你的账户，换设备也能看到', save_fail:'没能保存到云端，改动暂存在这个浏览器', synced_acct:'已同步你的账户',
   d_off:'未绑定', d_ask:'等你选择', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新登录', d_err:'同步出错',
@@ -414,7 +415,7 @@ en: {
   cf_yes_cloud:'Yes, switch to cloud data', cf_yes_local:'Yes, overwrite with local data', cf_back:'Back',
   d_cancelled:'Cloud not linked. Neither your local data nor your cloud data was changed.', d_used_local:'Cloud data overwritten with your local data.', d_used_cloud:'Switched to your cloud data.',
   title:'RBS–NB Graduation Tracker',
-  sub:'Unofficial · course & graduation planner for Rutgers Business School–New Brunswick',
+  sub:'A clearer way than Degree Navigator to plan courses and graduation at Rutgers Business School–New Brunswick',
   loading:'Loading saved progress…', lang_aria:'Language',
   drv_h:'Cloud sync', drv_p:'Saved to your own Google Drive, available on any device',
  
@@ -425,7 +426,7 @@ en: {
   bk_paste:'Paste the progress you copied into the box, then click “Import progress” again.', bk_imported:'Imported.', bk_bad:'That doesn’t look right. Paste the full copied text.',
   bk_confirm:'Click again to confirm', bk_warn:'This clears all your check marks and plans and cannot be undone.', bk_cleared:'Cleared.',
   ft1:'Requirements follow the FA26 advising slides and the myRBS site (checked 2026-11). Degree Navigator and your advisor have the final word.',
-  ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:', privacy:'Privacy Policy',
+  ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:', privacy:'Privacy Policy', ft_unoff:'An unofficial, student-made tool. Not affiliated with Rutgers University.',
   local_msg:'Saved in this browser',
   saving:'Saving…', saved_acct:'Saved to your account; available on your other devices too', save_fail:'Couldn’t save to the cloud; changes are kept in this browser for now', synced_acct:'Synced with your account',
   d_off:'Not linked', d_ask:'Choose one', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Sign-in needed', d_err:'Sync error',
@@ -498,7 +499,7 @@ es: {
   cf_yes_cloud:'Sí, cambiar a los datos en la nube', cf_yes_local:'Sí, sobrescribir con datos locales', cf_back:'Volver',
   d_cancelled:'Nube sin vincular. No se cambiaron ni tus datos locales ni los de la nube.', d_used_local:'Se sobrescribieron los datos en la nube con tus datos locales.', d_used_cloud:'Se cambió a tus datos en la nube.',
   title:'RBS–NB: seguimiento de graduación',
-  sub:'No oficial · planificador de cursos y graduación para Rutgers Business School–New Brunswick',
+  sub:'Una forma más clara que Degree Navigator de planificar cursos y graduación en Rutgers Business School–New Brunswick',
   loading:'Cargando el progreso guardado…', lang_aria:'Idioma',
   drv_h:'Sincronización en la nube', drv_p:'Se guarda en tu propio Google Drive, disponible en cualquier dispositivo',
  
@@ -509,7 +510,7 @@ es: {
   bk_paste:'Pega en el cuadro el progreso que copiaste y vuelve a hacer clic en «Importar progreso».', bk_imported:'Importado.', bk_bad:'El formato no es válido. Pega el texto copiado completo.',
   bk_confirm:'Haz clic otra vez para confirmar', bk_warn:'Esto borra todas tus marcas y planes, y no se puede deshacer.', bk_cleared:'Borrado.',
   ft1:'Los requisitos siguen las diapositivas de asesoría FA26 y el sitio myRBS (consultados en 2026-11). Degree Navigator y tu advisor tienen la última palabra.',
-  ft2:'Todos los cursos del core y del major requieren C o más; al menos 45 créditos de business deben cursarse en RBS–NB; para graduarte necesitas al menos 120 créditos.', ft_src:'Fuentes:', privacy:'Política de privacidad',
+  ft2:'Todos los cursos del core y del major requieren C o más; al menos 45 créditos de business deben cursarse en RBS–NB; para graduarte necesitas al menos 120 créditos.', ft_src:'Fuentes:', privacy:'Política de privacidad', ft_unoff:'Herramienta no oficial creada por un estudiante. Sin afiliación con Rutgers University.',
   local_msg:'Guardado en este navegador',
   saving:'Guardando…', saved_acct:'Guardado en tu cuenta; también disponible en tus otros dispositivos', save_fail:'No se pudo guardar en la nube; por ahora los cambios quedan en este navegador', synced_acct:'Sincronizado con tu cuenta',
   d_off:'Sin vincular', d_ask:'Elige una opción', d_connecting:'Conectando…', d_pending:'Sincronizando…', d_syncing:'Sincronizando…', d_ok:'Sincronizado', d_auth:'Inicia sesión de nuevo', d_err:'Error de sincronización',
