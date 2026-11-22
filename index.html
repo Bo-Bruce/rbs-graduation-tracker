@@ -190,6 +190,18 @@ footer p{margin:0;max-width:70ch}
 .trres.done{color:var(--good)} .trres.prog{color:var(--prog)} .trres.fail,.trres.skip{color:var(--bad)} .trres.plan,.trres.nocr{color:var(--muted)}
 .trmaj{display:flex;gap:8px;align-items:center;font-size:13.5px}
 .trmaj input{accent-color:var(--accent);width:16px;height:16px}
+.tag.beta{background:var(--warn-soft);color:var(--warn);font-weight:600}
+.betanote{margin:0;font-size:12.5px;color:var(--warn)}
+.opt>p.betanote{color:var(--warn)}
+.pg.rcb[aria-expanded="true"]{border-color:var(--prog);color:var(--prog)}
+.rcpick{padding:10px 16px 14px;border-bottom:1px solid var(--line);background:var(--bg);display:flex;flex-direction:column;gap:8px}
+.rch{margin:0;font-weight:600;font-size:13.5px}
+.rcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px}
+.rcopt{display:flex;gap:8px;align-items:flex-start;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;cursor:pointer}
+.rcopt input{margin-top:2px;accent-color:var(--prog)}
+.rcopt small{display:block;color:var(--warn)}
+.rcnote{margin:0;font-size:12.5px;color:var(--muted)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
 .btn.danger{background:var(--bad);border-color:var(--bad);color:var(--surface)}
 .optmsg:empty{display:none}
 #bk-text,#tr-text{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)}
@@ -244,9 +256,10 @@ body.wait #app{opacity:.55;pointer-events:none}
       <div class="opt imp">
         <div class="opth">
           <svg class="localic" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <h3 data-i18n="tr_h">从 Transcript 导入</h3>
+          <h3 data-i18n="tr_h">从 Transcript 导入</h3><span class="tag beta" data-i18n="tr_beta">Beta</span>
         </div>
         <p data-i18n="tr_p">自动识别已修课程，只在你的浏览器里处理</p>
+        <p class="betanote" data-i18n="tr_beta_note">自动识别目前是 Beta 版：只能识别 RBS 必修课，SAS Core 需要你在“其他学分”里自己归类。</p>
         <div class="optact">
           <button type="button" class="btn2" id="tr-pdf" data-i18n="tr_pdf">上传 PDF</button>
           <button type="button" class="btn2" id="tr-paste" data-i18n="tr_paste">粘贴文字</button>
@@ -293,6 +306,9 @@ const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 // Course names stay in English in both languages.
 const I18N = {
 zh: {
+  tr_beta:'Beta', tr_beta_note:'自动识别目前是 Beta 版：只能识别 RBS 必修课，SAS Core 需要你在“其他学分”里自己归类。',
+  rc_btn:'归入 SAS Core', rc_h:x => '把「'+x+'」归入哪些 SAS Core（可多选）', rc_filled:x => '已填：'+x+'（会被替换）',
+  rc_note:'学分只算一次：第一个格子记学分，其余记 0。归入后这门课会从“其他学分”移走。', rc_apply:'归入', rc_cancel:'取消',
   tr_h:'从 Transcript 导入', tr_p:'自动识别已修课程，只在你的浏览器里处理', tr_pdf:'上传 PDF', tr_paste:'粘贴文字', tr_text:'Transcript 文字',
   tr_paste_hint:'打开 unofficial transcript，全选复制，粘贴到框里，再点一次“粘贴文字”。', tr_reading:'正在读取 PDF…', tr_pdf_fail:'读不出这个 PDF。可以打开 transcript 全选复制，用“粘贴文字”。',
   tr_none:'没有识别到课程。请确认是 Rutgers unofficial transcript。', tr_title:'导入预览', tr_sum:(n,a,b,c) => '识别到 '+n+' 门课：要求内 '+a+' 门，其他学分 '+b+' 门，AP / 转学分 '+c+' 门。',
@@ -301,7 +317,7 @@ zh: {
   tr_where_cat:'要求内', tr_where_calc:'Calculus', tr_where_custom:'其他学分',
   tr_w_pass:x => x+'：Pass 可能不满足 core / major 要 C 以上的规定，和 advisor 确认。', tr_w_fail:x => x+'：成绩低于 C，没有算作已修。',
   tr_w_skip:x => x+'：退课或未完成，没有导入。', tr_w_fm:x => x+'：Financial Management 低于 B，不能留在 Finance major，也不能申报 Finance / Real Estate concentration。',
-  tr_major:x => '把 major 设为 '+x, tr_apply:'导入', tr_cancel:'取消', tr_done_msg:n => '已导入 '+n+' 门课。Rutgers Core 要你自己填。',
+  tr_major:x => '把 major 设为 '+x, tr_apply:'导入', tr_cancel:'取消', tr_done_msg:n => '已导入 '+n+' 门课。SAS Core 请在“其他学分”里归类。',
   tr_note:'不会保存姓名、学号和成绩。已有的进度不会被删除，transcript 上的课会更新成 transcript 的状态。',
   ask_h:'本地数据和云端数据不一样，要保留哪一份？', ask_cloud_t:'云端数据', ask_local_t:'本地数据',
   ask_sum:(m,d,w) => (m || '未选 major')+' · 已修 '+d+' 门 · 更新于 '+w,
@@ -373,6 +389,9 @@ zh: {
   del_aria:x => '删除 '+x, add_ph:'课程号或名称', add_btn:'添加'
 },
 en: {
+  tr_beta:'Beta', tr_beta_note:'Auto-recognition is in beta: it only recognizes RBS required courses. Sort SAS Core courses yourself under “Other credits”.',
+  rc_btn:'Move to SAS Core', rc_h:x => 'Which SAS Core goals does “'+x+'” meet? (choose any)', rc_filled:x => 'Filled: '+x+' (will be replaced)',
+  rc_note:'Credits count once: the first slot gets the credits, the rest get 0. The course then leaves “Other credits”.', rc_apply:'Move', rc_cancel:'Cancel',
   tr_h:'Import from transcript', tr_p:'Recognizes your courses automatically, right in your browser', tr_pdf:'Upload PDF', tr_paste:'Paste text', tr_text:'Transcript text',
   tr_paste_hint:'Open your unofficial transcript, select all, copy, paste it into the box, then click “Paste text” again.', tr_reading:'Reading the PDF…', tr_pdf_fail:'Couldn’t read this PDF. Open the transcript, select all, copy, and use “Paste text”.',
   tr_none:'No courses found. Make sure this is a Rutgers unofficial transcript.', tr_title:'Import preview', tr_sum:(n,a,b,c) => 'Found '+n+' courses: '+a+' in your requirements, '+b+' other credits, '+c+' AP / transfer.',
@@ -381,7 +400,7 @@ en: {
   tr_where_cat:'Requirement', tr_where_calc:'Calculus', tr_where_custom:'Other credits',
   tr_w_pass:x => x+': a Pass may not meet the C-or-better rule for core / major courses; check with an advisor.', tr_w_fail:x => x+': grade below C, not counted as done.',
   tr_w_skip:x => x+': withdrawn or incomplete, not imported.', tr_w_fm:x => x+': Financial Management below B means you can’t stay in the Finance major or declare the Finance / Real Estate concentration.',
-  tr_major:x => 'Set major to '+x, tr_apply:'Import', tr_cancel:'Cancel', tr_done_msg:n => 'Imported '+n+' courses. Fill in the Rutgers Core yourself.',
+  tr_major:x => 'Set major to '+x, tr_apply:'Import', tr_cancel:'Cancel', tr_done_msg:n => 'Imported '+n+' courses. Sort SAS Core courses under “Other credits”.',
   tr_note:'Your name, student number and grades are not saved. Existing progress is kept; courses on the transcript are updated to their transcript status.',
   ask_h:'Your local data and cloud data are different. Which one do you want to keep?', ask_cloud_t:'Cloud data', ask_local_t:'Local data',
   ask_sum:(m,d,w) => (m || 'No major')+' · '+d+' courses done · updated '+w,
@@ -453,6 +472,9 @@ en: {
   del_aria:x => 'Delete '+x, add_ph:'Course number or name', add_btn:'Add'
 },
 es: {
+  tr_beta:'Beta', tr_beta_note:'El reconocimiento automático está en beta: solo reconoce los cursos obligatorios de RBS. Clasifica tú mismo los cursos del SAS Core en «Otros créditos».',
+  rc_btn:'Mover a SAS Core', rc_h:x => '¿Qué objetivos del SAS Core cumple «'+x+'»? (puedes elegir varios)', rc_filled:x => 'Ocupado: '+x+' (se reemplazará)',
+  rc_note:'Los créditos cuentan una vez: la primera casilla recibe los créditos y las demás 0. Luego el curso sale de «Otros créditos».', rc_apply:'Mover', rc_cancel:'Cancelar',
   tr_h:'Importar desde el expediente', tr_p:'Reconoce tus cursos automáticamente, solo en tu navegador', tr_pdf:'Subir PDF', tr_paste:'Pegar texto', tr_text:'Texto del expediente',
   tr_paste_hint:'Abre tu expediente no oficial, selecciona todo, copia, pégalo en el cuadro y vuelve a hacer clic en «Pegar texto».', tr_reading:'Leyendo el PDF…', tr_pdf_fail:'No se pudo leer este PDF. Abre el expediente, selecciona todo, copia y usa «Pegar texto».',
   tr_none:'No se encontraron cursos. Asegúrate de que sea un expediente no oficial de Rutgers.', tr_title:'Vista previa de la importación', tr_sum:(n,a,b,c) => 'Se encontraron '+n+' cursos: '+a+' de tus requisitos, '+b+' otros créditos, '+c+' AP / transferencia.',
@@ -461,7 +483,7 @@ es: {
   tr_where_cat:'Requisito', tr_where_calc:'Calculus', tr_where_custom:'Otros créditos',
   tr_w_pass:x => x+': un Pass podría no cumplir la regla de C o más para cursos del core / major; consulta con un advisor.', tr_w_fail:x => x+': nota menor que C, no cuenta como cursado.',
   tr_w_skip:x => x+': retirado o incompleto, no se importa.', tr_w_fm:x => x+': Financial Management por debajo de B impide seguir en el major de Finance o declarar la concentration de Finance / Real Estate.',
-  tr_major:x => 'Poner el major en '+x, tr_apply:'Importar', tr_cancel:'Cancelar', tr_done_msg:n => 'Se importaron '+n+' cursos. Completa el Rutgers Core tú mismo.',
+  tr_major:x => 'Poner el major en '+x, tr_apply:'Importar', tr_cancel:'Cancelar', tr_done_msg:n => 'Se importaron '+n+' cursos. Clasifica los cursos del SAS Core en «Otros créditos».',
   tr_note:'No se guardan tu nombre, número de estudiante ni calificaciones. Tu progreso actual se conserva; los cursos del expediente se actualizan a su estado en el expediente.',
   ask_h:'Tus datos locales y tus datos en la nube son distintos. ¿Cuáles quieres conservar?', ask_cloud_t:'Datos en la nube', ask_local_t:'Datos locales',
   ask_sum:(m,d,w) => (m || 'Sin major')+' · '+d+' cursos cursados · actualizado '+w,
@@ -837,7 +859,7 @@ function build(cfg){
     out.push(sec);
   }
 
-  out.push({id:'rc', kind:'gen', title:'Rutgers Core', items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
+  out.push({id:'rc', kind:'gen', title:'SAS Core', items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
   return out;
 }
 
@@ -1346,6 +1368,30 @@ async function pdfToText(file){
   return pdfTextFromPages(pages);
 }
 
+// Move an "other credits" course into one or more SAS Core slots. Credits count once (first slot), the rest get 0.
+function moveToCore(st, id, keys){
+  const i = st.custom.findIndex(x => x.id === id); if (i < 0 || !keys || !keys.length) return false;
+  const x = st.custom[i], m = String(x.name).match(/^(\d{2}:\d{3}:\d{3})\s+(.*)$/);
+  const label = m ? m[1] : '', name = m ? m[2] : x.name;
+  const ordered = Object.keys(SLOTS).filter(k => k.startsWith('RC-') && keys.includes(k));
+  ordered.forEach((k, n) => {
+    st.slots[k] = {label, name, cr: n === 0 ? (+x.cr || 0) : 0};
+    delete st.st[k]; delete st.took[k]; delete st.plan[k];
+    if (x.st){ st.st[k] = x.st; if (x.took) st.took[k] = x.took; }
+    else if (x.term) st.plan[k] = x.term;
+  });
+  st.custom.splice(i, 1);
+  return ordered.length > 0;
+}
+let rcOpen = null; const rcSel = new Set();
+function rcPickHTML(x){
+  const keys = Object.keys(SLOTS).filter(k => k.startsWith('RC-'));
+  return '<div class="rcpick"><p class="rch">'+esc(t('rc_h', x.name))+'</p><div class="rcgrid">'+keys.map(k => {
+    const v = state.slots[k] || {}, filled = (v.label || v.name) ? ((v.label ? v.label+' ' : '') + (v.name || '')) : '';
+    return '<label class="rcopt"><input type="checkbox" id="rc-'+k+'" data-act="rcsel" data-key="'+k+'"'+(rcSel.has(k) ? ' checked' : '')+'><span>'+esc(SLOTS[k].t)+(filled ? '<small>'+esc(t('rc_filled', filled))+'</small>' : '')+'</span></label>';
+  }).join('')+'</div><p class="rcnote">'+esc(t('rc_note'))+'</p><div class="optact"><button type="button" class="btn" data-act="rcapply" data-id="'+x.id+'"'+(rcSel.size ? '' : ' disabled')+'>'+esc(t('rc_apply'))+'</button><button type="button" class="btn2" data-act="rccancel">'+esc(t('rc_cancel'))+'</button></div></div>';
+}
+
 /* ---------- rendering ---------- */
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const idOf = (a,b) => (a+'-'+b).replace(/[^A-Za-z0-9_-]/g,'-');
@@ -1512,7 +1558,7 @@ function render(){
     h += ev.secs.map(secHTML).join('');
     h += '<section class="card sec"><header><h2>'+t('other_h')+'</h2><span class="kind">'+t('other_kind')+'</span></header><p class="secnote">'+t('other_note')+'</p>'+
       state.custom.map(x => '<div class="row s'+(x.st||0)+'"><input type="checkbox" id="cu-'+x.id+'" data-act="cdone" data-id="'+x.id+'"'+(x.st===2?' checked':'')+' aria-label="'+esc(t('done_aria', x.name))+'"><label for="cu-'+x.id+'"><span class="ttl">'+esc(x.name)+'</span></label>'+
-        '<span class="acts">'+(!x.st ? termSel('cu-'+x.id+'-t', 'data-cplan="'+x.id+'"', x.term) : x.st===2 ? termSel('cu-'+x.id+'-k', 'data-ctook="'+x.id+'"', x.took, true) : '')+'<button type="button" class="pg" id="cu-'+x.id+'-p" data-act="cprog" data-id="'+x.id+'" aria-pressed="'+(x.st===1)+'">'+t('inprog')+'</button><span class="cr wide">'+(+x.cr||0)+' <button type="button" class="x" data-act="cdel" data-id="'+x.id+'" aria-label="'+esc(t('del_aria', x.name))+'">×</button></span></span></div>').join('')+
+        '<span class="acts">'+(!x.st ? termSel('cu-'+x.id+'-t', 'data-cplan="'+x.id+'"', x.term) : x.st===2 ? termSel('cu-'+x.id+'-k', 'data-ctook="'+x.id+'"', x.took, true) : '')+'<button type="button" class="pg rcb" id="cu-'+x.id+'-rc" data-act="rcopen" data-id="'+x.id+'" aria-expanded="'+(rcOpen===x.id)+'">'+t('rc_btn')+'</button><button type="button" class="pg" id="cu-'+x.id+'-p" data-act="cprog" data-id="'+x.id+'" aria-pressed="'+(x.st===1)+'">'+t('inprog')+'</button><span class="cr wide">'+(+x.cr||0)+' <button type="button" class="x" data-act="cdel" data-id="'+x.id+'" aria-label="'+esc(t('del_aria', x.name))+'">×</button></span></span></div>'+(rcOpen===x.id ? rcPickHTML(x) : '')).join('')+
       '<form class="add" id="addf"><input type="text" id="add-name" placeholder="'+t('add_ph')+'" aria-label="'+t('add_ph')+'" required><input type="number" id="add-cr" min="0" max="12" value="3" aria-label="'+t('aria_cr')+'"><button class="btn" type="submit">'+t('add_btn')+'</button></form></section>';
     app.innerHTML = h;
   }
@@ -1531,7 +1577,11 @@ if (typeof document !== 'undefined'){
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-act]'); if (!t || !ready) return;
     const a = t.dataset.act, val = t.dataset.val, code = t.dataset.code, id = t.dataset.id;
-    if (t.tagName==='INPUT' && a!=='done' && a!=='cdone' && a!=='dn') return;
+    if (t.tagName==='INPUT' && a!=='done' && a!=='cdone' && a!=='dn' && a!=='rcsel') return;
+    if (a==='rcopen'){ rcOpen = rcOpen===id ? null : id; rcSel.clear(); render(); return; }
+    if (a==='rcsel'){ const k = t.dataset.key; if (t.checked) rcSel.add(k); else rcSel.delete(k); render(); return; }
+    if (a==='rccancel'){ rcOpen = null; rcSel.clear(); render(); return; }
+    if (a==='rcapply'){ if (!rcSel.size) return; moveToCore(state, id, [...rcSel]); rcOpen = null; rcSel.clear(); commit(); return; }
     if (a==='cur') state.cur = val;
     else if (a==='major'){
       const i = state.majors.indexOf(val);
@@ -1650,7 +1700,7 @@ if (typeof document !== 'undefined'){
     const res = c => c.action === 'plan' ? ['plan', t('tr_r_plan', termName(c.row.term))] : c.action === 'fail' ? ['fail', t('tr_r_fail', c.row.grade)] :
       c.action === 'skip' ? ['skip', t('tr_r_skip', c.row.grade)] : c.target === 'custom' && c.cr === 0 ? ['nocr', t('tr_r_nocr')] : c.action === 'prog' ? ['prog', t('tr_r_prog')] : ['done', t('tr_r_done')];
     const where = c => t('tr_where_' + c.target);
-    let h = '<h2>'+esc(t('tr_title'))+'</h2><p class="trsum">'+esc(t('tr_sum', n, inReq, other, ap))+(trPlan.bad ? ' '+esc(t('tr_bad', trPlan.bad)) : '')+'</p>';
+    let h = '<h2>'+esc(t('tr_title'))+' <span class="tag beta">'+esc(t('tr_beta'))+'</span></h2><p class="betanote">'+esc(t('tr_beta_note'))+'</p><p class="trsum">'+esc(t('tr_sum', n, inReq, other, ap))+(trPlan.bad ? ' '+esc(t('tr_bad', trPlan.bad)) : '')+'</p>';
     if (trPlan.warns.length) h += '<ul class="notes">'+trPlan.warns.map(w => '<li>'+esc(t(w.k, w.row.code+' '+trTitle(w.row.title)))+'</li>').join('')+'</ul>';
     h += '<div class="tw"><table class="trtab"><thead><tr><th>'+esc(t('tr_th_term'))+'</th><th>'+esc(t('tr_th_course'))+'</th><th class="n">'+esc(t('tr_th_cr'))+'</th><th>'+esc(t('tr_th_res'))+'</th></tr></thead><tbody>'+
       ch.map(c => { const r = res(c); return '<tr><td>'+esc(c.row.term === 'ap' ? t('ts_ap') : termName(c.row.term))+'</td><td><span class="code">'+esc(c.row.code)+'</span> '+esc(CAT[c.row.code] ? CAT[c.row.code].t : trTitle(c.row.title))+'<small>'+esc(where(c))+'</small></td><td class="n">'+c.cr+'</td><td class="trres '+r[0]+'">'+esc(r[1])+'</td></tr>'; }).join('')+
@@ -1688,7 +1738,7 @@ if (typeof document !== 'undefined'){
   });
 }
 if (typeof module !== 'undefined') module.exports = {render, setLang, t, I18N, evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName,
-  parseTranscript, planImport, applyImport, pdfTextFromPages,
+  parseTranscript, planImport, applyImport, pdfTextFromPages, moveToCore,
   _drive: {drive, hasContent, sameContent, driveMerge, driveRun, drivePushNow, driveQueue, driveConnect, driveDisconnect, getState: () => state, setState: s => { state = s; }}};
 </script>
 </body>

@@ -34,7 +34,7 @@ python3 -m http.server 8000
 
 ## 从 Transcript 导入
 
-上传 Rutgers unofficial transcript 的 PDF，或者粘贴 transcript 文字，自动识别已修 / 在修 / 已注册的课程。全部在浏览器里处理，不上传，也不保存姓名、学号和成绩。PDF 用 Mozilla pdf.js（只在上传时从 cdnjs 加载）读取文字，不用 AI。Rutgers Core 仍需手动填写。
+上传 Rutgers unofficial transcript 的 PDF，或者粘贴 transcript 文字，自动识别已修 / 在修 / 已注册的课程。全部在浏览器里处理，不上传，也不保存姓名、学号和成绩。PDF 用 Mozilla pdf.js（只在上传时从 cdnjs 加载）读取文字，不用 AI。自动识别目前是 Beta 版：只识别 RBS 必修课，SAS Core 需要在“其他学分”里用“归入 SAS Core”手动归类（一门课可以归入多个 goal，学分只算一次）。
 
 ## Google Drive 同步（可选）
 
