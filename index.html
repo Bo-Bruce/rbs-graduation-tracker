@@ -250,6 +250,10 @@ body.wait #app{opacity:.55;pointer-events:none}
 const GOOGLE_CLIENT_ID = '621232733778-o5bnf0a94vof8ouogc767l8ul4b0j1ea.apps.googleusercontent.com';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const DRIVE_FILE = 'tracker.json';
+// Cloudflare Web Analytics token (public; cookieless page-view counts). Empty = off.
+// Only reports from the production hostname, so preview and local testing are not counted.
+const CF_ANALYTICS_TOKEN = '';
+const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 
 /* ---------- i18n ---------- */
 // Chinese UI for zh-* browsers (Simplified and Traditional), Spanish for es-*, English for everything else.
@@ -1304,6 +1308,12 @@ if (typeof document !== 'undefined'){
   });
   document.addEventListener('toggle', e => { const d = e.target; if (d.dataset && d.dataset.pick) openSet[d.dataset.pick] = d.open; }, true);
 
+  if (CF_ANALYTICS_TOKEN && location.hostname === CF_ANALYTICS_HOST && !(window.claude && window.claude.use)){
+    const cf = document.createElement('script');
+    cf.defer = true; cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    cf.setAttribute('data-cf-beacon', JSON.stringify({token: CF_ANALYTICS_TOKEN}));
+    document.head.appendChild(cf);
+  }
   applyStatic();
   document.getElementById('lang-sel').addEventListener('change', e => {
     setLang(e.target.value, true);

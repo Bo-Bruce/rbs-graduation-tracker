@@ -13,6 +13,9 @@ Single-file static web app (`index.html`) for Rutgers Business School–New Brun
 - `window.claude` exists only inside a Claude artifact; elsewhere the page falls back to `localStorage` key `rbs-nb-tracker-v1`. Keep that fallback working.
 - Google Drive sync (`drive*` functions): GIS token client + Drive REST `appDataFolder/tracker.json`, scope `drive.appdata` only — never widen it. Last-writer-wins by `state.rev` on connect; afterwards localStorage first, upload after a 2 s pause. 401 → retry token with `prompt: ''`, else show "重新连接". Hidden while `GOOGLE_CLIENT_ID` is the placeholder and inside Claude artifacts. localStorage keys: `rbs-nb-drive-v1` (connected flag + fileId), `rbs-nb-drive-token` (short-lived access token).
 
+## Analytics
+- Cloudflare Web Analytics only (cookieless page views, to count visitors). Token in `CF_ANALYTICS_TOKEN`; loads only on the production hostname and never inside Claude artifacts. Never send course progress or any user data to analytics, and keep `privacy.html` in sync if this changes.
+
 ## Conventions
 - No build step, no frameworks. Keep everything in `index.html`. The one exception is `privacy.html` (Google OAuth needs a standalone privacy-policy URL, linked from the home page footer); keep it in sync with what the app actually stores and the scopes it requests.
 - Show course names alongside course numbers everywhere.
