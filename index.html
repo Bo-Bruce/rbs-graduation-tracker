@@ -1160,13 +1160,13 @@ function rowHTML(code, sec, x){
 function secHTML(sec){
   const kind = t('k_'+sec.kind);
   const sk = 'sec-'+sec.id, full = sec.done >= sec.tot;
-  const open = openSet[sk] != null ? openSet[sk] : !full;
+  const open = openSet[sk] != null ? openSet[sk] : true;
   let h = '<details class="card sec'+(full?' full':'')+'" data-pick="'+sk+'"'+(open?' open':'')+'><summary><h2>'+esc(sec.title)+'</h2><span class="kind">'+kind+'</span><span class="cnt">'+sec.done+'/'+sec.tot+'</span>'+
     '<span class="bar mini"><i class="d" style="width:'+(100*sec.done/sec.tot)+'%"></i><i class="p" style="width:'+(100*sec.prog/sec.tot)+'%"></i></span></summary>';
   if (sec.note && sec.note.trim()) h += '<p class="secnote">'+esc(sec.note.trim())+'</p>';
   for (const it of sec.items){
     if (it.k==='p'){
-      const open = openSet[it.id] != null ? openSet[it.id] : (it.opts.length <= 6);
+      const open = openSet[it.id] != null ? openSet[it.id] : true;
       const lv = it.left===0 ? (it.done>=it.need ? 'good' : 'tight') : 'na';
       h += '<details class="pick" data-pick="'+it.id+'"'+(open?' open':'')+'><summary><h3>'+esc(it.title)+'</h3><span class="tag">'+t('pick', it.opts.length, it.need)+'</span><span class="pill '+lv+'">'+it.taken.length+'/'+it.need+'</span></summary>';
       if (it.note) h += '<p class="pnote">'+esc(it.note)+'</p>';
@@ -1202,7 +1202,7 @@ function whatIfHTML(base, cur){
       rows.push(line(MAJORS[m], c2, false, '', 'major', m));
     }
   }
-  return '<details class="card wi" data-pick="whatif"'+(openSet.whatif ? ' open' : '')+'><summary><h2>'+t('wi_h')+'</h2></summary><div class="tw"><table><thead><tr><th>'+t('th_plan')+'</th><th class="n">'+t('th_extra')+'</th><th class="n">'+t('th_avg')+'</th><th>'+t('th_res')+'</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></details>';
+  return '<details class="card wi" data-pick="whatif"'+(openSet.whatif !== false ? ' open' : '')+'><summary><h2>'+t('wi_h')+'</h2></summary><div class="tw"><table><thead><tr><th>'+t('th_plan')+'</th><th class="n">'+t('th_extra')+'</th><th class="n">'+t('th_avg')+'</th><th>'+t('th_res')+'</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></details>';
 }
 function render(){
   const app = document.getElementById('app'); if (!app) return;
