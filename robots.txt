@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rbs-graduation-tracker.vercel.app/sitemap.xml

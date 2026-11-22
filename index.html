@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>/* apply saved day/night choice before first paint */try{var th=localStorage.getItem('rbs-nb-theme');if(th==='dark'||th==='light')document.documentElement.setAttribute('data-theme',th);}catch(e){}</script>
-<title>RBS–NB 毕业进度</title>
+<title>RBS Graduation Tracker – Rutgers Business School NB Course & Degree Planner</title>
+<meta name="description" content="Free course and graduation planner for Rutgers Business School–New Brunswick undergrads. Track major, concentration, Business Core and SAS Core requirements, plan your terms, import your unofficial transcript, and see if you will graduate on time.">
+<link rel="canonical" href="https://rbs-graduation-tracker.vercel.app/">
+<meta name="theme-color" content="#c8102e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RBS–NB Graduation Tracker">
+<meta property="og:title" content="RBS–NB Graduation Tracker">
+<meta property="og:description" content="Plan courses and check if you'll graduate on time at Rutgers Business School–New Brunswick. Free, private, in English, 中文 and Español.">
+<meta property="og:url" content="https://rbs-graduation-tracker.vercel.app/">
+<meta property="og:image" content="https://rbs-graduation-tracker.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RBS–NB Graduation Tracker: progress by requirement and an on-time graduation check">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"RBS–NB Graduation Tracker","alternateName":"RBS–NB 毕业进度","url":"https://rbs-graduation-tracker.vercel.app/","description":"Free course and graduation planner for Rutgers Business School–New Brunswick undergrads. Track major, concentration, Business Core and SAS Core requirements, plan your terms, import your unofficial transcript, and see if you will graduate on time.","applicationCategory":"EducationalApplication","operatingSystem":"Any","inLanguage":["en","zh-Hans","es"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"audience":{"@type":"EducationalAudience","educationalRole":"student"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -342,6 +356,8 @@ zh: {
   cf_yes_cloud:'确认换成云端数据', cf_yes_local:'确认本地数据覆盖', cf_back:'返回',
   d_cancelled:'暂不绑定云端，本地数据和云端数据都没有改动。', d_used_local:'已用本地数据覆盖云端数据。', d_used_cloud:'已换成云端数据。',
   title:'RBS–NB 毕业进度',
+  page_title:'RBS–NB 毕业进度 · Rutgers Business School 选课与毕业规划',
+  page_desc:'免费的 Rutgers Business School–New Brunswick 本科选课与毕业规划工具：追踪 major、concentration、Business Core 和 SAS Core，规划学期，导入 unofficial transcript，判断能否按时毕业。',
   sub:'Rutgers Business School–New Brunswick：比 Degree Navigator 更直观的选课与毕业规划',
   loading:'正在读取已保存的进度…', lang_aria:'语言',
   drv_h:'云端同步', drv_p:'存到你自己的 Google Drive，换设备也能接着用',
@@ -427,6 +443,8 @@ en: {
   cf_yes_cloud:'Yes, switch to cloud data', cf_yes_local:'Yes, overwrite with local data', cf_back:'Back',
   d_cancelled:'Cloud not linked. Neither your local data nor your cloud data was changed.', d_used_local:'Cloud data overwritten with your local data.', d_used_cloud:'Switched to your cloud data.',
   title:'RBS–NB Graduation Tracker',
+  page_title:'RBS Graduation Tracker – Rutgers Business School NB Course & Degree Planner',
+  page_desc:'Free course and graduation planner for Rutgers Business School–New Brunswick undergrads. Track major, concentration, Business Core and SAS Core requirements, plan your terms, import your unofficial transcript, and see if you will graduate on time.',
   sub:'A clearer way than Degree Navigator to plan courses and graduation at Rutgers Business School–New Brunswick',
   loading:'Loading saved progress…', lang_aria:'Language',
   drv_h:'Cloud sync', drv_p:'Saved to your own Google Drive, available on any device',
@@ -512,6 +530,8 @@ es: {
   cf_yes_cloud:'Sí, cambiar a los datos en la nube', cf_yes_local:'Sí, sobrescribir con datos locales', cf_back:'Volver',
   d_cancelled:'Nube sin vincular. No se cambiaron ni tus datos locales ni los de la nube.', d_used_local:'Se sobrescribieron los datos en la nube con tus datos locales.', d_used_cloud:'Se cambió a tus datos en la nube.',
   title:'RBS–NB: seguimiento de graduación',
+  page_title:'RBS–NB: seguimiento de graduación · Planificador de cursos de Rutgers Business School',
+  page_desc:'Planificador gratuito de cursos y graduación para estudiantes de Rutgers Business School–New Brunswick: sigue tu major, concentration, Business Core y SAS Core, planifica semestres, importa tu unofficial transcript y comprueba si te gradúas a tiempo.',
   sub:'Una forma más clara que Degree Navigator de planificar cursos y graduación en Rutgers Business School–New Brunswick',
   loading:'Cargando el progreso guardado…', lang_aria:'Idioma',
   drv_h:'Sincronización en la nube', drv_p:'Se guarda en tu propio Google Drive, disponible en cualquier dispositivo',
@@ -589,7 +609,8 @@ function setLang(l, save){ LANG = I18N[l] ? l : 'en'; if (save) try { localStora
 function applyStatic(){
   if (typeof document === 'undefined' || !document.documentElement) return;
   document.documentElement.lang = LANG === 'zh' ? 'zh-Hans' : LANG;
-  document.title = t('title');
+  document.title = t('page_title');
+  const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', t('page_desc'));
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
   const b = document.getElementById('lang-sel');

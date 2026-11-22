@@ -30,3 +30,6 @@ Single-file static web app (`index.html`) for Rutgers Business School–New Brun
 - No build step, no frameworks. Keep everything in `index.html`. The one exception is `privacy.html` (Google OAuth needs a standalone privacy-policy URL, linked from the home page footer); keep it in sync with what the app actually stores and the scopes it requests.
 - Show course names alongside course numbers everywhere.
 - Test logic by extracting the `<script>` and running it with Node (`module.exports` at the bottom exposes the pure functions).
+
+## SEO
+- `robots.txt`, `sitemap.xml` and `og.png` (1200×630 share image, fake data only) sit next to `index.html`. Head has title, description, canonical, Open Graph and JSON-LD; `page_title` / `page_desc` i18n keys update the title and description per language. Update `sitemap.xml` `lastmod` when content changes meaningfully.
