@@ -1,6 +1,6 @@
 # Project notes for Claude Code
 
-Single-file static web app (`index.html`) for Rutgers Business School–New Brunswick students to track graduation progress. Deployed on Vercel as a static site. UI language: Chinese, English or Spanish (course names and RBS terms like major / concentration stay in English). All UI text lives in the `I18N` dictionary (`zh` / `en` / `es`) and is read with `t(key, ...args)`; add every new string to both languages. Default: saved choice (`localStorage` `rbs-nb-lang`) > browser language (`zh-*` → Chinese, `es-*` → Spanish, else English). Missing keys fall back to English.
+Single-file static web app (`index.html`) for Rutgers Business School–New Brunswick students to track graduation progress. Deployed on Vercel as a static site. UI language: Chinese, English or Spanish (course names and RBS terms like major / concentration stay in English). All UI text lives in the `I18N` dictionary (`zh` / `en` / `es`) and is read with `t(key, ...args)`; add every new string to all three languages. Default: saved choice (`localStorage` `rbs-nb-lang`) > browser language (`zh-*` → Chinese, `es-*` → Spanish, else English). Missing keys fall back to English.
 
 ## Key rules encoded (verify before changing)
 - Requirements follow the FA26 advising slides first, then myRBS pages. Accounting & AIS has **no electives**; Foundational Core has no Computer Applications.
@@ -14,6 +14,6 @@ Single-file static web app (`index.html`) for Rutgers Business School–New Brun
 - Google Drive sync (`drive*` functions): GIS token client + Drive REST `appDataFolder/tracker.json`, scope `drive.appdata` only — never widen it. Last-writer-wins by `state.rev` on connect; afterwards localStorage first, upload after a 2 s pause. 401 → retry token with `prompt: ''`, else show "重新连接". Hidden while `GOOGLE_CLIENT_ID` is the placeholder and inside Claude artifacts. localStorage keys: `rbs-nb-drive-v1` (connected flag + fileId), `rbs-nb-drive-token` (short-lived access token).
 
 ## Conventions
-- No build step, no frameworks. Keep everything in `index.html`.
+- No build step, no frameworks. Keep everything in `index.html`. The one exception is `privacy.html` (Google OAuth needs a standalone privacy-policy URL, linked from the home page footer); keep it in sync with what the app actually stores and the scopes it requests.
 - Show course names alongside course numbers everywhere.
 - Test logic by extracting the `<script>` and running it with Node (`module.exports` at the bottom exposes the pure functions).
