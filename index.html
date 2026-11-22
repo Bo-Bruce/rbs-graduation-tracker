@@ -261,7 +261,7 @@ body.wait #app{opacity:.55;pointer-events:none}
           <h3 data-i18n="tr_h">从 Transcript 导入</h3><span class="tag beta" data-i18n="tr_beta">Beta</span>
         </div>
         <p data-i18n="tr_p">自动识别已修课程，只在你的浏览器里处理</p>
-        <p class="betanote" data-i18n="tr_beta_note">自动识别目前是 Beta 版：只能识别 RBS 必修课，SAS Core 需要你在“其他学分”里自己归类。</p>
+        <p class="betanote" data-i18n="tr_beta_note">自动识别目前是 Beta 版：会识别 RBS 必修课，并按 Rutgers 课程表提示可以归入哪些 SAS Core。提示的分类需要你在“其他学分”里确认后才会归入。</p>
         <div class="optact">
           <button type="button" class="btn2" id="tr-pdf" data-i18n="tr_pdf">上传 PDF</button>
           <button type="button" class="btn2" id="tr-paste" data-i18n="tr_paste">粘贴文字</button>
@@ -309,7 +309,7 @@ const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 const I18N = {
 zh: {
   rc_sugg:x => '可满足 '+x, rc_sugg_tag:'建议', rc_src:d => '建议来自 Rutgers 公开课程表（'+d+' 更新）。课的 core 认证可能随学期变化，以 Degree Navigator 为准。',
-  tr_beta:'Beta', tr_beta_note:'自动识别目前是 Beta 版：只能识别 RBS 必修课，SAS Core 需要你在“其他学分”里自己归类。',
+  tr_beta:'Beta', tr_beta_note:'自动识别目前是 Beta 版：会识别 RBS 必修课，并按 Rutgers 课程表提示可以归入哪些 SAS Core。提示的分类需要你在“其他学分”里确认后才会归入。',
   rc_btn:'归入 SAS Core', rc_h:x => '把「'+x+'」归入哪些 SAS Core（可多选）', rc_filled:x => '已填：'+x+'（会被替换）',
   rc_note:'学分只算一次：第一个格子记学分，其余记 0。归入后这门课会从“其他学分”移走。', rc_apply:'归入', rc_cancel:'取消',
   tr_h:'从 Transcript 导入', tr_p:'自动识别已修课程，只在你的浏览器里处理', tr_pdf:'上传 PDF', tr_paste:'粘贴文字', tr_text:'Transcript 文字',
@@ -320,7 +320,7 @@ zh: {
   tr_where_cat:'要求内', tr_where_calc:'Calculus', tr_where_custom:'其他学分',
   tr_w_pass:x => x+'：Pass 可能不满足 core / major 要 C 以上的规定，和 advisor 确认。', tr_w_fail:x => x+'：成绩低于 C，没有算作已修。',
   tr_w_skip:x => x+'：退课或未完成，没有导入。', tr_w_fm:x => x+'：Financial Management 低于 B，不能留在 Finance major，也不能申报 Finance / Real Estate concentration。',
-  tr_major:x => '把 major 设为 '+x, tr_apply:'导入', tr_cancel:'取消', tr_done_msg:n => '已导入 '+n+' 门课。SAS Core 请在“其他学分”里归类。',
+  tr_major:x => '把 major 设为 '+x, tr_apply:'导入', tr_cancel:'取消', tr_done_msg:n => '已导入 '+n+' 门课。可归入 SAS Core 的课已在“其他学分”里标出，点“归入 SAS Core”确认。',
   tr_note:'不会保存姓名、学号和成绩。已有的进度不会被删除，transcript 上的课会更新成 transcript 的状态。',
   ask_h:'本地数据和云端数据不一样，要保留哪一份？', ask_cloud_t:'云端数据', ask_local_t:'本地数据',
   ask_sum:(m,d,w) => (m || '未选 major')+' · 已修 '+d+' 门 · 更新于 '+w,
@@ -393,7 +393,7 @@ zh: {
 },
 en: {
   rc_sugg:x => 'May meet '+x, rc_sugg_tag:'Suggested', rc_src:d => 'Suggestions come from the public Rutgers Schedule of Classes (updated '+d+'). Core certification can change by term; Degree Navigator has the final word.',
-  tr_beta:'Beta', tr_beta_note:'Auto-recognition is in beta: it only recognizes RBS required courses. Sort SAS Core courses yourself under “Other credits”.',
+  tr_beta:'Beta', tr_beta_note:'Auto-recognition is in beta: it recognizes RBS required courses and suggests SAS Core goals from the Rutgers Schedule of Classes. Suggested goals are only applied after you confirm them under “Other credits”.',
   rc_btn:'Move to SAS Core', rc_h:x => 'Which SAS Core goals does “'+x+'” meet? (choose any)', rc_filled:x => 'Filled: '+x+' (will be replaced)',
   rc_note:'Credits count once: the first slot gets the credits, the rest get 0. The course then leaves “Other credits”.', rc_apply:'Move', rc_cancel:'Cancel',
   tr_h:'Import from transcript', tr_p:'Recognizes your courses automatically, right in your browser', tr_pdf:'Upload PDF', tr_paste:'Paste text', tr_text:'Transcript text',
@@ -404,7 +404,7 @@ en: {
   tr_where_cat:'Requirement', tr_where_calc:'Calculus', tr_where_custom:'Other credits',
   tr_w_pass:x => x+': a Pass may not meet the C-or-better rule for core / major courses; check with an advisor.', tr_w_fail:x => x+': grade below C, not counted as done.',
   tr_w_skip:x => x+': withdrawn or incomplete, not imported.', tr_w_fm:x => x+': Financial Management below B means you can’t stay in the Finance major or declare the Finance / Real Estate concentration.',
-  tr_major:x => 'Set major to '+x, tr_apply:'Import', tr_cancel:'Cancel', tr_done_msg:n => 'Imported '+n+' courses. Sort SAS Core courses under “Other credits”.',
+  tr_major:x => 'Set major to '+x, tr_apply:'Import', tr_cancel:'Cancel', tr_done_msg:n => 'Imported '+n+' courses. Courses that may count for the SAS Core are marked under “Other credits”; click “Move to SAS Core” to confirm.',
   tr_note:'Your name, student number and grades are not saved. Existing progress is kept; courses on the transcript are updated to their transcript status.',
   ask_h:'Your local data and cloud data are different. Which one do you want to keep?', ask_cloud_t:'Cloud data', ask_local_t:'Local data',
   ask_sum:(m,d,w) => (m || 'No major')+' · '+d+' courses done · updated '+w,
@@ -477,7 +477,7 @@ en: {
 },
 es: {
   rc_sugg:x => 'Puede cumplir '+x, rc_sugg_tag:'Sugerido', rc_src:d => 'Las sugerencias vienen del Schedule of Classes público de Rutgers (actualizado el '+d+'). La certificación del core puede cambiar según el semestre; Degree Navigator tiene la última palabra.',
-  tr_beta:'Beta', tr_beta_note:'El reconocimiento automático está en beta: solo reconoce los cursos obligatorios de RBS. Clasifica tú mismo los cursos del SAS Core en «Otros créditos».',
+  tr_beta:'Beta', tr_beta_note:'El reconocimiento automático está en beta: reconoce los cursos obligatorios de RBS y sugiere objetivos del SAS Core según el Schedule of Classes de Rutgers. Las sugerencias solo se aplican después de que las confirmes en «Otros créditos».',
   rc_btn:'Mover a SAS Core', rc_h:x => '¿Qué objetivos del SAS Core cumple «'+x+'»? (puedes elegir varios)', rc_filled:x => 'Ocupado: '+x+' (se reemplazará)',
   rc_note:'Los créditos cuentan una vez: la primera casilla recibe los créditos y las demás 0. Luego el curso sale de «Otros créditos».', rc_apply:'Mover', rc_cancel:'Cancelar',
   tr_h:'Importar desde el expediente', tr_p:'Reconoce tus cursos automáticamente, solo en tu navegador', tr_pdf:'Subir PDF', tr_paste:'Pegar texto', tr_text:'Texto del expediente',
@@ -488,7 +488,7 @@ es: {
   tr_where_cat:'Requisito', tr_where_calc:'Calculus', tr_where_custom:'Otros créditos',
   tr_w_pass:x => x+': un Pass podría no cumplir la regla de C o más para cursos del core / major; consulta con un advisor.', tr_w_fail:x => x+': nota menor que C, no cuenta como cursado.',
   tr_w_skip:x => x+': retirado o incompleto, no se importa.', tr_w_fm:x => x+': Financial Management por debajo de B impide seguir en el major de Finance o declarar la concentration de Finance / Real Estate.',
-  tr_major:x => 'Poner el major en '+x, tr_apply:'Importar', tr_cancel:'Cancelar', tr_done_msg:n => 'Se importaron '+n+' cursos. Clasifica los cursos del SAS Core en «Otros créditos».',
+  tr_major:x => 'Poner el major en '+x, tr_apply:'Importar', tr_cancel:'Cancelar', tr_done_msg:n => 'Se importaron '+n+' cursos. Los cursos que pueden contar para el SAS Core están marcados en «Otros créditos»; haz clic en «Mover a SAS Core» para confirmar.',
   tr_note:'No se guardan tu nombre, número de estudiante ni calificaciones. Tu progreso actual se conserva; los cursos del expediente se actualizan a su estado en el expediente.',
   ask_h:'Tus datos locales y tus datos en la nube son distintos. ¿Cuáles quieres conservar?', ask_cloud_t:'Datos en la nube', ask_local_t:'Datos locales',
   ask_sum:(m,d,w) => (m || 'Sin major')+' · '+d+' cursos cursados · actualizado '+w,
