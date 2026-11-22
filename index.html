@@ -176,6 +176,12 @@ footer p{margin:0;max-width:70ch}
 .tag.rec{background:var(--prog);color:var(--surface);font-weight:600}
 .optact{display:flex;gap:8px;flex-wrap:wrap}
 .optmsg{font-size:13px}
+.ask{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px}
+.askh{margin:0;font-weight:600}
+.askrow{display:flex;flex-direction:column;gap:1px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
+.askrow span{color:var(--muted)}
+.askwarn{margin:0;background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:var(--surface)}
 .optmsg:empty{display:none}
 #bk-text{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)}
 body.wait #app{opacity:.55;pointer-events:none}
@@ -210,6 +216,7 @@ body.wait #app{opacity:.55;pointer-events:none}
           <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
         </div>
         <p id="drv-msg" class="optmsg" role="status"></p>
+        <div id="drv-ask" class="ask" hidden role="group" aria-live="polite"></div>
       </div>
       <div class="opt local">
         <div class="opth">
@@ -262,6 +269,13 @@ const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 // Course names stay in English in both languages.
 const I18N = {
 zh: {
+  ask_h:'本地数据和云端数据不一样，要保留哪一份？', ask_cloud_t:'云端数据', ask_local_t:'本地数据',
+  ask_sum:(m,d,w) => (m || '未选 major')+' · 已修 '+d+' 门 · 更新于 '+w,
+  ask_use_cloud:'云端数据', ask_use_local:'本地数据覆盖', ask_cancel:'暂不绑定云端',
+  cf_cloud:'本地数据会被云端数据替换，替换后不能恢复。确定吗？',
+  cf_local:'云端数据会被本地数据覆盖，你的其他设备下次同步时也会变成这一份，覆盖后不能恢复。确定吗？',
+  cf_yes_cloud:'确认换成云端数据', cf_yes_local:'确认本地数据覆盖', cf_back:'返回',
+  d_cancelled:'暂不绑定云端，本地数据和云端数据都没有改动。', d_used_local:'已用本地数据覆盖云端数据。',
   title:'RBS–NB 毕业进度',
   sub:'非官方 · Rutgers Business School–New Brunswick 选课与毕业规划',
   loading:'正在读取已保存的进度…', lang_aria:'语言',
@@ -277,7 +291,7 @@ zh: {
   ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：', privacy:'隐私政策',
   local_msg:'已保存在此浏览器',
   saving:'保存中…', saved_acct:'已保存到你的账户，换设备也能看到', save_fail:'没能保存到云端，改动暂存在这个浏览器', synced_acct:'已同步你的账户',
-  d_off:'未绑定', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新登录', d_err:'同步出错',
+  d_off:'未绑定', d_ask:'等你选择', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新登录', d_err:'同步出错',
   d_go:'登录 Google，绑定云端', d_reconnect:'重新登录', d_retry:'重试', d_off_btn:'断开',
   d_pulled:'已读取 Drive 上较新的进度。', d_auth_msg:'登录已过期或被取消，点“重新登录”。改动先存在这个浏览器。',
   d_err_msg:'网络或 Drive 出错，下次改动时会再试。', d_connect_fail:'没能连接，点“重新登录”再试。',
@@ -325,6 +339,13 @@ zh: {
   del_aria:x => '删除 '+x, add_ph:'课程号或名称', add_btn:'添加'
 },
 en: {
+  ask_h:'Your local data and cloud data are different. Which one do you want to keep?', ask_cloud_t:'Cloud data', ask_local_t:'Local data',
+  ask_sum:(m,d,w) => (m || 'No major')+' · '+d+' courses done · updated '+w,
+  ask_use_cloud:'Cloud data', ask_use_local:'Overwrite with local data', ask_cancel:'Don’t link cloud now',
+  cf_cloud:'Your local data will be replaced by your cloud data. This can’t be undone. Continue?',
+  cf_local:'Your cloud data will be overwritten with your local data, and your other devices will get this version on their next sync. This can’t be undone. Continue?',
+  cf_yes_cloud:'Yes, switch to cloud data', cf_yes_local:'Yes, overwrite with local data', cf_back:'Back',
+  d_cancelled:'Cloud not linked. Neither your local data nor your cloud data was changed.', d_used_local:'Cloud data overwritten with your local data.',
   title:'RBS–NB Graduation Tracker',
   sub:'Unofficial · course & graduation planner for Rutgers Business School–New Brunswick',
   loading:'Loading saved progress…', lang_aria:'Language',
@@ -340,7 +361,7 @@ en: {
   ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:', privacy:'Privacy Policy',
   local_msg:'Saved in this browser',
   saving:'Saving…', saved_acct:'Saved to your account; available on your other devices too', save_fail:'Couldn’t save to the cloud; changes are kept in this browser for now', synced_acct:'Synced with your account',
-  d_off:'Not linked', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Sign-in needed', d_err:'Sync error',
+  d_off:'Not linked', d_ask:'Choose one', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Sign-in needed', d_err:'Sync error',
   d_go:'Sign in with Google to sync', d_reconnect:'Sign in again', d_retry:'Retry', d_off_btn:'Disconnect',
   d_pulled:'Loaded newer progress from Drive.', d_auth_msg:'Sign-in expired or was cancelled. Click “Sign in again”. Changes are kept in this browser for now.',
   d_err_msg:'Network or Drive error. It will retry on your next change.', d_connect_fail:'Couldn’t connect. Click “Sign in again” to try again.',
@@ -388,6 +409,13 @@ en: {
   del_aria:x => 'Delete '+x, add_ph:'Course number or name', add_btn:'Add'
 },
 es: {
+  ask_h:'Tus datos locales y tus datos en la nube son distintos. ¿Cuáles quieres conservar?', ask_cloud_t:'Datos en la nube', ask_local_t:'Datos locales',
+  ask_sum:(m,d,w) => (m || 'Sin major')+' · '+d+' cursos cursados · actualizado '+w,
+  ask_use_cloud:'Datos en la nube', ask_use_local:'Sobrescribir con datos locales', ask_cancel:'No vincular la nube por ahora',
+  cf_cloud:'Tus datos locales se reemplazarán por los datos en la nube. No se puede deshacer. ¿Continuar?',
+  cf_local:'Tus datos en la nube se sobrescribirán con tus datos locales, y tus otros dispositivos recibirán esta versión en su próxima sincronización. No se puede deshacer. ¿Continuar?',
+  cf_yes_cloud:'Sí, cambiar a los datos en la nube', cf_yes_local:'Sí, sobrescribir con datos locales', cf_back:'Volver',
+  d_cancelled:'Nube sin vincular. No se cambiaron ni tus datos locales ni los de la nube.', d_used_local:'Se sobrescribieron los datos en la nube con tus datos locales.',
   title:'RBS–NB: seguimiento de graduación',
   sub:'No oficial · planificador de cursos y graduación para Rutgers Business School–New Brunswick',
   loading:'Cargando el progreso guardado…', lang_aria:'Idioma',
@@ -403,7 +431,7 @@ es: {
   ft2:'Todos los cursos del core y del major requieren C o más; al menos 45 créditos de business deben cursarse en RBS–NB; para graduarte necesitas al menos 120 créditos.', ft_src:'Fuentes:', privacy:'Política de privacidad',
   local_msg:'Guardado en este navegador',
   saving:'Guardando…', saved_acct:'Guardado en tu cuenta; también disponible en tus otros dispositivos', save_fail:'No se pudo guardar en la nube; por ahora los cambios quedan en este navegador', synced_acct:'Sincronizado con tu cuenta',
-  d_off:'Sin vincular', d_connecting:'Conectando…', d_pending:'Sincronizando…', d_syncing:'Sincronizando…', d_ok:'Sincronizado', d_auth:'Inicia sesión de nuevo', d_err:'Error de sincronización',
+  d_off:'Sin vincular', d_ask:'Elige una opción', d_connecting:'Conectando…', d_pending:'Sincronizando…', d_syncing:'Sincronizando…', d_ok:'Sincronizado', d_auth:'Inicia sesión de nuevo', d_err:'Error de sincronización',
   d_go:'Iniciar sesión con Google', d_reconnect:'Volver a iniciar sesión', d_retry:'Reintentar', d_off_btn:'Desconectar',
   d_pulled:'Se cargó un progreso más reciente desde Drive.', d_auth_msg:'La sesión expiró o se canceló. Haz clic en «Volver a iniciar sesión». Por ahora los cambios quedan en este navegador.',
   d_err_msg:'Error de red o de Drive. Se volverá a intentar con tu próximo cambio.', d_connect_fail:'No se pudo conectar. Haz clic en «Volver a iniciar sesión» para intentarlo de nuevo.',
@@ -983,7 +1011,19 @@ async function driveCreate(body){
 }
 const driveUpdate = (id, body) => driveFetch('/upload/drive/v3/files/' + id + '?uploadType=media', {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body});
 // Merge: newer state.rev wins. Returns 'pulled' | 'pushed' | 'same'.
-async function driveMerge(){
+// Has this progress object got anything the user entered?
+function hasContent(x){
+  x = x || {};
+  return !!((x.majors||[]).length || x.conc || Object.keys(x.st||{}).length || Object.keys(x.plan||{}).length ||
+    (x.custom||[]).length || Object.values(x.slots||{}).some(v => v && (v.label || v.name)));
+}
+// Same progress, ignoring rev (key order independent).
+function sameContent(a, b){
+  const canon = v => Array.isArray(v) ? '['+v.map(canon).join(',')+']' : v && typeof v === 'object' ? '{'+Object.keys(v).sort().filter(k => k !== 'rev').map(k => JSON.stringify(k)+':'+canon(v[k])).join(',')+'}' : JSON.stringify(v);
+  return canon(normalize(JSON.parse(JSON.stringify(a)))) === canon(normalize(JSON.parse(JSON.stringify(b))));
+}
+// firstLink: this browser has not synced with Drive before (or was disconnected).
+async function driveMerge(firstLink){
   if (!drive.fileId){ const f = await driveFind(); drive.fileId = f ? f.id : ''; driveSave(); }
   if (!drive.fileId){ drive.fileId = await driveCreate(JSON.stringify(state)); driveSave(); return 'pushed'; }
   let remote = null;
@@ -994,6 +1034,14 @@ async function driveMerge(){
   }
   drive.lastPull = Date.now();
   const rr = remote && +remote.rev || 0;
+  if (firstLink && remote && hasContent(state) && hasContent(remote) && !sameContent(state, remote)){
+    const choice = await (drive.ask || driveAskUI)(state, remote);
+    if (choice === 'cloud'){ const s = normalize(remote); s.rev = rr || Date.now(); state = s; cacheSet(); render(); return 'pulled'; }
+    if (choice === 'local'){ state.rev = Math.max(Date.now(), rr + 1); cacheSet(); await driveUpdate(drive.fileId, JSON.stringify(state)); return 'overwrote'; }
+    throw Object.assign(new Error('cancelled'), {cancel: true});
+  }
+  // First bind on an empty device: never let a blank (but newer) copy wipe the cloud.
+  if (firstLink && remote && !hasContent(state) && hasContent(remote)){ const s = normalize(remote); s.rev = rr || Date.now(); state = s; cacheSet(); render(); return 'pulled'; }
   if (rr > state.rev){ const s = normalize(remote); s.rev = rr; state = s; cacheSet(); render(); return 'pulled'; }
   if (rr < state.rev || !remote){ await driveUpdate(drive.fileId, JSON.stringify(state)); return 'pushed'; }
   return 'same';
@@ -1004,10 +1052,11 @@ async function driveRun(job){
   try {
     const r = await job();
     while (drive.dirty && drive.on){ drive.dirty = false; await drivePushNow(); }
-    drive.busy = false; if (drive.on) driveUI('ok', r === 'pulled' ? 'd_pulled' : '');
+    drive.busy = false; if (drive.on) driveUI('ok', r === 'pulled' ? 'd_pulled' : r === 'overwrote' ? 'd_used_local' : '');
     return r;
   } catch(e){
-    drive.busy = false;
+    drive.busy = false; drive.dirty = false;
+    if (e && e.cancel){ drive.on = false; drive.fileId = ''; driveSave(); driveUI('off', 'd_cancelled'); return 'cancelled'; }
     if (!drive.on) return;
     driveUI(e.auth ? 'auth' : 'err', e.auth ? 'd_auth_msg' : 'd_err_msg');
   }
@@ -1024,8 +1073,46 @@ function driveQueue(){
 }
 function driveConnect(prompt){
   driveUI('connecting');
-  return driveToken(prompt).then(() => { drive.on = true; driveSave(); drive.status = 'syncing'; return driveRun(driveMerge); })
+  const firstLink = !drive.fileId;
+  return driveToken(prompt).then(() => { drive.on = true; driveSave(); drive.status = 'syncing'; return driveRun(() => driveMerge(firstLink)); })
     .catch(e => { if (drive.on) driveUI('auth', 'd_connect_fail'); else driveUI('off', e && e.message === 'gis_load' ? 'd_gis_fail' : 'd_not_connected'); });
+}
+function driveAskUI(local, remote){
+  return new Promise(resolve => {
+    const box = document.getElementById('drv-ask');
+    const sum = x => {
+      const done = Object.keys(x.st||{}).filter(k => x.st[k] === 2).length + (x.custom||[]).filter(c => c.st === 2).length;
+      const when = x.rev ? new Date(+x.rev).toLocaleString(LANG === 'zh' ? 'zh-CN' : LANG, {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '—';
+      return t('ask_sum', (x.majors||[]).filter(m => MAJORS[m]).map(m => MAJORS[m]).join(', '), done, when);
+    };
+    let step = 'choose', pick = '';
+    const draw = () => {
+      if (step === 'choose'){
+        box.innerHTML = '<p class="askh">'+esc(t('ask_h'))+'</p>'+
+          '<div class="askrow"><b>'+esc(t('ask_cloud_t'))+'</b><span>'+esc(sum(remote))+'</span></div>'+
+          '<div class="askrow"><b>'+esc(t('ask_local_t'))+'</b><span>'+esc(sum(local))+'</span></div>'+
+          '<div class="optact"><button type="button" class="btn" data-ask="cloud">'+esc(t('ask_use_cloud'))+'</button>'+
+          '<button type="button" class="btn2" data-ask="local">'+esc(t('ask_use_local'))+'</button>'+
+          '<button type="button" class="btn2" data-ask="cancel">'+esc(t('ask_cancel'))+'</button></div>';
+      } else {
+        box.innerHTML = '<p class="askwarn">'+esc(t(pick === 'cloud' ? 'cf_cloud' : 'cf_local'))+'</p>'+
+          '<div class="optact"><button type="button" class="btn danger" data-ask="yes">'+esc(t(pick === 'cloud' ? 'cf_yes_cloud' : 'cf_yes_local'))+'</button>'+
+          '<button type="button" class="btn2" data-ask="back">'+esc(t('cf_back'))+'</button></div>';
+      }
+      const first = box.querySelector('button'); if (first) first.focus({preventScroll:true});
+    };
+    const done = v => { box.hidden = true; box.innerHTML = ''; box.onclick = null; drive.askRender = null; resolve(v); };
+    box.onclick = e => {
+      const b = e.target.closest('[data-ask]'); if (!b) return;
+      const a = b.dataset.ask;
+      if (a === 'cancel') return done('cancel');
+      if (a === 'cloud' || a === 'local'){ pick = a; step = 'confirm'; return draw(); }
+      if (a === 'back'){ step = 'choose'; return draw(); }
+      if (a === 'yes') return done(pick);
+    };
+    drive.askRender = () => { driveUI('ask'); draw(); };
+    box.hidden = false; drive.askRender();
+  });
 }
 function driveDisconnect(){
   clearTimeout(drive.timer);
@@ -1045,7 +1132,7 @@ function driveUI(st, msg){
   if (typeof document === 'undefined') return;
   const box = document.getElementById('drv'); if (!box) return;
   const pill = document.getElementById('drv-st');
-  pill.textContent = t('d_' + st); pill.className = 'pill ' + {off:'na', connecting:'na', pending:'tight', syncing:'tight', ok:'good', auth:'late', err:'late'}[st];
+  pill.textContent = t('d_' + st); pill.className = 'pill ' + {off:'na', connecting:'na', pending:'tight', syncing:'tight', ask:'tight', ok:'good', auth:'late', err:'late'}[st];
   const go = document.getElementById('drv-go');
   go.hidden = !(st === 'off' || st === 'auth' || st === 'err');
   go.textContent = t(st === 'auth' ? 'd_reconnect' : st === 'err' ? 'd_retry' : 'd_go');
@@ -1321,7 +1408,7 @@ if (typeof document !== 'undefined'){
   document.getElementById('lang-sel').addEventListener('change', e => {
     setLang(e.target.value, true);
     applyStatic(); render();
-    if (!document.getElementById('drv').hidden) driveUI(drive.status); else sync(syncKey);
+    if (!document.getElementById('drv').hidden){ if (drive.askRender) drive.askRender(); else driveUI(drive.status); } else sync(syncKey);
     document.getElementById('bk-msg').textContent = '';
     const r = document.getElementById('bk-reset'); r.dataset.armed = ''; r.textContent = t('bk_reset');
   });
@@ -1366,7 +1453,7 @@ if (typeof document !== 'undefined'){
   });
 }
 if (typeof module !== 'undefined') module.exports = {render, setLang, t, I18N, evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName,
-  _drive: {drive, driveMerge, driveRun, drivePushNow, driveQueue, driveConnect, driveDisconnect, getState: () => state, setState: s => { state = s; }}};
+  _drive: {drive, hasContent, sameContent, driveMerge, driveRun, drivePushNow, driveQueue, driveConnect, driveDisconnect, getState: () => state, setState: s => { state = s; }}};
 </script>
 </body>
 </html>
