@@ -18,6 +18,11 @@ Single-file static web app (`index.html`) for Rutgers Business School–New Brun
 - Decisions from the user: PR flag `E` → no credit (other credits, 0 cr); `PA`/`P` → done but warn (C-or-better rule); no grade in a future term → planned for that term; current term → in progress; `W`/`INC` skipped; below C not done. Financial Management below B warns. Business Calculus / Calc I → CALC slot. Courses not in `CAT` → other credits.
 - Never store name, student number or grades. Test with fabricated transcripts only; never commit a real transcript.
 
+## SAS Core suggestions
+- `CORE_DATA` in index.html (between the CORE-DATA markers) maps course numbers to SAS Core codes, built from the public Rutgers Schedule of Classes API (classes.rutgers.edu/soc/api, no login). Refresh each term with `node tools/build-core-codes.mjs` and commit. Never scrape Degree Navigator.
+- Suggestions only: shown as "可满足 …" tags and pre-checked in the 归入 SAS Core picker; the user confirms. Degree Navigator is authoritative.
+- Exception to "everything in index.html": `tools/` holds maintenance scripts that are not loaded by the page.
+
 ## Analytics
 - Cloudflare Web Analytics only (cookieless page views, to count visitors). Token in `CF_ANALYTICS_TOKEN`; loads only on the production hostname and never inside Claude artifacts. Never send course progress or any user data to analytics, and keep `privacy.html` in sync if this changes.
 

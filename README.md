@@ -36,6 +36,14 @@ python3 -m http.server 8000
 
 上传 Rutgers unofficial transcript 的 PDF，或者粘贴 transcript 文字，自动识别已修 / 在修 / 已注册的课程。全部在浏览器里处理，不上传，也不保存姓名、学号和成绩。PDF 用 Mozilla pdf.js（只在上传时从 cdnjs 加载）读取文字，不用 AI。自动识别目前是 Beta 版：只识别 RBS 必修课，SAS Core 需要在“其他学分”里用“归入 SAS Core”手动归类（一门课可以归入多个 goal，学分只算一次）。
 
+## SAS Core 建议（每学期更新一次）
+
+“其他学分”里的课会根据 Rutgers 公开课程表（Schedule of Classes）提示“可满足 HST · SCL”之类的 core code，在“归入 SAS Core”时预先勾上。数据嵌在 `index.html` 的 `CORE_DATA` 里，用下面的命令更新（不需要登录）：
+
+```bash
+node tools/build-core-codes.mjs
+```
+
 ## Google Drive 同步（可选）
 
 纯前端：Google Identity Services token client + Drive REST，只用 `https://www.googleapis.com/auth/drive.appdata` scope（non-sensitive，不需要 Google 审核）。进度存在用户自己 Drive 的 `appDataFolder/tracker.json`，页面看不到 Drive 里的其他文件。`index.html` 顶部的 `GOOGLE_CLIENT_ID` 还是占位符时，同步区块不显示，页面和以前完全一样。
