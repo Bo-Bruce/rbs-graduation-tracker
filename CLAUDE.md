@@ -13,6 +13,11 @@ Single-file static web app (`index.html`) for Rutgers Business School–New Brun
 - `window.claude` exists only inside a Claude artifact; elsewhere the page falls back to `localStorage` key `rbs-nb-tracker-v1`. Keep that fallback working.
 - Google Drive sync (`drive*` functions): GIS token client + Drive REST `appDataFolder/tracker.json`, scope `drive.appdata` only — never widen it. Last-writer-wins by `state.rev` on connect; afterwards localStorage first, upload after a 2 s pause. 401 → retry token with `prompt: ''`, else show "重新连接". Hidden while `GOOGLE_CLIENT_ID` is the placeholder and inside Claude artifacts. localStorage keys: `rbs-nb-drive-v1` (connected flag + fileId), `rbs-nb-drive-token` (short-lived access token).
 
+## Transcript import
+- `parseTranscript` / `planImport` / `applyImport` (pure) + `pdfTextFromPages`; pdf.js 3.11.174 loads from cdnjs only when a PDF is uploaded (SRI pinned, blob worker). Everything runs in the browser.
+- Decisions from the user: PR flag `E` → no credit (other credits, 0 cr); `PA`/`P` → done but warn (C-or-better rule); no grade in a future term → planned for that term; current term → in progress; `W`/`INC` skipped; below C not done. Financial Management below B warns. Business Calculus / Calc I → CALC slot. Courses not in `CAT` → other credits.
+- Never store name, student number or grades. Test with fabricated transcripts only; never commit a real transcript.
+
 ## Analytics
 - Cloudflare Web Analytics only (cookieless page views, to count visitors). Token in `CF_ANALYTICS_TOKEN`; loads only on the production hostname and never inside Claude artifacts. Never send course progress or any user data to analytics, and keep `privacy.html` in sync if this changes.
 

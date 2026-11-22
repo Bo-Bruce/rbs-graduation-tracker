@@ -32,6 +32,10 @@ python3 -m http.server 8000
 # 打开 http://localhost:8000
 ```
 
+## 从 Transcript 导入
+
+上传 Rutgers unofficial transcript 的 PDF，或者粘贴 transcript 文字，自动识别已修 / 在修 / 已注册的课程。全部在浏览器里处理，不上传，也不保存姓名、学号和成绩。PDF 用 Mozilla pdf.js（只在上传时从 cdnjs 加载）读取文字，不用 AI。Rutgers Core 仍需手动填写。
+
 ## Google Drive 同步（可选）
 
 纯前端：Google Identity Services token client + Drive REST，只用 `https://www.googleapis.com/auth/drive.appdata` scope（non-sensitive，不需要 Google 审核）。进度存在用户自己 Drive 的 `appDataFolder/tracker.json`，页面看不到 Drive 里的其他文件。`index.html` 顶部的 `GOOGLE_CLIENT_ID` 还是占位符时，同步区块不显示，页面和以前完全一样。

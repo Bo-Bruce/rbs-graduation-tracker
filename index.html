@@ -182,9 +182,17 @@ footer p{margin:0;max-width:70ch}
 .askrow{display:flex;flex-direction:column;gap:1px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
 .askrow span{color:var(--muted)}
 .askwarn{margin:0;background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px}
+.trp h2{font-size:17px}
+.trsum{margin:0;color:var(--muted);font-size:13.5px}
+.trtab td,.trtab th{padding:6px 8px;font-size:13px}
+.trtab td.code{font:500 12.5px var(--mono);color:var(--muted);white-space:nowrap}
+.trres{white-space:nowrap}
+.trres.done{color:var(--good)} .trres.prog{color:var(--prog)} .trres.fail,.trres.skip{color:var(--bad)} .trres.plan,.trres.nocr{color:var(--muted)}
+.trmaj{display:flex;gap:8px;align-items:center;font-size:13.5px}
+.trmaj input{accent-color:var(--accent);width:16px;height:16px}
 .btn.danger{background:var(--bad);border-color:var(--bad);color:var(--surface)}
 .optmsg:empty{display:none}
-#bk-text{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)}
+#bk-text,#tr-text{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)}
 body.wait #app{opacity:.55;pointer-events:none}
 @media (max-width:520px){
   .tiles{grid-template-columns:repeat(2,1fr)}
@@ -203,7 +211,7 @@ body.wait #app{opacity:.55;pointer-events:none}
     <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><select class="langb" id="lang-sel" aria-label="语言"><option value="zh" lang="zh-Hans">中文</option><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></div>
   </div>
   <section class="card save" aria-labelledby="save-h">
-    <h2 id="save-h" data-i18n="save_h">保存进度</h2>
+    <h2 id="save-h" data-i18n="save_h">保存与导入</h2>
     <div class="savegrid">
       <div class="opt cloud" id="drv" hidden>
         <div class="opth">
@@ -233,8 +241,23 @@ body.wait #app{opacity:.55;pointer-events:none}
         <p id="bk-msg" class="optmsg" role="status"></p>
         <textarea id="bk-text" hidden rows="4" aria-label="进度数据" data-i18n-aria="bk_text"></textarea>
       </div>
+      <div class="opt imp">
+        <div class="opth">
+          <svg class="localic" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h5M10 13h6M10 17h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <h3 data-i18n="tr_h">从 Transcript 导入</h3>
+        </div>
+        <p data-i18n="tr_p">自动识别已修课程，只在你的浏览器里处理</p>
+        <div class="optact">
+          <button type="button" class="btn2" id="tr-pdf" data-i18n="tr_pdf">上传 PDF</button>
+          <button type="button" class="btn2" id="tr-paste" data-i18n="tr_paste">粘贴文字</button>
+          <input type="file" id="tr-file" accept="application/pdf,.pdf" hidden>
+        </div>
+        <p id="tr-msg" class="optmsg" role="status"></p>
+        <textarea id="tr-text" hidden rows="5" aria-label="Transcript" data-i18n-aria="tr_text"></textarea>
+      </div>
     </div>
   </section>
+  <section class="card trp" id="tr-preview" hidden aria-live="polite"></section>
   <div id="app"></div>
   <footer>
     <p data-i18n="ft1">课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。</p>
@@ -270,6 +293,16 @@ const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 // Course names stay in English in both languages.
 const I18N = {
 zh: {
+  tr_h:'从 Transcript 导入', tr_p:'自动识别已修课程，只在你的浏览器里处理', tr_pdf:'上传 PDF', tr_paste:'粘贴文字', tr_text:'Transcript 文字',
+  tr_paste_hint:'打开 unofficial transcript，全选复制，粘贴到框里，再点一次“粘贴文字”。', tr_reading:'正在读取 PDF…', tr_pdf_fail:'读不出这个 PDF。可以打开 transcript 全选复制，用“粘贴文字”。',
+  tr_none:'没有识别到课程。请确认是 Rutgers unofficial transcript。', tr_title:'导入预览', tr_sum:(n,a,b,c) => '识别到 '+n+' 门课：要求内 '+a+' 门，其他学分 '+b+' 门，AP / 转学分 '+c+' 门。',
+  tr_bad:n => '有 '+n+' 行看起来像课程但没认出来，没有导入。', tr_th_term:'学期', tr_th_course:'课程', tr_th_cr:'学分', tr_th_res:'导入为',
+  tr_r_done:'已修', tr_r_prog:'在修', tr_r_plan:x => '排到 '+x, tr_r_fail:g => '未通过（'+g+'），不导入', tr_r_skip:g => g+'，不导入', tr_r_nocr:'已修，不计学分',
+  tr_where_cat:'要求内', tr_where_calc:'Calculus', tr_where_custom:'其他学分',
+  tr_w_pass:x => x+'：Pass 可能不满足 core / major 要 C 以上的规定，和 advisor 确认。', tr_w_fail:x => x+'：成绩低于 C，没有算作已修。',
+  tr_w_skip:x => x+'：退课或未完成，没有导入。', tr_w_fm:x => x+'：Financial Management 低于 B，不能留在 Finance major，也不能申报 Finance / Real Estate concentration。',
+  tr_major:x => '把 major 设为 '+x, tr_apply:'导入', tr_cancel:'取消', tr_done_msg:n => '已导入 '+n+' 门课。Rutgers Core 要你自己填。',
+  tr_note:'不会保存姓名、学号和成绩。已有的进度不会被删除，transcript 上的课会更新成 transcript 的状态。',
   ask_h:'本地数据和云端数据不一样，要保留哪一份？', ask_cloud_t:'云端数据', ask_local_t:'本地数据',
   ask_sum:(m,d,w) => (m || '未选 major')+' · 已修 '+d+' 门 · 更新于 '+w,
   ask_use_cloud:'云端数据', ask_use_local:'本地数据覆盖', ask_cancel:'暂不绑定云端',
@@ -283,7 +316,7 @@ zh: {
   drv_h:'云端同步', drv_p:'存到你自己的 Google Drive，换设备也能接着用',
  
  
-  save_h:'保存进度', rec:'推荐', bk_h:'本地备份', bk_p:'不用登录，手动复制和导入',
+  save_h:'保存与导入', rec:'推荐', bk_h:'本地备份', bk_p:'不用登录，手动复制和导入',
   bk_copy:'复制我的进度', bk_import:'导入进度', bk_reset:'清空重来', bk_text:'进度数据',
   bk_copied:'已复制。粘贴到备忘录或发给自己保存。', bk_manual:'浏览器不让自动复制，请手动复制框里的内容。',
   bk_paste:'把之前复制的进度粘贴到框里，再点一次“导入进度”。', bk_imported:'已导入。', bk_bad:'内容格式不对，请粘贴完整的复制内容。',
@@ -340,6 +373,16 @@ zh: {
   del_aria:x => '删除 '+x, add_ph:'课程号或名称', add_btn:'添加'
 },
 en: {
+  tr_h:'Import from transcript', tr_p:'Recognizes your courses automatically, right in your browser', tr_pdf:'Upload PDF', tr_paste:'Paste text', tr_text:'Transcript text',
+  tr_paste_hint:'Open your unofficial transcript, select all, copy, paste it into the box, then click “Paste text” again.', tr_reading:'Reading the PDF…', tr_pdf_fail:'Couldn’t read this PDF. Open the transcript, select all, copy, and use “Paste text”.',
+  tr_none:'No courses found. Make sure this is a Rutgers unofficial transcript.', tr_title:'Import preview', tr_sum:(n,a,b,c) => 'Found '+n+' courses: '+a+' in your requirements, '+b+' other credits, '+c+' AP / transfer.',
+  tr_bad:n => n+' line(s) looked like courses but couldn’t be read; they were not imported.', tr_th_term:'Term', tr_th_course:'Course', tr_th_cr:'Credits', tr_th_res:'Imported as',
+  tr_r_done:'Done', tr_r_prog:'In progress', tr_r_plan:x => 'Planned for '+x, tr_r_fail:g => 'Not passed ('+g+'), skipped', tr_r_skip:g => g+', skipped', tr_r_nocr:'Done, no credit',
+  tr_where_cat:'Requirement', tr_where_calc:'Calculus', tr_where_custom:'Other credits',
+  tr_w_pass:x => x+': a Pass may not meet the C-or-better rule for core / major courses; check with an advisor.', tr_w_fail:x => x+': grade below C, not counted as done.',
+  tr_w_skip:x => x+': withdrawn or incomplete, not imported.', tr_w_fm:x => x+': Financial Management below B means you can’t stay in the Finance major or declare the Finance / Real Estate concentration.',
+  tr_major:x => 'Set major to '+x, tr_apply:'Import', tr_cancel:'Cancel', tr_done_msg:n => 'Imported '+n+' courses. Fill in the Rutgers Core yourself.',
+  tr_note:'Your name, student number and grades are not saved. Existing progress is kept; courses on the transcript are updated to their transcript status.',
   ask_h:'Your local data and cloud data are different. Which one do you want to keep?', ask_cloud_t:'Cloud data', ask_local_t:'Local data',
   ask_sum:(m,d,w) => (m || 'No major')+' · '+d+' courses done · updated '+w,
   ask_use_cloud:'Cloud data', ask_use_local:'Overwrite with local data', ask_cancel:'Don’t link cloud now',
@@ -353,7 +396,7 @@ en: {
   drv_h:'Cloud sync', drv_p:'Saved to your own Google Drive, available on any device',
  
  
-  save_h:'Save your progress', rec:'Recommended', bk_h:'Local backup', bk_p:'No sign-in: copy and import by hand',
+  save_h:'Save & import', rec:'Recommended', bk_h:'Local backup', bk_p:'No sign-in: copy and import by hand',
   bk_copy:'Copy my progress', bk_import:'Import progress', bk_reset:'Start over', bk_text:'Progress data',
   bk_copied:'Copied. Paste it into a note or send it to yourself.', bk_manual:'Your browser blocked copying. Please copy the text in the box yourself.',
   bk_paste:'Paste the progress you copied into the box, then click “Import progress” again.', bk_imported:'Imported.', bk_bad:'That doesn’t look right. Paste the full copied text.',
@@ -410,6 +453,16 @@ en: {
   del_aria:x => 'Delete '+x, add_ph:'Course number or name', add_btn:'Add'
 },
 es: {
+  tr_h:'Importar desde el expediente', tr_p:'Reconoce tus cursos automáticamente, solo en tu navegador', tr_pdf:'Subir PDF', tr_paste:'Pegar texto', tr_text:'Texto del expediente',
+  tr_paste_hint:'Abre tu expediente no oficial, selecciona todo, copia, pégalo en el cuadro y vuelve a hacer clic en «Pegar texto».', tr_reading:'Leyendo el PDF…', tr_pdf_fail:'No se pudo leer este PDF. Abre el expediente, selecciona todo, copia y usa «Pegar texto».',
+  tr_none:'No se encontraron cursos. Asegúrate de que sea un expediente no oficial de Rutgers.', tr_title:'Vista previa de la importación', tr_sum:(n,a,b,c) => 'Se encontraron '+n+' cursos: '+a+' de tus requisitos, '+b+' otros créditos, '+c+' AP / transferencia.',
+  tr_bad:n => n+' línea(s) parecían cursos pero no se pudieron leer; no se importaron.', tr_th_term:'Semestre', tr_th_course:'Curso', tr_th_cr:'Créditos', tr_th_res:'Se importa como',
+  tr_r_done:'Cursado', tr_r_prog:'En curso', tr_r_plan:x => 'Planificado en '+x, tr_r_fail:g => 'No aprobado ('+g+'), se omite', tr_r_skip:g => g+', se omite', tr_r_nocr:'Cursado, sin créditos',
+  tr_where_cat:'Requisito', tr_where_calc:'Calculus', tr_where_custom:'Otros créditos',
+  tr_w_pass:x => x+': un Pass podría no cumplir la regla de C o más para cursos del core / major; consulta con un advisor.', tr_w_fail:x => x+': nota menor que C, no cuenta como cursado.',
+  tr_w_skip:x => x+': retirado o incompleto, no se importa.', tr_w_fm:x => x+': Financial Management por debajo de B impide seguir en el major de Finance o declarar la concentration de Finance / Real Estate.',
+  tr_major:x => 'Poner el major en '+x, tr_apply:'Importar', tr_cancel:'Cancelar', tr_done_msg:n => 'Se importaron '+n+' cursos. Completa el Rutgers Core tú mismo.',
+  tr_note:'No se guardan tu nombre, número de estudiante ni calificaciones. Tu progreso actual se conserva; los cursos del expediente se actualizan a su estado en el expediente.',
   ask_h:'Tus datos locales y tus datos en la nube son distintos. ¿Cuáles quieres conservar?', ask_cloud_t:'Datos en la nube', ask_local_t:'Datos locales',
   ask_sum:(m,d,w) => (m || 'Sin major')+' · '+d+' cursos cursados · actualizado '+w,
   ask_use_cloud:'Datos en la nube', ask_use_local:'Sobrescribir con datos locales', ask_cancel:'No vincular la nube por ahora',
@@ -423,7 +476,7 @@ es: {
   drv_h:'Sincronización en la nube', drv_p:'Se guarda en tu propio Google Drive, disponible en cualquier dispositivo',
  
  
-  save_h:'Guarda tu progreso', rec:'Recomendado', bk_h:'Copia local', bk_p:'Sin iniciar sesión: copia e importa a mano',
+  save_h:'Guardar e importar', rec:'Recomendado', bk_h:'Copia local', bk_p:'Sin iniciar sesión: copia e importa a mano',
   bk_copy:'Copiar mi progreso', bk_import:'Importar progreso', bk_reset:'Empezar de cero', bk_text:'Datos de progreso',
   bk_copied:'Copiado. Pégalo en una nota o envíatelo a ti mismo.', bk_manual:'Tu navegador bloqueó la copia. Copia tú mismo el texto del cuadro.',
   bk_paste:'Pega en el cuadro el progreso que copiaste y vuelve a hacer clic en «Importar progreso».', bk_imported:'Importado.', bk_bad:'El formato no es válido. Pega el texto copiado completo.',
@@ -1161,6 +1214,138 @@ function driveInit(){
   else driveUI('auth', 'd_expired');
 }
 
+/* ---------- transcript import (parsed in the browser; nothing is uploaded or stored except course status) ---------- */
+// Rutgers unofficial transcript lines look like:
+//   "Fall 2025 RUTGERS BUSINESS SCHOOL-…"                      -> term header
+//   "EXTERNAL EXAMINATIONS" / "CEEB ADVANCED PLACEMENT IN:"    -> AP / external credit block
+//   "MAJOR: SUPPLY CHAIN MANAGEMENT"
+//   "INTR SUPPLY CHAIN   33 799 301   02  3.0     B"           -> title, school dept course, [sup] sec, credits, [PR flag] grade
+//   "PRECALC PT 1 WKSHOP 01 640 011   01  2.0  E  A"           -> PR flag E = no degree credit
+const TR_CALC = ['01:640:135', '01:640:130', '01:640:151'];
+const TR_MAJOR = [[/SUPPLY CHAIN/i, 'scm'], [/BUSINESS ANALYTICS/i, 'bait'], [/ACCOUNTING/i, 'acct'], [/FINANCE/i, 'fin'], [/MARKETING/i, 'mkt'], [/LEADERSHIP|MANAGEMENT/i, 'lm']];
+const TR_PASS = {'A':1, 'B+':1, 'B':1, 'C+':1, 'C':1, 'PA':2, 'P':2, 'S':2};
+const TR_FAIL = {'D+':1, 'D':1, 'F':1, 'NC':1, 'U':1};
+function trTerm(season, year){
+  const s = season.toLowerCase(), y = +year;
+  // Spring Y = Y*2, Fall Y = Y*2+1; Summer counts with that Spring, Winter (January) with the Fall before it.
+  return s === 'fall' ? y*2+1 : s === 'winter' ? (y-1)*2+1 : y*2;
+}
+function parseTranscript(text){
+  const res = {rows: [], major: '', bad: 0};
+  let term = null;
+  for (const raw of String(text || '').split(/\r?\n/)){
+    const line = raw.replace(/\s+/g, ' ').trim(); if (!line) continue;
+    const tm = line.match(/^(Fall|Spring|Summer|Winter)\s+(\d{4})\b/i);
+    if (tm){ term = trTerm(tm[1], tm[2]); continue; }
+    if (/EXTERNAL EXAMINATIONS|ADVANCED PLACEMENT|TRANSFER CREDIT/i.test(line) && !/\b\d{2} \d{3} \d{3}\b/.test(line)){ term = 'ap'; continue; }
+    const mj = line.match(/^MAJOR:\s*(.+)$/i); if (mj){ res.major = mj[1].trim(); continue; }
+    const m = line.match(/^(.*?)\s*\b(\d{2}) (\d{3}) (\d{3})\b((?: [A-Z0-9]{1,3})*?) (\d{1,2}\.\d)((?: [A-Z]{1,3}\+?)*)$/);
+    if (!m){ if (/\b\d{2} \d{3} [0-9A-Z]{3}\b/.test(line) && !/^TITLE\b/.test(line)) res.bad++; continue; }
+    if (term == null){ res.bad++; continue; }
+    const tail = m[7].trim() ? m[7].trim().split(' ') : [];
+    let flag = '', grade = '';
+    if (tail.length >= 2){ flag = tail[0]; grade = tail[tail.length-1]; }
+    else if (tail.length === 1){ if (tail[0] === 'E' || tail[0] === 'P') flag = tail[0]; else grade = tail[0]; }
+    res.rows.push({title: m[1].trim(), code: m[2]+':'+m[3]+':'+m[4], cr: +m[6], flag, grade, term});
+  }
+  const mk = TR_MAJOR.find(x => x[0].test(res.major)); res.majorKey = mk ? mk[1] : '';
+  return res;
+}
+// Decide what each row means. Later rows for the same course (retakes) win.
+function planImport(parsed, cur){
+  cur = cur == null ? curTerm() : cur;
+  const last = new Map(); parsed.rows.forEach(r => last.set(r.code, r));
+  const changes = [], warns = [];
+  for (const r of last.values()){
+    let action;
+    if (r.term === 'ap') action = 'done';
+    else if (r.grade){
+      if (TR_PASS[r.grade]){ action = 'done'; if (TR_PASS[r.grade] === 2) warns.push({k:'tr_w_pass', row:r}); }
+      else if (TR_FAIL[r.grade]){ action = 'fail'; warns.push({k:'tr_w_fail', row:r}); }
+      else { action = 'skip'; warns.push({k:'tr_w_skip', row:r}); }
+    } else action = r.term > cur ? 'plan' : 'prog';
+    if (r.code === '33:390:300' && action === 'done' && !/^(A|B\+|B)$/.test(r.grade)) warns.push({k:'tr_w_fm', row:r});
+    const target = r.flag === 'E' ? 'custom' : TR_CALC.includes(r.code) ? 'calc' : CAT[r.code] && r.code !== 'ACCT-ELEC' ? 'cat' : 'custom';
+    changes.push({row: r, action, target, cr: r.flag === 'E' ? 0 : r.cr});
+  }
+  const ord = x => x === 'ap' ? -1 : x;
+  changes.sort((a, b) => (ord(a.row.term) - ord(b.row.term)) || a.row.code.localeCompare(b.row.code));
+  return {changes, warns, majorKey: parsed.majorKey, major: parsed.major, bad: parsed.bad};
+}
+const trTitle = s => String(s).toLowerCase().replace(/(^|[\s/&(-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
+// Merge into progress (never removes anything that is not on the transcript). Returns how many courses were written.
+function applyImport(plan, st, useMajor){
+  let n = 0;
+  for (const c of plan.changes){
+    if (c.action === 'fail' || c.action === 'skip') continue;
+    const term = c.row.term; n++;
+    if (c.target === 'custom'){
+      const name = c.row.code + ' ' + trTitle(c.row.title);
+      let x = st.custom.find(u => u.name.startsWith(c.row.code + ' '));
+      if (!x){ x = {id: 't' + Date.now().toString(36) + n, name, cr: c.cr, st: 0}; st.custom.push(x); }
+      x.name = name; x.cr = c.cr;
+      if (c.action === 'plan'){ if (!x.st){ x.term = term; delete x.took; } }
+      else { x.st = c.action === 'done' ? 2 : 1; x.took = term; delete x.term; }
+      continue;
+    }
+    const key = c.target === 'calc' ? 'CALC' : c.row.code;
+    if (c.target === 'calc') st.slots.CALC = Object.assign({}, st.slots.CALC, {label: c.row.code, name: trTitle(c.row.title), cr: c.row.cr});
+    if (c.action === 'plan'){ if (!(st.st[key] > 0)) st.plan[key] = term; }
+    else { st.st[key] = c.action === 'done' ? 2 : 1; st.took[key] = term; delete st.plan[key]; }
+  }
+  if (useMajor && plan.majorKey && !st.majors.includes(plan.majorKey) && st.majors.length < 3){
+    st.majors.push(plan.majorKey);
+    if (st.conc && concBlock(st.conc, st.majors)) st.conc = '';
+  }
+  return n;
+}
+// pdf.js text items -> lines. Rotated text (the "UNOFFICIAL COPY" watermark) is dropped; two-column pages are read left column first.
+function pdfTextFromPages(pages){
+  const out = [];
+  for (const pg of pages){
+    const items = pg.items.filter(i => i.str && i.str.trim() && Math.abs(i.transform[1]) < 0.01 && Math.abs(i.transform[2]) < 0.01);
+    const mid = pg.width / 2;
+    const right = items.filter(i => i.transform[4] >= mid);
+    const twoCol = right.some(i => /^\s*(TITLE\b|(Fall|Spring|Summer|Winter)\s+\d{4})/.test(i.str));
+    for (const col of twoCol ? [items.filter(i => i.transform[4] < mid), right] : [items]){
+      const lines = [];
+      for (const it of col){
+        const y = it.transform[5]; let L = lines.find(l => Math.abs(l.y - y) < 2.5);
+        if (!L){ L = {y, parts: []}; lines.push(L); } L.parts.push(it);
+      }
+      lines.sort((a, b) => b.y - a.y).forEach(L => out.push(L.parts.sort((a, b) => a.transform[4] - b.transform[4]).map(p => p.str).join(' ')));
+    }
+  }
+  return out.join('\n');
+}
+const PDFJS = {src: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', sri: 'sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e',
+  worker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js', p: null};
+function loadPdfJs(){
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return PDFJS.p = PDFJS.p || new Promise((ok, no) => {
+    const s = document.createElement('script');
+    s.src = PDFJS.src; s.integrity = PDFJS.sri; s.crossOrigin = 'anonymous';
+    s.onload = () => {
+      // A cross-origin worker URL cannot be used directly; a same-origin blob worker imports it.
+      const blob = new Blob(['importScripts(' + JSON.stringify(PDFJS.worker) + ');'], {type: 'text/javascript'});
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
+      ok(window.pdfjsLib);
+    };
+    s.onerror = () => { PDFJS.p = null; no(new Error('pdfjs')); };
+    document.head.appendChild(s);
+  });
+}
+async function pdfToText(file){
+  const lib = await loadPdfJs();
+  const pdf = await lib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++){
+    const page = await pdf.getPage(i), tc = await page.getTextContent();
+    pages.push({width: page.getViewport({scale: 1}).width, items: tc.items});
+  }
+  return pdfTextFromPages(pages);
+}
+
 /* ---------- rendering ---------- */
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const idOf = (a,b) => (a+'-'+b).replace(/[^A-Za-z0-9_-]/g,'-');
@@ -1410,7 +1595,7 @@ if (typeof document !== 'undefined'){
     setLang(e.target.value, true);
     applyStatic(); render();
     if (!document.getElementById('drv').hidden){ if (drive.askRender) drive.askRender(); else driveUI(drive.status); } else sync(syncKey);
-    document.getElementById('bk-msg').textContent = '';
+    document.getElementById('bk-msg').textContent = ''; document.getElementById('tr-msg').textContent = ''; if (window.__trRerender) window.__trRerender();
     const r = document.getElementById('bk-reset'); r.dataset.armed = ''; r.textContent = t('bk_reset');
   });
   const cached = cacheGet(); if (cached) state = normalize(cached);
@@ -1447,6 +1632,55 @@ if (typeof document !== 'undefined'){
     try { const s = normalize(JSON.parse(ta.value)); state = s; ta.hidden = true; ta.value = ''; commit(); msg.textContent = t('bk_imported'); }
     catch(e){ msg.textContent = t('bk_bad'); }
   });
+  // transcript import
+  const trMsg = k => { document.getElementById('tr-msg').textContent = k ? t(k) : ''; };
+  let trPlan = null;
+  const trShow = text => {
+    const parsed = parseTranscript(text);
+    if (!parsed.rows.length){ trMsg('tr_none'); return; }
+    trPlan = planImport(parsed, curTerm()); trMsg('');
+    trRender();
+  };
+  const trRender = () => {
+    const box = document.getElementById('tr-preview'); if (!trPlan) { box.hidden = true; return; }
+    const ch = trPlan.changes, n = ch.length;
+    const inReq = ch.filter(c => c.target !== 'custom' && c.action !== 'fail' && c.action !== 'skip').length;
+    const ap = ch.filter(c => c.row.term === 'ap').length;
+    const other = ch.filter(c => c.target === 'custom' && c.action !== 'fail' && c.action !== 'skip').length;
+    const res = c => c.action === 'plan' ? ['plan', t('tr_r_plan', termName(c.row.term))] : c.action === 'fail' ? ['fail', t('tr_r_fail', c.row.grade)] :
+      c.action === 'skip' ? ['skip', t('tr_r_skip', c.row.grade)] : c.target === 'custom' && c.cr === 0 ? ['nocr', t('tr_r_nocr')] : c.action === 'prog' ? ['prog', t('tr_r_prog')] : ['done', t('tr_r_done')];
+    const where = c => t('tr_where_' + c.target);
+    let h = '<h2>'+esc(t('tr_title'))+'</h2><p class="trsum">'+esc(t('tr_sum', n, inReq, other, ap))+(trPlan.bad ? ' '+esc(t('tr_bad', trPlan.bad)) : '')+'</p>';
+    if (trPlan.warns.length) h += '<ul class="notes">'+trPlan.warns.map(w => '<li>'+esc(t(w.k, w.row.code+' '+trTitle(w.row.title)))+'</li>').join('')+'</ul>';
+    h += '<div class="tw"><table class="trtab"><thead><tr><th>'+esc(t('tr_th_term'))+'</th><th>'+esc(t('tr_th_course'))+'</th><th class="n">'+esc(t('tr_th_cr'))+'</th><th>'+esc(t('tr_th_res'))+'</th></tr></thead><tbody>'+
+      ch.map(c => { const r = res(c); return '<tr><td>'+esc(c.row.term === 'ap' ? t('ts_ap') : termName(c.row.term))+'</td><td><span class="code">'+esc(c.row.code)+'</span> '+esc(CAT[c.row.code] ? CAT[c.row.code].t : trTitle(c.row.title))+'<small>'+esc(where(c))+'</small></td><td class="n">'+c.cr+'</td><td class="trres '+r[0]+'">'+esc(r[1])+'</td></tr>'; }).join('')+
+      '</tbody></table></div>';
+    if (trPlan.majorKey && !state.majors.includes(trPlan.majorKey) && state.majors.length < 3)
+      h += '<label class="trmaj"><input type="checkbox" id="tr-major" checked> '+esc(t('tr_major', MAJORS[trPlan.majorKey]))+'</label>';
+    h += '<p class="trsum">'+esc(t('tr_note'))+'</p><div class="optact"><button type="button" class="btn" id="tr-apply">'+esc(t('tr_apply'))+'</button><button type="button" class="btn2" id="tr-cancel">'+esc(t('tr_cancel'))+'</button></div>';
+    box.innerHTML = h; box.hidden = false; box.scrollIntoView({block: 'start', behavior: 'smooth'});
+  };
+  document.getElementById('tr-preview').addEventListener('click', e => {
+    if (e.target.id === 'tr-cancel'){ trPlan = null; trRender(); }
+    if (e.target.id === 'tr-apply' && trPlan){
+      const mj = document.getElementById('tr-major');
+      const n = applyImport(trPlan, state, !!(mj && mj.checked));
+      trPlan = null; trRender(); commit(); trMsg(''); document.getElementById('tr-msg').textContent = t('tr_done_msg', n);
+      document.getElementById('save-h').scrollIntoView({block: 'start', behavior: 'smooth'});
+    }
+  });
+  document.getElementById('tr-pdf').addEventListener('click', () => document.getElementById('tr-file').click());
+  document.getElementById('tr-file').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+    trMsg('tr_reading');
+    try { trShow(await pdfToText(f)); } catch(err){ trMsg('tr_pdf_fail'); }
+  });
+  document.getElementById('tr-paste').addEventListener('click', () => {
+    const ta = document.getElementById('tr-text');
+    if (ta.hidden || !ta.value.trim()){ ta.hidden = false; ta.focus(); trMsg('tr_paste_hint'); return; }
+    trShow(ta.value); ta.value = ''; ta.hidden = true;
+  });
+  window.__trRerender = () => { if (trPlan) trRender(); };
   document.getElementById('bk-reset').addEventListener('click', () => {
     const msg = document.getElementById('bk-msg'), btn = document.getElementById('bk-reset');
     if (btn.dataset.armed !== '1'){ btn.dataset.armed = '1'; btn.textContent = t('bk_confirm'); msg.textContent = t('bk_warn'); return; }
@@ -1454,6 +1688,7 @@ if (typeof document !== 'undefined'){
   });
 }
 if (typeof module !== 'undefined') module.exports = {render, setLang, t, I18N, evaluate, verdict, build, BLANK, normalize, CAT, autoPlan, termName,
+  parseTranscript, planImport, applyImport, pdfTextFromPages,
   _drive: {drive, hasContent, sameContent, driveMerge, driveRun, drivePushNow, driveQueue, driveConnect, driveDisconnect, getState: () => state, setState: s => { state = s; }}};
 </script>
 </body>
