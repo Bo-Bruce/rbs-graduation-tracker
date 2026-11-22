@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* apply saved day/night choice before first paint */try{var th=localStorage.getItem('rbs-nb-theme');if(th==='dark'||th==='light')document.documentElement.setAttribute('data-theme',th);}catch(e){}</script>
 <title>Privacy Policy – RBS–NB Graduation Tracker</title>
 <style>
 :root{--bg:#f3f4f6;--surface:#fff;--ink:#15171c;--muted:#5b616d;--line:#d9dce3;--accent:#c8102e}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#111317;--surface:#1a1d23;--ink:#eceef2;--muted:#9aa1ad;--line:#2d323b;--accent:#ff5f74}}
+:root[data-theme="light"]{color-scheme:light}
 :root[data-theme="dark"]{color-scheme:dark;--bg:#111317;--surface:#1a1d23;--ink:#eceef2;--muted:#9aa1ad;--line:#2d323b;--accent:#ff5f74}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}

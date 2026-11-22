@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* apply saved day/night choice before first paint */try{var th=localStorage.getItem('rbs-nb-theme');if(th==='dark'||th==='light')document.documentElement.setAttribute('data-theme',th);}catch(e){}</script>
 <title>RBS–NB 毕业进度</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,6 +36,7 @@
   --prog:#82b6f0; --prog-soft:#162638;
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-text-size-adjust:100%}
 main{max-width:920px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:14px}
@@ -50,6 +52,14 @@ button,input,select{font:inherit;color:inherit}
 #sync{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
 #sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good);flex:none}
 .topr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+:root[data-theme="light"]{color-scheme:light}
+.themesw{position:relative;flex:none;width:62px;height:30px;padding:0;border:1px solid var(--line);border-radius:999px;background:var(--bg);cursor:pointer;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.themesw .ts-knob{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.28)}
+.themesw[aria-checked="true"] .ts-knob{transform:translateX(32px)}
+.themesw .ts-ic{position:absolute;top:50%;width:24px;margin-top:-8px;text-align:center;font-size:14px;line-height:16px;opacity:.45;pointer-events:none}
+.themesw .sun{left:2px} .themesw .moon{right:2px}
+.themesw[aria-checked="false"] .sun,.themesw[aria-checked="true"] .moon{opacity:1}
+@media (prefers-reduced-motion:no-preference){.themesw .ts-knob{transition:transform .28s cubic-bezier(.3,.7,.3,1)} .themesw .ts-ic{transition:opacity .2s}}
 .langb{font-size:12.5px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);cursor:pointer}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.03)}
 .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
@@ -222,7 +232,7 @@ body.wait #app{opacity:.55;pointer-events:none}
       <h1 data-i18n="title">RBS–NB 毕业进度</h1>
       <p data-i18n="sub">Rutgers Business School–New Brunswick：比 Degree Navigator 更直观的选课与毕业规划</p>
     </div>
-    <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><select class="langb" id="lang-sel" aria-label="语言"><option value="zh" lang="zh-Hans">中文</option><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></div>
+    <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><button type="button" class="themesw" id="theme-sw" role="switch" aria-checked="false" aria-label="夜间模式" data-i18n-aria="theme_aria"><span class="ts-knob"></span><span class="ts-ic sun" aria-hidden="true">☀️</span><span class="ts-ic moon" aria-hidden="true">🌙</span></button><select class="langb" id="lang-sel" aria-label="语言"><option value="zh" lang="zh-Hans">中文</option><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></div>
   </div>
   <section class="card save" aria-labelledby="save-h">
     <h2 id="save-h" data-i18n="save_h">保存与导入</h2>
@@ -309,6 +319,7 @@ const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 // Course names stay in English in both languages.
 const I18N = {
 zh: {
+  theme_aria:'夜间模式', 
   rc_sugg:x => '可满足 '+x, rc_sugg_tag:'建议', rc_src:d => '建议来自 Rutgers 公开课程表（'+d+' 更新）。课的 core 认证可能随学期变化，以 Degree Navigator 为准。',
   tr_beta:'Beta', tr_beta_note:'自动识别目前是 Beta 版：会识别 RBS 必修课，并按 Rutgers 课程表提示可以归入哪些 SAS Core。提示的分类需要你在“其他学分”里确认后才会归入。',
   rc_btn:'归入 SAS Core', rc_h:x => '把「'+x+'」归入哪些 SAS Core（可多选）', rc_filled:x => '已填：'+x+'（会被替换）',
@@ -393,6 +404,7 @@ zh: {
   del_aria:x => '删除 '+x, add_ph:'课程号或名称', add_btn:'添加'
 },
 en: {
+  theme_aria:'Dark mode', 
   rc_sugg:x => 'May meet '+x, rc_sugg_tag:'Suggested', rc_src:d => 'Suggestions come from the public Rutgers Schedule of Classes (updated '+d+'). Core certification can change by term; Degree Navigator has the final word.',
   tr_beta:'Beta', tr_beta_note:'Auto-recognition is in beta: it recognizes RBS required courses and suggests SAS Core goals from the Rutgers Schedule of Classes. Suggested goals are only applied after you confirm them under “Other credits”.',
   rc_btn:'Move to SAS Core', rc_h:x => 'Which SAS Core goals does “'+x+'” meet? (choose any)', rc_filled:x => 'Filled: '+x+' (will be replaced)',
@@ -477,6 +489,7 @@ en: {
   del_aria:x => 'Delete '+x, add_ph:'Course number or name', add_btn:'Add'
 },
 es: {
+  theme_aria:'Modo oscuro', 
   rc_sugg:x => 'Puede cumplir '+x, rc_sugg_tag:'Sugerido', rc_src:d => 'Las sugerencias vienen del Schedule of Classes público de Rutgers (actualizado el '+d+'). La certificación del core puede cambiar según el semestre; Degree Navigator tiene la última palabra.',
   tr_beta:'Beta', tr_beta_note:'El reconocimiento automático está en beta: reconoce los cursos obligatorios de RBS y sugiere objetivos del SAS Core según el Schedule of Classes de Rutgers. Las sugerencias solo se aplican después de que las confirmes en «Otros créditos».',
   rc_btn:'Mover a SAS Core', rc_h:x => '¿Qué objetivos del SAS Core cumple «'+x+'»? (puedes elegir varios)', rc_filled:x => 'Ocupado: '+x+' (se reemplazará)',
@@ -1671,6 +1684,19 @@ if (typeof document !== 'undefined'){
     document.head.appendChild(cf);
   }
   applyStatic();
+  // day / night switch: click, or swipe right for night / left for day
+  const THEME_KEY = 'rbs-nb-theme', sw = document.getElementById('theme-sw');
+  const darkMQ = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
+  const effTheme = () => document.documentElement.getAttribute('data-theme') || (darkMQ && darkMQ.matches ? 'dark' : 'light');
+  const syncSw = () => sw.setAttribute('aria-checked', String(effTheme() === 'dark'));
+  const setTheme = th => { document.documentElement.setAttribute('data-theme', th); try { localStorage.setItem(THEME_KEY, th); } catch(e){} syncSw(); };
+  let swX = null, swMoved = false;
+  sw.addEventListener('pointerdown', e => { swX = e.clientX; swMoved = false; });
+  sw.addEventListener('pointermove', e => { if (swX == null) return; const dx = e.clientX - swX; if (Math.abs(dx) > 12){ swMoved = true; setTheme(dx > 0 ? 'dark' : 'light'); swX = null; } });
+  window.addEventListener('pointerup', () => { swX = null; });
+  sw.addEventListener('click', () => { if (swMoved){ swMoved = false; return; } setTheme(effTheme() === 'dark' ? 'light' : 'dark'); });
+  if (darkMQ && darkMQ.addEventListener) darkMQ.addEventListener('change', syncSw);
+  syncSw();
   document.getElementById('lang-sel').addEventListener('change', e => {
     setLang(e.target.value, true);
     applyStatic(); render();
