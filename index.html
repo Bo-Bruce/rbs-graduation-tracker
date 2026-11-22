@@ -37,20 +37,21 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-text-size-adjust:100%}
-main{max-width:880px;margin:0 auto;padding:24px 16px 64px;display:flex;flex-direction:column;gap:16px}
+main{max-width:920px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:14px}
 h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
-h1{font-size:26px;line-height:1.15}
+h1{font-size:30px;line-height:1.1;letter-spacing:-.01em}
 h2{font-size:17px}
 h3{font-size:14px}
 a{color:var(--accent)}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.top p{margin:4px 0 0;color:var(--muted);font-size:13px}
-#sync{font-size:12px;color:var(--muted)}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:4px 2px 6px}
+.top p{margin:6px 0 0;color:var(--muted);font-size:13px}
+#sync{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+#sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good);flex:none}
 .topr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .langb{font-size:12.5px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface);cursor:pointer}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.03)}
 .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:13.5px;line-height:1.3}
@@ -65,20 +66,19 @@ button,input,select{font:inherit;color:inherit}
 .verdict{border-left:6px solid var(--line)}
 .verdict.good{border-left-color:var(--good)} .verdict.tight{border-left-color:var(--warn)} .verdict.late{border-left-color:var(--bad)}
 .vhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.vhead strong{font:700 22px/1.2 var(--display)}
+.vhead strong{font:700 24px/1.2 var(--display)}
 .pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;white-space:nowrap}
 .pill.good{background:var(--good-soft);color:var(--good)} .pill.tight{background:var(--warn-soft);color:var(--warn)} .pill.late{background:var(--bad-soft);color:var(--bad)} .pill.na{background:var(--bg);color:var(--muted)}
 .vsub{margin:0;color:var(--muted)}
 .vsub b{color:var(--ink);font-variant-numeric:tabular-nums}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.tile{background:var(--bg);border-radius:8px;padding:8px 10px}
-.tile b{display:block;font:700 22px/1.2 var(--display);font-variant-numeric:tabular-nums}
+.tile{background:var(--bg);border-radius:10px;padding:10px 12px}
+.tile:nth-child(1) b{color:var(--good)} .tile:nth-child(2) b{color:var(--prog)}
+.tile b{display:block;font:700 26px/1.15 var(--display);font-variant-numeric:tabular-nums}
 .tile span{font-size:12px;color:var(--muted)}
 .bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--bg)}
 .bar i{display:block;height:100%}
 .bar .d{background:var(--good)} .bar .p{background:var(--prog)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
-.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
 .ctl{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;border-top:1px solid var(--line);padding-top:12px}
 .ctl select,.ctl input[type=number],.add input,.slot input{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 8px}
 .ctl input[type=number]{width:72px}
@@ -98,8 +98,16 @@ td small{color:var(--muted);display:block}
 .use:hover{border-color:var(--accent);color:var(--accent)}
 /* requirement ledgers */
 .sec{padding:0;gap:0;overflow:hidden}
-.sec>header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.sec>header h2{flex:1;min-width:160px}
+.sec>header,.sec>summary{display:flex;align-items:center;gap:10px;padding:14px 18px;flex-wrap:wrap}
+.sec>header,.sec[open]>summary{border-bottom:1px solid var(--line)}
+.sec>header h2,.sec>summary h2{flex:1;min-width:160px}
+details.card>summary{cursor:pointer;list-style:none}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 3px 2px;transition:transform .15s;flex:none}
+details.card[open]>summary::after{transform:rotate(-135deg);margin-bottom:-3px}
+.sec.full>summary h2::after{content:" ✓";color:var(--good)}
+.wi>summary{display:flex;align-items:center;gap:10px}
+.wi>summary h2{flex:1}
 .kind{font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
 .cnt{font:500 13px var(--mono);color:var(--muted)}
 .mini{width:90px;height:6px}
@@ -160,7 +168,7 @@ details.pick>summary h3{flex:1;min-width:140px}
 footer{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
 footer p{margin:0;max-width:70ch}
 .savegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
-.opt{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.opt{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .opt.cloud{border-color:var(--prog);background:var(--prog-soft)}
 .opt>p{margin:0;color:var(--muted);font-size:13px}
 .opth{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -169,9 +177,6 @@ footer p{margin:0;max-width:70ch}
 .optact{display:flex;gap:8px;flex-wrap:wrap}
 .optmsg{font-size:13px}
 .optmsg:empty{display:none}
-.cloudmore{font-size:12.5px;color:var(--muted)}
-.cloudmore summary{cursor:pointer;width:fit-content}
-.cloudmore p{margin:6px 0 0}
 #bk-text{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px;font:12px var(--mono);background:var(--surface);color:var(--ink)}
 body.wait #app{opacity:.55;pointer-events:none}
 @media (max-width:520px){
@@ -186,7 +191,7 @@ body.wait #app{opacity:.55;pointer-events:none}
   <div class="top">
     <div>
       <h1 data-i18n="title">RBS–NB 毕业进度</h1>
-      <p data-i18n="sub">Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。</p>
+      <p data-i18n="sub">非官方 · Rutgers Business School–New Brunswick 选课与毕业规划</p>
     </div>
     <div class="topr"><span id="sync" role="status" data-i18n="loading">正在读取已保存的进度…</span><select class="langb" id="lang-sel" aria-label="语言"><option value="zh" lang="zh-Hans">中文</option><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></div>
   </div>
@@ -199,23 +204,19 @@ body.wait #app{opacity:.55;pointer-events:none}
           <h3 id="drv-h" data-i18n="drv_h">云端同步</h3><span class="tag rec" data-i18n="rec">推荐</span>
           <span class="pill na" id="drv-st" data-i18n="d_off">未绑定</span>
         </div>
-        <p data-i18n="drv_p">绑定 Google 账号后，进度自动存到你自己的 Google Drive，换设备登录同一账号就能接着用。</p>
+        <p data-i18n="drv_p">存到你自己的 Google Drive，换设备也能接着用</p>
         <div class="optact">
           <button type="button" class="btn" id="drv-go" data-i18n="d_go">登录 Google，绑定云端</button>
           <button type="button" class="btn2" id="drv-off" hidden data-i18n="d_off_btn">断开</button>
         </div>
         <p id="drv-msg" class="optmsg" role="status"></p>
-        <details class="cloudmore"><summary data-i18n="drv_more">这是怎么存的？</summary>
-          <p data-i18n="drv_priv">进度存在你 Google Drive 里一个隐藏的应用文件夹。</p>
-          <p data-i18n="drv_note">建议用个人 Gmail。</p>
-        </details>
       </div>
       <div class="opt local">
         <div class="opth">
           <svg class="localic" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <h3 id="bk-h" data-i18n="bk_h">本地备份</h3>
         </div>
-        <p data-i18n="bk_p">不用登录：复制一段进度文本自己保存，换设备时粘贴导入。</p>
+        <p data-i18n="bk_p">不用登录，手动复制和导入</p>
         <div class="optact">
           <button type="button" class="btn2" id="bk-copy" data-i18n="bk_copy">复制我的进度</button>
           <button type="button" class="btn2" id="bk-import" data-i18n="bk_import">导入进度</button>
@@ -262,19 +263,19 @@ const CF_ANALYTICS_HOST = 'rbs-graduation-tracker.vercel.app';
 const I18N = {
 zh: {
   title:'RBS–NB 毕业进度',
-  sub:'Rutgers Business School–New Brunswick 学生用：选 major 和 concentration，勾掉修完的课，排未来学期，看能不能按时毕业。',
+  sub:'非官方 · Rutgers Business School–New Brunswick 选课与毕业规划',
   loading:'正在读取已保存的进度…', lang_aria:'语言',
-  drv_h:'云端同步', drv_p:'绑定 Google 账号后，进度自动存到你自己的 Google Drive，换设备登录同一账号就能接着用。', drv_more:'这是怎么存的？',
-  drv_priv:'进度存在你 Google Drive 里一个隐藏的应用文件夹。这个页面只能读写它自己建的那一个文件，看不到你 Drive 里的其他内容；开发者也看不到任何人的进度。点“断开”会撤销授权，本地进度和 Drive 上的文件都保留。',
-  drv_note:'建议用个人 Gmail。Rutgers 的 ScarletMail 账号可能被学校拦截第三方应用，连不上时换个人账号试试。',
-  save_h:'保存进度', rec:'推荐', bk_h:'本地备份', bk_p:'不用登录：复制一段进度文本自己保存，换设备时粘贴导入。',
+  drv_h:'云端同步', drv_p:'存到你自己的 Google Drive，换设备也能接着用',
+ 
+ 
+  save_h:'保存进度', rec:'推荐', bk_h:'本地备份', bk_p:'不用登录，手动复制和导入',
   bk_copy:'复制我的进度', bk_import:'导入进度', bk_reset:'清空重来', bk_text:'进度数据',
   bk_copied:'已复制。粘贴到备忘录或发给自己保存。', bk_manual:'浏览器不让自动复制，请手动复制框里的内容。',
   bk_paste:'把之前复制的进度粘贴到框里，再点一次“导入进度”。', bk_imported:'已导入。', bk_bad:'内容格式不对，请粘贴完整的复制内容。',
   bk_confirm:'再点一次确认清空', bk_warn:'会清空你所有勾选和规划，不能恢复。', bk_cleared:'已清空。',
   ft1:'课程要求以 FA26 advising 课件和 myRBS 官网（2026-11 查询）为准。最终以 Degree Navigator 和 advisor 为准。',
   ft2:'所有 core 和 major 课程需要 C 或以上；至少 45 个 business 学分在 RBS–NB 修；毕业至少 120 学分。', ft_src:'来源：', privacy:'隐私政策',
-  local_msg:'进度保存在这个浏览器里，只有你看得到。换设备前绑定云端，或用“复制我的进度”备份',
+  local_msg:'已保存在此浏览器',
   saving:'保存中…', saved_acct:'已保存到你的账户，换设备也能看到', save_fail:'没能保存到云端，改动暂存在这个浏览器', synced_acct:'已同步你的账户',
   d_off:'未绑定', d_connecting:'连接中…', d_pending:'同步中…', d_syncing:'同步中…', d_ok:'已同步', d_auth:'需要重新登录', d_err:'同步出错',
   d_go:'登录 Google，绑定云端', d_reconnect:'重新登录', d_retry:'重试', d_off_btn:'断开',
@@ -282,26 +283,26 @@ zh: {
   d_err_msg:'网络或 Drive 出错，下次改动时会再试。', d_connect_fail:'没能连接，点“重新登录”再试。',
   d_gis_fail:'加载 Google 登录失败，检查网络后再试。', d_not_connected:'没有连接。如果用的是 ScarletMail，换个人 Gmail 试试。',
   d_disconnected:'已断开。进度还在这个浏览器里，Drive 上的文件没有删除。', d_expired:'上次登录已过期，点“重新登录”恢复同步。',
-  sync_ok:'已同步到你的 Google Drive', sync_busy:'正在同步到 Google Drive…', sync_auth:'云端同步需要重新登录，改动先存在这个浏览器',
-  sync_err:'没能同步到 Google Drive，改动先存在这个浏览器', sync_connecting:'正在连接 Google Drive…',
+  sync_ok:'已同步到 Google Drive', sync_busy:'正在同步到 Google Drive…', sync_auth:'需要重新登录，改动暂存在此浏览器',
+  sync_err:'同步失败，改动暂存在此浏览器', sync_connecting:'正在连接 Google Drive…',
   h_nb:'必须在 Rutgers–NB 修', h_ah2:'和第 1 门要满足不同的 goal', h_wcd:'不能和 WCr 用同一门课',
   cb_bait:'BAIT major 不能申报', cb_fin:'Finance major 不能申报', cb_fi:'仅限 Finance major', cb_lm:'L&M major 不能申报',
   p_mis:'MIS 或 AIS', p_ops:'Business Operations Analytics 或 Managerial Accounting', p_law:'Business Ethics 或 Business Law',
-  core_new:'Fall 2026 版（36 学分）', core_old:'Fall 2025 及以前版（39 学分）',
+ 
   n_acct:'没有 elective。AIS、Business Law I、Managerial Accounting 已算在 Business Core 里。',
   n_bait:'Group 1（33:136 课）至少 1 门；Group 2 最多 2 门。', n_fin:'Financial Management 需要 B 或以上才能留在 Finance major。',
   n_lm:'Set One 至少 2 门；Set Two 最多 2 门。', n_scm:'至少 2 门来自 33:799；其他系最多 1 门。', sub_other:'其他系',
-  n_conc:'Concentration 的课不能和 major 的课 double count。', n_ba:' 先修 Business Operations Analytics。', n_needB:' 申报需要 Financial Management ≥ B。',
+  n_ba:' 先修 Business Operations Analytics。', n_needB:' 申报需要 Financial Management ≥ B。',
   n_fi:'Finance major 内的 track：这 3 门同时算作 Finance electives，另外再选 1 门 Finance elective。',
   n_gb_lm:' 官网不推荐 L&M major 选这个（重叠多）。', n_ls:'Effective Leadership Communications 和 Negotiations 至少选 1 门。',
   n_ps:'Marketing major 内的 track：这些课同时算作 Marketing electives（Negotiations 除外）。', n_re435:' 33:390:435 可同时算 Finance elective。',
-  n_rc:'一门课如果同时满足两个 goal，第二格的学分填 0。',
+ 
   sk_extra:'超出所需门数，算 free elective', sk_cap:x => x+' 已到上限', sk_used:x => '已用于 '+x,
   ts_took:'修于…', ts_ap:'AP / 转学分', ts_took_aria:'哪个学期修的', ts_plan:'排到…', ts_plan_aria:'排到哪个学期',
   w_pre:'先修课没排在这学期之前', w_senior:'Seniors only，要排到最后一年', plan_h:'学期规划', credits:n => n+' 学分',
   st_done:'已修', st_now:'本学期', over19:'超过 19', over:n => '超过 '+n, late_goal:'晚于目标', room:n => '还可排 '+n,
   unplan_aria:x => '取消安排 '+x, no_rec:'没有记录', no_plan:'还没排课',
-  plan_left:n => '还有 <b>'+n+'</b> 学分没排进学期。在下面每门课右边的“排到…”里选学期，或者点自动排课。', plan_all:'全部学分都排进学期了。',
+  plan_left:n => '还有 <b>'+n+'</b> 学分没排进学期', plan_all:'全部学分都已排进学期',
   auto:'自动排课', clearplan:'清空规划',
   dn_title:'只在 Degree Navigator 里出现，官网没列', blocked:x => '已算入 '+x+'，需另选一门替代', pre:x => '先修 '+x, or:' 或 ', sep:'，',
   ph_code:'课程号', ph_name:'课程名称', aria_cr:'学分', done_aria:x => '已修完 '+x, inprog:'在修',
@@ -314,30 +315,30 @@ zh: {
   h_good:'能按时毕业', h_tight:'能毕业，但课表偏紧', h_late:'按这个节奏会延毕', target:x => '目标 '+x,
   vsub:(n,s,a) => '还需 <b>'+n+'</b> 学分 ÷ <b>'+s+'</b> 个学期 = 每学期 <b>'+a+'</b> 学分。',
   late_proj:(l,x) => '按每学期 '+l+' 学分，预计 <b>'+x+'</b> 毕业。', tight_more:l => '比你设的 '+l+' 学分多。',
-  t_need:'还需', t_total:'毕业时合计（最低 120）', bar_aria:(a,b,c) => '已修 '+a+'，在修 '+b+'，还需 '+c, lg_prog:'在修（按本学期修完算）',
+  t_need:'还需', t_total:'毕业时合计（最低 120）', bar_aria:(a,b,c) => '已修 '+a+'，在修 '+b+'，还需 '+c,
   note_over:n => '这个组合的必修合计比 120 多 '+n+' 学分。', note_free:n => '必修之外还要 '+n+' 学分 free elective 才满 120。',
   note_chain:(p,n,s) => '先修链太长：'+p+' 需要 '+n+' 个学期，只剩 '+s+' 个。', note_chain_tight:p => '先修链刚好卡满：'+p+'，每学期都不能断。',
   note_19:'每学期超过 19 学分。旧版 catalog 写的注册上限是 19，选课前和 advisor 确认。',
   note_dbl:x => '已用掉唯一一次 major 之间的 double count：'+x+'。',
   ctl_grad:'目标毕业学期', ctl_load:'每学期打算修（学分）', ctl_extra:'Summer / Winter 打算修（学分）',
-  other_h:'其他学分', other_kind:'自己加', other_note:'不属于上面任何要求的课：general elective、minor、转学分、AP。没打勾的会算进还需学分。',
+  other_h:'其他学分', other_kind:'自己加', other_note:'general elective、minor、转学分、AP',
   del_aria:x => '删除 '+x, add_ph:'课程号或名称', add_btn:'添加'
 },
 en: {
   title:'RBS–NB Graduation Tracker',
-  sub:'For Rutgers Business School–New Brunswick students: pick your majors and concentration, check off finished courses, plan future terms, and see whether you can graduate on time.',
+  sub:'Unofficial · course & graduation planner for Rutgers Business School–New Brunswick',
   loading:'Loading saved progress…', lang_aria:'Language',
-  drv_h:'Cloud sync', drv_p:'Sign in with Google and your progress is saved to your own Google Drive automatically, so you can pick up on any device with the same account.', drv_more:'How is it stored?',
-  drv_priv:'Your progress is kept in a hidden app folder in your Google Drive. This page can only read and write the one file it creates and cannot see anything else in your Drive; the developer cannot see anyone’s progress either. “Disconnect” revokes access and keeps both your local progress and the Drive file.',
-  drv_note:'A personal Gmail account works best. Rutgers ScarletMail accounts may block third-party apps; if connecting fails, try a personal account.',
-  save_h:'Save your progress', rec:'Recommended', bk_h:'Local backup', bk_p:'No sign-in needed: copy your progress as text, keep it somewhere safe, and paste it to import on another device.',
+  drv_h:'Cloud sync', drv_p:'Saved to your own Google Drive, available on any device',
+ 
+ 
+  save_h:'Save your progress', rec:'Recommended', bk_h:'Local backup', bk_p:'No sign-in: copy and import by hand',
   bk_copy:'Copy my progress', bk_import:'Import progress', bk_reset:'Start over', bk_text:'Progress data',
   bk_copied:'Copied. Paste it into a note or send it to yourself.', bk_manual:'Your browser blocked copying. Please copy the text in the box yourself.',
   bk_paste:'Paste the progress you copied into the box, then click “Import progress” again.', bk_imported:'Imported.', bk_bad:'That doesn’t look right. Paste the full copied text.',
   bk_confirm:'Click again to confirm', bk_warn:'This clears all your check marks and plans and cannot be undone.', bk_cleared:'Cleared.',
   ft1:'Requirements follow the FA26 advising slides and the myRBS site (checked 2026-11). Degree Navigator and your advisor have the final word.',
   ft2:'All core and major courses need a C or better; at least 45 business credits must be taken at RBS–NB; graduation requires at least 120 credits.', ft_src:'Sources:', privacy:'Privacy Policy',
-  local_msg:'Progress is saved in this browser, and only you can see it. Before switching devices, turn on cloud sync or back it up with “Copy my progress”.',
+  local_msg:'Saved in this browser',
   saving:'Saving…', saved_acct:'Saved to your account; available on your other devices too', save_fail:'Couldn’t save to the cloud; changes are kept in this browser for now', synced_acct:'Synced with your account',
   d_off:'Not linked', d_connecting:'Connecting…', d_pending:'Syncing…', d_syncing:'Syncing…', d_ok:'Synced', d_auth:'Sign-in needed', d_err:'Sync error',
   d_go:'Sign in with Google to sync', d_reconnect:'Sign in again', d_retry:'Retry', d_off_btn:'Disconnect',
@@ -345,26 +346,26 @@ en: {
   d_err_msg:'Network or Drive error. It will retry on your next change.', d_connect_fail:'Couldn’t connect. Click “Sign in again” to try again.',
   d_gis_fail:'Couldn’t load Google sign-in. Check your connection and try again.', d_not_connected:'Not connected. If you used ScarletMail, try a personal Gmail account.',
   d_disconnected:'Disconnected. Your progress is still in this browser, and the file on Drive was not deleted.', d_expired:'Your last session expired. Click “Sign in again” to resume syncing.',
-  sync_ok:'Synced to your Google Drive', sync_busy:'Syncing to Google Drive…', sync_auth:'Cloud sync needs you to sign in again; changes are kept in this browser for now',
-  sync_err:'Couldn’t sync to Google Drive; changes are kept in this browser for now', sync_connecting:'Connecting to Google Drive…',
+  sync_ok:'Synced to your Google Drive', sync_busy:'Syncing to Google Drive…', sync_auth:'Sign in again; changes kept in this browser',
+  sync_err:'Sync failed; changes kept in this browser', sync_connecting:'Connecting to Google Drive…',
   h_nb:'Must be taken at Rutgers–NB', h_ah2:'Must meet a different goal than #1', h_wcd:'Cannot be the same course as WCr',
   cb_bait:'Not available to BAIT majors', cb_fin:'Not available to Finance majors', cb_fi:'Finance majors only', cb_lm:'Not available to L&M majors',
   p_mis:'MIS or AIS', p_ops:'Business Operations Analytics or Managerial Accounting', p_law:'Business Ethics or Business Law',
-  core_new:'Fall 2026 version (36 credits)', core_old:'Fall 2025-and-earlier version (39 credits)',
+ 
   n_acct:'No electives. AIS, Business Law I and Managerial Accounting are already counted in the Business Core.',
   n_bait:'At least 1 from Group 1 (33:136 courses); at most 2 from Group 2.', n_fin:'You need a B or better in Financial Management to stay in the Finance major.',
   n_lm:'At least 2 from Set One; at most 2 from Set Two.', n_scm:'At least 2 from 33:799; at most 1 from other departments.', sub_other:'Other departments',
-  n_conc:'Concentration courses cannot double count with major courses.', n_ba:' Prerequisite: Business Operations Analytics.', n_needB:' Declaring requires Financial Management ≥ B.',
+  n_ba:' Prerequisite: Business Operations Analytics.', n_needB:' Declaring requires Financial Management ≥ B.',
   n_fi:'A track inside the Finance major: these 3 courses also count as Finance electives; take 1 more Finance elective.',
   n_gb_lm:' The RBS site advises L&M majors against this one (heavy overlap).', n_ls:'Take at least 1 of Effective Leadership Communications and Negotiations.',
   n_ps:'A track inside the Marketing major: these courses also count as Marketing electives (except Negotiations).', n_re435:' 33:390:435 can also count as a Finance elective.',
-  n_rc:'If one course meets two goals, enter 0 credits in the second slot.',
+ 
   sk_extra:'More than needed; counts as a free elective', sk_cap:x => x+' limit reached', sk_used:x => 'Already used for '+x,
   ts_took:'Taken in…', ts_ap:'AP / transfer', ts_took_aria:'Term taken', ts_plan:'Plan for…', ts_plan_aria:'Term to plan it in',
   w_pre:'Prerequisite isn’t planned before this term', w_senior:'Seniors only; plan it in your final year', plan_h:'Term plan', credits:n => n+' cr',
   st_done:'Done', st_now:'This term', over19:'Over 19', over:n => 'Over '+n, late_goal:'After target', room:n => n+' cr left',
   unplan_aria:x => 'Remove '+x+' from plan', no_rec:'No records', no_plan:'Nothing planned yet',
-  plan_left:n => '<b>'+n+'</b> credits aren’t in any term yet. Pick a term in “Plan for…” next to each course below, or click Auto-plan.', plan_all:'Every credit is planned into a term.',
+  plan_left:n => '<b>'+n+'</b> credits not planned yet', plan_all:'Every credit is planned',
   auto:'Auto-plan', clearplan:'Clear plan',
   dn_title:'Only listed in Degree Navigator, not on the RBS site', blocked:x => 'Already counted in '+x+'; pick another course instead', pre:x => 'Needs '+x, or:' or ', sep:'; ',
   ph_code:'Course #', ph_name:'Course title', aria_cr:'Credits', done_aria:x => 'Completed '+x, inprog:'In progress',
@@ -377,30 +378,30 @@ en: {
   h_good:'On track to graduate on time', h_tight:'You can graduate, but the schedule is tight', h_late:'At this pace you will graduate late', target:x => 'Target '+x,
   vsub:(n,s,a) => '<b>'+n+'</b> credits still needed ÷ <b>'+s+'</b> terms = <b>'+a+'</b> credits per term. ',
   late_proj:(l,x) => 'At '+l+' credits per term, expected graduation is <b>'+x+'</b>.', tight_more:l => 'That’s more than the '+l+' credits you set.',
-  t_need:'Still needed', t_total:'Total at graduation (min 120)', bar_aria:(a,b,c) => 'Done '+a+', in progress '+b+', still needed '+c, lg_prog:'In progress (counted as finished this term)',
+  t_need:'Still needed', t_total:'Total at graduation (min 120)', bar_aria:(a,b,c) => 'Done '+a+', in progress '+b+', still needed '+c,
   note_over:n => 'Required courses for this combination add up to '+n+' credits more than 120.', note_free:n => 'You need '+n+' free-elective credits beyond the requirements to reach 120.',
   note_chain:(p,n,s) => 'Prerequisite chain is too long: '+p+' needs '+n+' terms, and only '+s+' are left.', note_chain_tight:p => 'Prerequisite chain fills every remaining term: '+p+'. You can’t skip a term.',
   note_19:'More than 19 credits per term. The older catalog lists 19 as the registration cap; check with an advisor before registering.',
   note_dbl:x => 'Your one allowed double count between majors is used: '+x+'.',
   ctl_grad:'Target graduation term', ctl_load:'Planned credits per term', ctl_extra:'Summer / Winter credits planned',
-  other_h:'Other credits', other_kind:'Added by you', other_note:'Courses outside the requirements above: general electives, minors, transfer credit, AP. Unchecked ones count toward credits still needed.',
+  other_h:'Other credits', other_kind:'Added by you', other_note:'General electives, minors, transfer credit, AP',
   del_aria:x => 'Delete '+x, add_ph:'Course number or name', add_btn:'Add'
 },
 es: {
   title:'RBS–NB: seguimiento de graduación',
-  sub:'Para estudiantes de Rutgers Business School–New Brunswick: elige tus majors y tu concentration, marca los cursos terminados, planifica los próximos semestres y comprueba si puedes graduarte a tiempo.',
+  sub:'No oficial · planificador de cursos y graduación para Rutgers Business School–New Brunswick',
   loading:'Cargando el progreso guardado…', lang_aria:'Idioma',
-  drv_h:'Sincronización en la nube', drv_p:'Inicia sesión con Google y tu progreso se guardará automáticamente en tu propio Google Drive, para que puedas seguir desde cualquier dispositivo con la misma cuenta.', drv_more:'¿Cómo se guarda?',
-  drv_priv:'Tu progreso se guarda en una carpeta oculta de la app dentro de tu Google Drive. Esta página solo puede leer y escribir el único archivo que crea y no ve nada más de tu Drive; el desarrollador tampoco puede ver el progreso de nadie. «Desconectar» revoca el acceso y conserva tanto tu progreso local como el archivo en Drive.',
-  drv_note:'Funciona mejor con una cuenta personal de Gmail. Las cuentas ScarletMail de Rutgers pueden bloquear apps de terceros; si no logras conectar, prueba con una cuenta personal.',
-  save_h:'Guarda tu progreso', rec:'Recomendado', bk_h:'Copia local', bk_p:'Sin iniciar sesión: copia tu progreso como texto, guárdalo en un lugar seguro y pégalo para importarlo en otro dispositivo.',
+  drv_h:'Sincronización en la nube', drv_p:'Se guarda en tu propio Google Drive, disponible en cualquier dispositivo',
+ 
+ 
+  save_h:'Guarda tu progreso', rec:'Recomendado', bk_h:'Copia local', bk_p:'Sin iniciar sesión: copia e importa a mano',
   bk_copy:'Copiar mi progreso', bk_import:'Importar progreso', bk_reset:'Empezar de cero', bk_text:'Datos de progreso',
   bk_copied:'Copiado. Pégalo en una nota o envíatelo a ti mismo.', bk_manual:'Tu navegador bloqueó la copia. Copia tú mismo el texto del cuadro.',
   bk_paste:'Pega en el cuadro el progreso que copiaste y vuelve a hacer clic en «Importar progreso».', bk_imported:'Importado.', bk_bad:'El formato no es válido. Pega el texto copiado completo.',
   bk_confirm:'Haz clic otra vez para confirmar', bk_warn:'Esto borra todas tus marcas y planes, y no se puede deshacer.', bk_cleared:'Borrado.',
   ft1:'Los requisitos siguen las diapositivas de asesoría FA26 y el sitio myRBS (consultados en 2026-11). Degree Navigator y tu advisor tienen la última palabra.',
   ft2:'Todos los cursos del core y del major requieren C o más; al menos 45 créditos de business deben cursarse en RBS–NB; para graduarte necesitas al menos 120 créditos.', ft_src:'Fuentes:', privacy:'Política de privacidad',
-  local_msg:'El progreso se guarda en este navegador y solo tú puedes verlo. Antes de cambiar de dispositivo, activa la sincronización en la nube o haz una copia con «Copiar mi progreso».',
+  local_msg:'Guardado en este navegador',
   saving:'Guardando…', saved_acct:'Guardado en tu cuenta; también disponible en tus otros dispositivos', save_fail:'No se pudo guardar en la nube; por ahora los cambios quedan en este navegador', synced_acct:'Sincronizado con tu cuenta',
   d_off:'Sin vincular', d_connecting:'Conectando…', d_pending:'Sincronizando…', d_syncing:'Sincronizando…', d_ok:'Sincronizado', d_auth:'Inicia sesión de nuevo', d_err:'Error de sincronización',
   d_go:'Iniciar sesión con Google', d_reconnect:'Volver a iniciar sesión', d_retry:'Reintentar', d_off_btn:'Desconectar',
@@ -408,26 +409,26 @@ es: {
   d_err_msg:'Error de red o de Drive. Se volverá a intentar con tu próximo cambio.', d_connect_fail:'No se pudo conectar. Haz clic en «Volver a iniciar sesión» para intentarlo de nuevo.',
   d_gis_fail:'No se pudo cargar el inicio de sesión de Google. Revisa tu conexión e inténtalo de nuevo.', d_not_connected:'No conectado. Si usaste ScarletMail, prueba con una cuenta personal de Gmail.',
   d_disconnected:'Desconectado. Tu progreso sigue en este navegador y el archivo en Drive no se borró.', d_expired:'Tu última sesión expiró. Haz clic en «Volver a iniciar sesión» para reanudar la sincronización.',
-  sync_ok:'Sincronizado con tu Google Drive', sync_busy:'Sincronizando con Google Drive…', sync_auth:'La sincronización necesita que vuelvas a iniciar sesión; por ahora los cambios quedan en este navegador',
-  sync_err:'No se pudo sincronizar con Google Drive; por ahora los cambios quedan en este navegador', sync_connecting:'Conectando con Google Drive…',
+  sync_ok:'Sincronizado con tu Google Drive', sync_busy:'Sincronizando con Google Drive…', sync_auth:'Vuelve a iniciar sesión; cambios guardados en este navegador',
+  sync_err:'Error al sincronizar; cambios guardados en este navegador', sync_connecting:'Conectando con Google Drive…',
   h_nb:'Debe cursarse en Rutgers–NB', h_ah2:'Debe cumplir un goal distinto al n.º 1', h_wcd:'No puede ser el mismo curso que WCr',
   cb_bait:'No disponible para majors de BAIT', cb_fin:'No disponible para majors de Finance', cb_fi:'Solo para majors de Finance', cb_lm:'No disponible para majors de L&M',
   p_mis:'MIS o AIS', p_ops:'Business Operations Analytics o Managerial Accounting', p_law:'Business Ethics o Business Law',
-  core_new:'Versión Fall 2026 (36 créditos)', core_old:'Versión Fall 2025 y anteriores (39 créditos)',
+ 
   n_acct:'Sin electives. AIS, Business Law I y Managerial Accounting ya cuentan en el Business Core.',
   n_bait:'Al menos 1 del Group 1 (cursos 33:136); como máximo 2 del Group 2.', n_fin:'Necesitas B o más en Financial Management para seguir en el major de Finance.',
   n_lm:'Al menos 2 del Set One; como máximo 2 del Set Two.', n_scm:'Al menos 2 de 33:799; como máximo 1 de otros departamentos.', sub_other:'Otros departamentos',
-  n_conc:'Los cursos de la concentration no pueden hacer double count con los del major.', n_ba:' Prerrequisito: Business Operations Analytics.', n_needB:' Para declararla se requiere Financial Management ≥ B.',
+  n_ba:' Prerrequisito: Business Operations Analytics.', n_needB:' Para declararla se requiere Financial Management ≥ B.',
   n_fi:'Un track dentro del major de Finance: estos 3 cursos también cuentan como Finance electives; toma 1 Finance elective más.',
   n_gb_lm:' El sitio de RBS no la recomienda para majors de L&M (mucha superposición).', n_ls:'Toma al menos 1 entre Effective Leadership Communications y Negotiations.',
   n_ps:'Un track dentro del major de Marketing: estos cursos también cuentan como Marketing electives (excepto Negotiations).', n_re435:' 33:390:435 también puede contar como Finance elective.',
-  n_rc:'Si un curso cumple dos goals, pon 0 créditos en la segunda casilla.',
+ 
   sk_extra:'Más de lo necesario; cuenta como free elective', sk_cap:x => x+': límite alcanzado', sk_used:x => 'Ya usado en '+x,
   ts_took:'Cursado en…', ts_ap:'AP / transferencia', ts_took_aria:'Semestre en que lo cursaste', ts_plan:'Planificar en…', ts_plan_aria:'Semestre en que lo planificas',
   w_pre:'El prerrequisito no está planificado antes de este semestre', w_senior:'Solo seniors; planifícalo en tu último año', plan_h:'Plan de semestres', credits:n => n+' cr',
   st_done:'Cursado', st_now:'Este semestre', over19:'Más de 19', over:n => 'Más de '+n, late_goal:'Después de la meta', room:n => 'Quedan '+n+' cr',
   unplan_aria:x => 'Quitar '+x+' del plan', no_rec:'Sin registros', no_plan:'Nada planificado aún',
-  plan_left:n => '<b>'+n+'</b> créditos aún no están en ningún semestre. Elige un semestre en «Planificar en…» junto a cada curso, o haz clic en «Planificar automáticamente».', plan_all:'Todos los créditos están planificados en algún semestre.',
+  plan_left:n => '<b>'+n+'</b> créditos sin planificar', plan_all:'Todos los créditos están planificados',
   auto:'Planificar automáticamente', clearplan:'Borrar plan',
   dn_title:'Solo aparece en Degree Navigator, no en el sitio de RBS', blocked:x => 'Ya cuenta en '+x+'; elige otro curso en su lugar', pre:x => 'Requiere '+x, or:' o ', sep:'; ',
   ph_code:'N.º de curso', ph_name:'Nombre del curso', aria_cr:'Créditos', done_aria:x => 'Completado: '+x, inprog:'En curso',
@@ -440,13 +441,13 @@ es: {
   h_good:'Vas a graduarte a tiempo', h_tight:'Puedes graduarte, pero el horario es ajustado', h_late:'A este ritmo te graduarás con retraso', target:x => 'Meta: '+x,
   vsub:(n,s,a) => 'Faltan <b>'+n+'</b> créditos ÷ <b>'+s+'</b> semestres = <b>'+a+'</b> créditos por semestre. ',
   late_proj:(l,x) => 'Con '+l+' créditos por semestre, la graduación prevista es en <b>'+x+'</b>.', tight_more:l => 'Es más que los '+l+' créditos que fijaste.',
-  t_need:'Faltan', t_total:'Total al graduarte (mín. 120)', bar_aria:(a,b,c) => 'Cursados '+a+', en curso '+b+', faltan '+c, lg_prog:'En curso (cuenta como terminado este semestre)',
+  t_need:'Faltan', t_total:'Total al graduarte (mín. 120)', bar_aria:(a,b,c) => 'Cursados '+a+', en curso '+b+', faltan '+c,
   note_over:n => 'Los cursos obligatorios de esta combinación suman '+n+' créditos más que 120.', note_free:n => 'Necesitas '+n+' créditos de free elective además de los requisitos para llegar a 120.',
   note_chain:(p,n,s) => 'La cadena de prerrequisitos es demasiado larga: '+p+' necesita '+n+' semestres y solo quedan '+s+'.', note_chain_tight:p => 'La cadena de prerrequisitos ocupa todos los semestres restantes: '+p+'. No puedes saltarte ninguno.',
   note_19:'Más de 19 créditos por semestre. El catálogo anterior fija 19 como límite de inscripción; consulta con un advisor antes de inscribirte.',
   note_dbl:x => 'Ya usaste el único double count permitido entre majors: '+x+'.',
   ctl_grad:'Semestre meta de graduación', ctl_load:'Créditos planeados por semestre', ctl_extra:'Créditos planeados en Summer / Winter',
-  other_h:'Otros créditos', other_kind:'Agregados por ti', other_note:'Cursos fuera de los requisitos anteriores: general electives, minors, créditos de transferencia, AP. Los que no estén marcados cuentan en los créditos que faltan.',
+  other_h:'Otros créditos', other_kind:'Agregados por ti', other_note:'General electives, minors, créditos de transferencia, AP',
   del_aria:x => 'Eliminar '+x, add_ph:'Número o nombre del curso', add_btn:'Agregar'
 }};
 const LANG_KEY = 'rbs-nb-lang';
@@ -691,7 +692,7 @@ function build(cfg){
     if (!acct && !need386) core.push(p('core-ops', t('p_ops'), 1, ['33:136:386','33:010:275']));
   }
   core.push(acct ? c('33:140:320') : p('core-law', t('p_law'), 1, ['33:522:334','33:140:320']));
-  out.push({id:'core', kind:'core', title:'Business Core', note: nw ? t('core_new') : t('core_old'), items:core});
+  out.push({id:'core', kind:'core', title:'Business Core', items:core});
 
   for (const m of cfg.majors){
     const sec = {id:'m-'+m, kind:'major', title:MAJORS[m]+' major', items:[]};
@@ -729,7 +730,7 @@ function build(cfg){
 
   const k = cfg.conc;
   if (k && CONCS[k]){
-    const sec = {id:'k-'+k, kind:'conc', title:CONCS[k]+' concentration', items:[], share:()=>false, note:t('n_conc')};
+    const sec = {id:'k-'+k, kind:'conc', title:CONCS[k]+' concentration', items:[], share:()=>false, note:''};
     if (k==='ba'){ sec.items = [c('33:136:400'), c('33:136:485'), p('ba-el','Elective',1,['33:136:494','33:136:450','33:136:487','33:136:486','33:136:405'])]; sec.note += t('n_ba'); }
     if (k==='ent'){ sec.items = [c('33:382:302'), c('33:382:303'), p('ent-el','Elective',1,['33:382:340','33:382:496','33:620:475','33:382:355','33:382:352','33:382:486','33:630:369','33:382:310','33:382:360','33:382:342'])]; }
     if (k==='fin'){ sec.items = ['33:390:380','33:390:400','33:390:420'].map(x=>c(x)); sec.note += t('n_needB'); }
@@ -754,7 +755,7 @@ function build(cfg){
     out.push(sec);
   }
 
-  out.push({id:'rc', kind:'gen', title:'Rutgers Core', note:t('n_rc'), items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
+  out.push({id:'rc', kind:'gen', title:'Rutgers Core', items:Object.keys(SLOTS).filter(x=>x.startsWith('RC-')).map(s)});
   return out;
 }
 
@@ -1158,9 +1159,11 @@ function rowHTML(code, sec, x){
 }
 function secHTML(sec){
   const kind = t('k_'+sec.kind);
-  let h = '<section class="card sec"><header><h2>'+esc(sec.title)+'</h2><span class="kind">'+kind+'</span><span class="cnt">'+sec.done+'/'+sec.tot+'</span>'+
-    '<span class="bar mini"><i class="d" style="width:'+(100*sec.done/sec.tot)+'%"></i><i class="p" style="width:'+(100*sec.prog/sec.tot)+'%"></i></span></header>';
-  if (sec.note) h += '<p class="secnote">'+esc(sec.note)+'</p>';
+  const sk = 'sec-'+sec.id, full = sec.done >= sec.tot;
+  const open = openSet[sk] != null ? openSet[sk] : !full;
+  let h = '<details class="card sec'+(full?' full':'')+'" data-pick="'+sk+'"'+(open?' open':'')+'><summary><h2>'+esc(sec.title)+'</h2><span class="kind">'+kind+'</span><span class="cnt">'+sec.done+'/'+sec.tot+'</span>'+
+    '<span class="bar mini"><i class="d" style="width:'+(100*sec.done/sec.tot)+'%"></i><i class="p" style="width:'+(100*sec.prog/sec.tot)+'%"></i></span></summary>';
+  if (sec.note && sec.note.trim()) h += '<p class="secnote">'+esc(sec.note.trim())+'</p>';
   for (const it of sec.items){
     if (it.k==='p'){
       const open = openSet[it.id] != null ? openSet[it.id] : (it.opts.length <= 6);
@@ -1170,7 +1173,7 @@ function secHTML(sec){
       h += it.opts.map(code => rowHTML(code, {id:it.id}, {skip:it.skip[code]})).join('')+'</details>';
     } else h += rowHTML(it.code, sec, it);
   }
-  return h+'</section>';
+  return h+'</details>';
 }
 function whatIfHTML(base, cur){
   const rows = [], cfg = cfgOf();
@@ -1199,7 +1202,7 @@ function whatIfHTML(base, cur){
       rows.push(line(MAJORS[m], c2, false, '', 'major', m));
     }
   }
-  return '<section class="card"><h2>'+t('wi_h')+'</h2><div class="tw"><table><thead><tr><th>'+t('th_plan')+'</th><th class="n">'+t('th_extra')+'</th><th class="n">'+t('th_avg')+'</th><th>'+t('th_res')+'</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></section>';
+  return '<details class="card wi" data-pick="whatif"'+(openSet.whatif ? ' open' : '')+'><summary><h2>'+t('wi_h')+'</h2></summary><div class="tw"><table><thead><tr><th>'+t('th_plan')+'</th><th class="n">'+t('th_extra')+'</th><th class="n">'+t('th_avg')+'</th><th>'+t('th_res')+'</th><th></th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></details>';
 }
 function render(){
   const app = document.getElementById('app'); if (!app) return;
@@ -1219,8 +1222,7 @@ function render(){
       '<p class="vsub">'+t('vsub', v.need, v.sems, v.sems ? fmt(v.avg) : '—')+
       (v.level==='late' ? t('late_proj', cfg.load, termName(v.proj)) : v.level==='tight' ? t('tight_more', cfg.load) : '')+'</p>'+
       '<div class="tiles"><div class="tile"><b>'+ev.earned+'</b><span>'+t('st_done')+'</span></div><div class="tile"><b>'+ev.inprog+'</b><span>'+t('inprog')+'</span></div><div class="tile"><b>'+ev.need+'</b><span>'+t('t_need')+'</span></div><div class="tile"><b>'+ev.total+'</b><span>'+t('t_total')+'</span></div></div>'+
-      '<div class="bar" role="img" aria-label="'+t('bar_aria', ev.earned, ev.inprog, ev.need)+'"><i class="d" style="width:'+(100*ev.earned/tot)+'%"></i><i class="p" style="width:'+(100*ev.inprog/tot)+'%"></i></div>'+
-      '<div class="legend"><span><i style="background:var(--good)"></i>'+t('st_done')+'</span><span><i style="background:var(--prog)"></i>'+t('lg_prog')+'</span><span><i style="background:var(--line)"></i>'+t('t_need')+'</span></div>';
+      '<div class="bar" role="img" aria-label="'+t('bar_aria', ev.earned, ev.inprog, ev.need)+'"><i class="d" style="width:'+(100*ev.earned/tot)+'%"></i><i class="p" style="width:'+(100*ev.inprog/tot)+'%"></i></div>';
     const notes = [];
     if (ev.over > 0) notes.push('<li class="info">'+t('note_over', ev.over)+'</li>');
     else if (ev.over < 0) notes.push('<li class="info">'+t('note_free', -ev.over)+'</li>');
@@ -1306,7 +1308,8 @@ if (typeof document !== 'undefined'){
     state.custom.push({id:'u'+Date.now().toString(36), name, cr: Math.max(0, +document.getElementById('add-cr').value||0), st:0});
     commit();
   });
-  document.addEventListener('toggle', e => { const d = e.target; if (d.dataset && d.dataset.pick) openSet[d.dataset.pick] = d.open; }, true);
+  // Remember only open/close changes the user makes (a <details open> inserted by render() also fires 'toggle').
+  document.addEventListener('click', e => { const sm = e.target.closest('summary'); const d = sm && sm.parentElement; if (d && d.dataset.pick) openSet[d.dataset.pick] = !d.open; });
 
   if (CF_ANALYTICS_TOKEN && location.hostname === CF_ANALYTICS_HOST && !(window.claude && window.claude.use)){
     const cf = document.createElement('script');
